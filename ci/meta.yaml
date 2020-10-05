@@ -1,5 +1,5 @@
 package:
-  name: carculator_truck
+  name: carculator_bus
   version: {{ environ['VERSION'] }}
 
 source:
@@ -31,10 +31,10 @@ requirements:
 
 test:
   imports:
-    - carculator_truck
+    - carculator_bus
 
 about:
-  home: https://github.com/romainsacchi/carculator_truck
+  home: https://github.com/romainsacchi/carculator_bus
   license: BSD License
   summary: 'A parameterized Python model to calculate the energy consumption and life cycle assessment of cars'
 license_family: BSD

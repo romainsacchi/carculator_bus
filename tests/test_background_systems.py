@@ -1,4 +1,4 @@
-from carculator_truck.background_systems import BackgroundSystemModel
+from carculator_bus.background_systems import BackgroundSystemModel
 
 def test_size_dictionary():
     bs = BackgroundSystemModel()

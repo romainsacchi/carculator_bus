@@ -8,7 +8,7 @@ if root_dir:
 
 
 # Probably should be changed, __init__.py is no longer required for Python 3
-for dirpath, dirnames, filenames in os.walk("carculator_truck"):
+for dirpath, dirnames, filenames in os.walk("carculator_bus"):
     # Ignore dirnames that start with '.'
     if "__init__.py" in filenames:
         pkg = dirpath.replace(os.path.sep, ".")
@@ -26,12 +26,12 @@ def package_files(directory):
 
 
 setup(
-    name="carculator_truck",
+    name="carculator_bus",
     version="0.0.4",
     packages=packages,
     author="Romain Sacchi <romain.sacchi@psi.ch>, Chris Mutel <christopher.mutel@psi.ch>",
     license=open("LICENSE").read(),
-    package_data={"carculator_truck": package_files(os.path.join("carculator_truck", "data"))},
+    package_data={"carculator_bus": package_files(os.path.join("carculator_bus", "data"))},
     install_requires=[
         "pandas",
         "xarray",
@@ -45,7 +45,7 @@ setup(
         "bw2io",
         "prettytable"
     ],
-    url="https://github.com/romainsacchi/carculator_truck",
+    url="https://github.com/romainsacchi/carculator_bus",
     description="Prospective environmental and economic life cycle assessment of public transport and heavy goods vehicles",
     classifiers=[
         "Intended Audience :: End Users/Desktop",

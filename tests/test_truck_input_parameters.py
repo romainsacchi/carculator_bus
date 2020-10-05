@@ -1,5 +1,5 @@
 from pathlib import Path
-import carculator_truck.truck_input_parameters as tip
+import carculator_bus.truck_input_parameters as tip
 import json
 import pytest
 

@@ -1,7 +1,7 @@
 Structure
 =========
 
-.. image:: https://github.com/romainsacchi/carculator_truck/raw/master/docs/coarse.png
+.. image:: https://github.com/romainsacchi/carculator_bus/raw/master/docs/coarse.png
     :width: 900
     :alt: Alternative text
 

@@ -75,7 +75,7 @@ class ExportInventory:
 
     """
 
-    def __init__(self, array, indices, db_name="carculator_truck export"):
+    def __init__(self, array, indices, db_name="carculator_bus export"):
         self.array = array
         self.indices = indices
         self.db_name = db_name
@@ -703,7 +703,7 @@ class ExportInventory:
             if filename is None:
                 safe_name = (
                     safe_filename(
-                        "carculator_truck_inventory_export_{}_brightway2".format(
+                        "carculator_bus_inventory_export_{}_brightway2".format(
                             str(datetime.date.today())
                         ),
                         False,
@@ -715,7 +715,7 @@ class ExportInventory:
         else:
             safe_name = (
                 safe_filename(
-                    "carculator_truck_inventory_export_{}_simapro".format(
+                    "carculator_bus_inventory_export_{}_simapro".format(
                         str(datetime.date.today())
                     ),
                     False,
@@ -923,7 +923,7 @@ class ExportInventory:
                             writer.writerow([name])
 
                         if item == "Generator":
-                            writer.writerow(["carculator_truck " + str(__version__)])
+                            writer.writerow(["carculator_bus " + str(__version__)])
 
                         if item == "Geography":
                             writer.writerow([a["location"]])
@@ -967,7 +967,7 @@ class ExportInventory:
                         if item == "Collection method":
                             writer.writerow(
                                 [
-                                    "Modeling and assumptions: https://carculator_truck.readthedocs.io/en/latest/modeling.html"
+                                    "Modeling and assumptions: https://carculator_bus.readthedocs.io/en/latest/modeling.html"
                                 ]
                             )
 

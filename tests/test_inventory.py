@@ -1,4 +1,4 @@
-from carculator_truck import *
+from carculator_bus import *
 import numpy as np
 
 tip = TruckInputParameters()

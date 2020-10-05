@@ -1,5 +1,5 @@
 # Only need to change these two variables
-PKG_NAME=carculator_truck
+PKG_NAME=carculator_bus
 USER=romainsacchi
 
 mkdir ~/conda-bld

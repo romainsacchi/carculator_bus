@@ -2,24 +2,24 @@ Modeling and assumptions
 ========================
 
 The modeling of medium and heavy goods vehicles in the past, present and future is complex and relies on many assumptions.
-With **carculator_truck**, we wish to be transparent about those: assumptions and modeling approaches should ideally be easily
+With **carculator_bus**, we wish to be transparent about those: assumptions and modeling approaches should ideally be easily
 criticized and modified if need be.
 
 We try here to give a comprehensive list of assumptions and modeling choices, and describe how, as a user, you
 can change those.
 
-Parameters' names are indicated ``verbatim`` and are to be used in **carculator_truck**.
+Parameters' names are indicated ``verbatim`` and are to be used in **carculator_bus**.
 
 Vehicle sizing
 **************
-**carculator_truck** models vehicles along four dimensions:
+**carculator_bus** models vehicles along four dimensions:
 
 * their powertrain (e.g., gasoline-run internal combustion engine, battery electric vehicle, etc.),
 * their size (e.g., 3.5t, 7.5t, 18t, etc.),
 * their year of production (2000, 2010, 2020, 2030, 2040 and 2050)
 * and a parameter dimension (i.e., input and calculated parameters).
 
-When **carculator_truck** sizes the vehicles for the different powertrains, sizes and years, it starts with bringing
+When **carculator_bus** sizes the vehicles for the different powertrains, sizes and years, it starts with bringing
 together a few components common to all powertrains, that is: `glider base mass`, `suspension mass`, `braking system mass`,
 `wheels and tires mass`, `cabin mass`, `electrical system mass`, `other components mass`, `transmission mass`. Then, it adds
 energy storage components, such as:

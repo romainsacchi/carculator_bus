@@ -1,28 +1,28 @@
 Introduction
 ============
 
-``carculator_truck`` is a parameterized model that allows to generate and characterize life cycle inventories for different
+``carculator_bus`` is a parameterized model that allows to generate and characterize life cycle inventories for different
 heavy goods vehicle configurations, according to selected:
 
 * powertrain technologies (9): diesel engine, electric motor, hybrid, plugin-hybrid, etc.,
 * year of operation (2): 2000, 2010, 2020, 2030, 2040 and 2050 (with the possibility to interpolate in between)
 * and sizes: 3.5t, 7.5t, 18t, 26t, 40t and 60t
 
-The methodology used to develop `carculator_truck` is explained in:
+The methodology used to develop `carculator_bus` is explained in:
 cDoes size matter? The influence of loading factor, trip length and application type on the Life Cycle Assessment of current and future heavy goods vehicles.
 Romain Sacchi, Christian Bauer
 (2020, in preparation)
 
 At the moment, the tool has a focus on the transport of dry goods.
 
-More specifically, ``carculator_truck`` generates `Brightway2 <https://brightwaylca.org/>`_ inventories, but also
+More specifically, ``carculator_bus`` generates `Brightway2 <https://brightwaylca.org/>`_ inventories, but also
 directly provides characterized results against several midpoint and endpoint indicators from the impact assessment method:
 * ReCiPe 2008 (mid- and endpoint)
 * and ILCD 2.0 2018 (only midpoint)
 
 as well as life cycle cost indicators.
 
-``carculator_truck`` differentiates itself from other truck LCA models as it uses time- and energy-scenario-differentiated
+``carculator_bus`` differentiates itself from other truck LCA models as it uses time- and energy-scenario-differentiated
 background inventories for the future, resulting from the coupling between the `ecoinvent 3.6 database <https://ecoinvent.org>`_
 and the scenario outputs of PIK's integrated assessment model `REMIND <https://www.pik-potsdam.de/research/transformation-pathways/models/remind/remind>`_.
 This allows to perform prospective study while consider future expected changes in regard to the production of electricity,
@@ -42,12 +42,12 @@ are sensitive to assumptions made in regards to electricity mix used for chargin
 to mixed conclusions being published in the scientific literature. Because the underlying calculations are kept undocumented,
 it is not always possible to explain the disparity in the results given by these models, which can contribute to adding confusion among the public.
 
-Because ``carculator_truck`` is kept **as open as possible**, the methods and assumptions behind the generation of results are
+Because ``carculator_bus`` is kept **as open as possible**, the methods and assumptions behind the generation of results are
 easily identifiable and adjustable.
 Also, there is an effort to keep the different modules (classes) separated, so that improving certain areas of the model is relatively
 easy and does not require changing extensive parts of the code. In that regard, contributions are welcome.
 
-Finally, beside being more flexible and transparent, ``carculator_truck`` provides interesting features, such as:
+Finally, beside being more flexible and transparent, ``carculator_bus`` provides interesting features, such as:
 
 * a stochastic mode, that allows fast Monte Carlo analyses, to include uncertainty at the vehicle level
 * possibility to override any or all of the 200+ default input vehicle parameters (e.g., load factor, drag coefficient) but also calculated parameters (e.g., driving mass).
@@ -60,8 +60,8 @@ Finally, beside being more flexible and transparent, ``carculator_truck`` provid
 How to install this package?
 ----------------------------
 
-``carculator_truck`` is a Python package, and is primarily to be used from within a Python 3.x environment.
-Because ``carculator_truck`` is still at an early development stage, it is a good idea to install it in a separate environment,
+``carculator_bus`` is a Python package, and is primarily to be used from within a Python 3.x environment.
+Because ``carculator_bus`` is still at an early development stage, it is a good idea to install it in a separate environment,
 such as a conda environment::
 
     conda create -n <name of the environment> python=3.7
@@ -70,9 +70,9 @@ Once your environment created, you should activate it::
 
     conda activate <name of the environment>
 
-And install the ``carculator_truck`` library in your new environment via Conda::
+And install the ``carculator_bus`` library in your new environment via Conda::
 
-    pip install carculator_truck
+    pip install carculator_bus
 
 This will install the package and the required dependencies.
 
@@ -81,12 +81,12 @@ How to update this package?
 
 Within the conda environment, type::
 
-    pip install carculator_truck --upgrade
+    pip install carculator_bus --upgrade
 
 How to use it?
 --------------
 
-Note: many examples are given in this `notebook <https://github.com/romainsacchi/carculator_truck/blob/master/examples/Examples.ipynb>`_ that you can run directly on your computer..
+Note: many examples are given in this `notebook <https://github.com/romainsacchi/carculator_bus/blob/master/examples/Examples.ipynb>`_ that you can run directly on your computer..
 
 Static vs. Stochastic mode vs. Sensitivity mode
 ***********************************************
@@ -106,7 +106,7 @@ Export of inventories
 *********************
 
 The library allows to export inventories in different formats, to be consumed by different tools and link to various databases.
-Among the formats available, ``carculator_truck`` can export inventories as:
+Among the formats available, ``carculator_bus`` can export inventories as:
 
 * Brightway2-compatible Excel file
 * Simapro-compatible CSV file
