@@ -27,7 +27,7 @@ def package_files(directory):
 
 setup(
     name="carculator_bus",
-    version="0.0.4",
+    version="0.0.1",
     packages=packages,
     author="Romain Sacchi <romain.sacchi@psi.ch>, Chris Mutel <christopher.mutel@psi.ch>",
     license=open("LICENSE").read(),
@@ -46,7 +46,7 @@ setup(
         "prettytable"
     ],
     url="https://github.com/romainsacchi/carculator_bus",
-    description="Prospective environmental and economic life cycle assessment of public transport and heavy goods vehicles",
+    description="Prospective environmental and economic life cycle assessment of buses and coaches",
     classifiers=[
         "Intended Audience :: End Users/Desktop",
         "Intended Audience :: Developers",

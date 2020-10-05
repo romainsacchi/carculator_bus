@@ -5,17 +5,17 @@
 </p>
 
 <p align="center">
-  <a href="https://badge.fury.io/py/carculator-truck" target="_blank"><img src="https://badge.fury.io/py/carculator-truck.svg"></a>
+  <a href="https://badge.fury.io/py/carculator-bus" target="_blank"><img src="https://badge.fury.io/py/carculator-bus.svg"></a>
   <a href="https://travis-ci.org/romainsacchi/carculator_bus" target="_blank"><img src="https://travis-ci.org/romainsacchi/carculator_bus.svg?branch=master"></a>
   <a href="https://ci.appveyor.com/project/romainsacchi/carculator_bus" target="_blank"><img src="https://ci.appveyor.com/api/projects/status/github/romainsacchi/carculator_bus?svg=true"></a>
   <a href="https://coveralls.io/github/romainsacchi/carculator_bus" target="_blank"><img src="https://coveralls.io/repos/github/romainsacchi/carculator_bus/badge.svg"></a>
   <a href="https://carculator_bus.readthedocs.io/en/latest/" target="_blank"><img src="https://readthedocs.org/projects/carculator_bus/badge/?version=latest"></a>
  </p>
 
-Prospective environmental and economic life cycle assessment of medium and heavy duty vehicles.
+Prospective environmental and economic life cycle assessment of buses and coaches.
 
 A fully parameterized Python model developed by the [Technology Assessment group](https://www.psi.ch/en/ta) of the
-[Paul Scherrer Institut](https://www.psi.ch/en) to perform life cycle assessments (LCA) of medium and heavy duty trucks.
+[Paul Scherrer Institut](https://www.psi.ch/en) to perform life cycle assessments (LCA) of buses and coaches.
 Based on the Life Cycle Assessment tool for passenger vehicles [carculator](https://github.com/romainsacchi/carculator).
 
 See [the documentation](https://carculator_bus.readthedocs.io/en/latest/index.html) for more detail, validation, etc.
