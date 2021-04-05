@@ -5,20 +5,75 @@
 </p>
 
 <p align="center">
-  <a href="https://badge.fury.io/py/carculator-bus" target="_blank"><img src="https://badge.fury.io/py/carculator-bus.svg"></a>
+  <a href="https://badge.fury.io/py/carculator-truck" target="_blank"><img src="https://badge.fury.io/py/carculator-truck.svg"></a>
   <a href="https://travis-ci.org/romainsacchi/carculator_bus" target="_blank"><img src="https://travis-ci.org/romainsacchi/carculator_bus.svg?branch=master"></a>
   <a href="https://ci.appveyor.com/project/romainsacchi/carculator_bus" target="_blank"><img src="https://ci.appveyor.com/api/projects/status/github/romainsacchi/carculator_bus?svg=true"></a>
   <a href="https://coveralls.io/github/romainsacchi/carculator_bus" target="_blank"><img src="https://coveralls.io/repos/github/romainsacchi/carculator_bus/badge.svg"></a>
   <a href="https://carculator_bus.readthedocs.io/en/latest/" target="_blank"><img src="https://readthedocs.org/projects/carculator_bus/badge/?version=latest"></a>
  </p>
 
-Prospective environmental and economic life cycle assessment of buses and coaches.
+Prospective environmental and economic life cycle assessment of medium and heavy duty vehicles.
 
 A fully parameterized Python model developed by the [Technology Assessment group](https://www.psi.ch/en/ta) of the
-[Paul Scherrer Institut](https://www.psi.ch/en) to perform life cycle assessments (LCA) of buses and coaches.
+[Paul Scherrer Institut](https://www.psi.ch/en) to perform life cycle assessments (LCA) of medium and heavy duty trucks.
 Based on the Life Cycle Assessment tool for passenger vehicles [carculator](https://github.com/romainsacchi/carculator).
 
 See [the documentation](https://carculator_bus.readthedocs.io/en/latest/index.html) for more detail, validation, etc.
+
+The model has been the subject of a submission to the journal <i>Environmental Science and Technology</i>.
+You may find a preprint version <a href="https://www.psi.ch/en/ta/preprint" target="_blank">here<a/>.
+
+
+## How to install?
+
+For the latest version, using conda::
+
+    conda install -c romainsacchi carculator_bus
+    
+or for a stable release, from Pypi::
+
+    pip install carculator_bus
+    
+    
+## What does it do?
+
+<i>carculator_bus</i> allows to model vehicles across:
+<ul>
+<li>different conventional and alternative powertrains: diesel, compressed natural gas, hybrid-diesel, plugin hybrid, electric, fuel cell</li>
+<li>different gross weight cateogries: 3.5t, 7.5t, 18t, 26t, 32t, 40t and 60t</li>
+<li>different fuel pathways: conventional fuels, bio-based fuels (biodiesel, biomethane), synthetic fuels
+(Fischer-Tropsch-based synthetic diesel, synhtetic methane)</li>
+<li>different years: from 2000 to 2050. Technological progress at the vehicle level but also in the rest of the world energy
+system (e.g., power generation) is accounted for, using energy scenario-specific IAM-coupled ecoinvent databases produced by 
+<a href="https://github.com/romainsacchi/premise" target="_blank">premise</a>.</li>
+<li>Inventories can be imported into <a href="https://brightway.dev/" target="_blank">Brightway2</a> and
+<a href="https://www.simapro.com/" target="_blank">SimaPro 9.x.</a>.</li>
+</ul>
+
+<p align="center">
+    The energy model of <i>carculator_bus</i> considers the vehicle aerodynamics, the road gradient and other factors.
+    It also considers varying efficiencies of the transmission and engine at various load points for each second
+    of the driving cycle.
+  <img style="height:50px;" src="https://github.com/romainsacchi/carculator_bus/raw/master/docs/energy_model.png">
+</p>
+
+<p align="center">
+    The energy model and the calculated tank-to-wheel energy consumption is validated against the simulation software
+    <a href="https://ec.europa.eu/clima/policies/transport/vehicles/vecto_en" target="_blank">VECTO</a>.
+  <img style="height:50px;" src="https://github.com/romainsacchi/carculator_bus/raw/master/docs/vecto_validation.png">
+</p>
+
+<p align="center">
+    Benefits of hybrid powertrains are fully conidered: the possibility to recuperate braking energy as well as efficiency gains from engine
+    downsizing is accounted for.
+  <img style="height:50px;" src="https://github.com/romainsacchi/carculator_bus/raw/master/docs/hybrid_efficiency.png">
+</p>
+
+<p align="center">
+    Global warming potential impacts per ton-km for a 40-t truck, across different powertrain technologies,
+    using an urban driving cycle.
+  <img style="height:50px;" src="https://github.com/romainsacchi/carculator_bus/raw/master/docs/urban_gwp.png">
+</p>
 
 ## How to use it?
 

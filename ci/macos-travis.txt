@@ -9,3 +9,5 @@ pytest
 numexpr
 bw2io
 prettytable
+wurst
+pycountry

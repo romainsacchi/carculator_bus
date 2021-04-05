@@ -28,6 +28,8 @@ requirements:
     - numexpr
     - bw2io
     - prettytable
+    - wurst
+    - pycountry
 
 test:
   imports:

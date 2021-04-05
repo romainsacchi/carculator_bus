@@ -29,7 +29,7 @@ setup(
     name="carculator_bus",
     version="0.0.1",
     packages=packages,
-    author="Romain Sacchi <romain.sacchi@psi.ch>, Chris Mutel <christopher.mutel@psi.ch>",
+    author="Romain Sacchi <romain.sacchi@psi.ch>",
     license=open("LICENSE").read(),
     package_data={"carculator_bus": package_files(os.path.join("carculator_bus", "data"))},
     install_requires=[
@@ -43,10 +43,12 @@ setup(
         "pytest",
         "numexpr",
         "bw2io",
-        "prettytable"
+        "prettytable",
+        "wurst",
+        "pycountry"
     ],
     url="https://github.com/romainsacchi/carculator_bus",
-    description="Prospective environmental and economic life cycle assessment of buses and coaches",
+    description="Prospective environmental and economic life cycle assessment of public transport and heavy goods vehicles",
     classifiers=[
         "Intended Audience :: End Users/Desktop",
         "Intended Audience :: Developers",
@@ -60,6 +62,7 @@ setup(
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "Topic :: Scientific/Engineering :: Information Analysis",
         "Topic :: Scientific/Engineering :: Mathematics",
         "Topic :: Scientific/Engineering :: Visualization",

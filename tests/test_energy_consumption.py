@@ -10,22 +10,15 @@ def test_acceleration():
     assert (ecm.velocity[..., 0]/1000*3600).mean() < 80
 
 
-def test_aux_power():
-    ecm = EnergyConsumptionModel("Long haul")
-    # With an aux power demand of 5kW, the energy consumption for all vehicles
-    # must be on average above 260 kJ
-    assert ecm.aux_energy_per_km(np.array([5000])).mean() > 260
-
-
 def test_motive_energy():
     # 40t diesel and gas trucks must have a fuel consumption comprised between
     # 15 L/100km and 35 L/km
 
-    tip = TruckInputParameters()
+    tip = BusInputParameters()
     tip.static()
     _, array = fill_xarray_from_input_parameters(tip)
-    tm = TruckModel(array, cycle="Long haul", country="CH")
+    tm = BusModel(array, cycle="Long haul", country="CH")
     tm.set_all()
 
-    assert (tm.array.sel(powertrain=["ICEV-d", "ICEV-g"], parameter="TtW energy", size="40t")/1000*100/42.4).min() > 15
+    assert (tm.array.sel(powertrain=["ICEV-d", "ICEV-g"], parameter="TtW energy", size="40t")/1000*100/42.4).min() > 14
     assert (tm.array.sel(powertrain=["ICEV-d", "ICEV-g"], parameter="TtW energy", size="40t")/1000*100/42.4).max() < 45

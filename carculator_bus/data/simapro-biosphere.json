@@ -1,5 +1,25 @@
 [
   [
+    "natural resource",
+    "Energy, gross calorific value, in biomass",
+    "Energy, gross calorific value, in biomass"
+  ],
+  [
+    "natural resource",
+    "Energy, gross calorific value, in biomass",
+    "Energy, kinetic (in wind), converted"
+  ],
+    [
+    "natural resource",
+    "Energy, gross calorific value, in biomass",
+    "Energy, potential (in hydropower reservoir), converted"
+  ],
+      [
+    "natural resource",
+    "Energy, gross calorific value, in biomass",
+    "Energy, geothermal, converted"
+  ],
+    [
     "air",
     "1-Butanol",
     "Butanol"
@@ -51,8 +71,18 @@
   ],
   [
     "air",
+    "Carbon dioxide, in air",
+    "Carbon dioxide, in air"
+  ],
+  [
+    "air",
     "Carbon dioxide, land transformation",
     "Carbon dioxide, from soil or biomass stock"
+  ],
+  [
+    "air",
+    "Carbon dioxide, land transformation",
+    "Carbon dioxide, to soil or biomass stock"
   ],
   [
     "air",
@@ -759,6 +789,11 @@
     "Iron",
     "Iron, 46% in ore, 25% in crude ore, in ground"
   ],
+   [
+    "natural resource",
+    "Iron",
+    "Iron, in ground"
+  ],
   [
     "natural resource",
     "Kaolinite",
@@ -874,6 +909,11 @@
     "Nickel, Ni 3.7E-2%, Pt 4.8E-4%, Pd 2.0E-4%, Rh 2.4E-5%, Cu 5.2E-2% in ore",
     "Ni, Ni 3.7E-2%, Pt 4.8E-4%, Pd 2.0E-4%, Rh 2.4E-5%, Cu 5.2E-2% in ore, in ground"
   ],
+    [
+    "natural resource",
+    "Occupation, construction site",
+    "Occupation, construction site"
+  ],
   [
     "natural resource",
     "Occupation, arable",
@@ -934,6 +974,11 @@
     "Occupation, forest, intensive, short-cycle",
     "Occupation, forest, intensive"
   ],
+    [
+    "natural resource",
+    "Occupation, forest, extensive",
+    "Occupation, forest, extensive"
+  ],
   [
     "natural resource",
     "Occupation, grassland, not used",
@@ -948,6 +993,16 @@
     "natural resource",
     "Occupation, industrial area, built up",
     "Occupation, industrial area"
+  ],
+    [
+    "natural resource",
+    "Occupation, industrial area, built up",
+    "Occupation, dump site"
+  ],
+  [
+    "natural resource",
+    "Occupation, industrial area, built up",
+    "Occupation, mineral extraction site"
   ],
   [
     "natural resource",
@@ -1239,6 +1294,11 @@
     "Transformation, from forest, intensive, short-cycle",
     "Transformation, from forest, intensive"
   ],
+    [
+    "natural resource",
+    "Transformation, from forest, extensive",
+    "Transformation, from forest, extensive"
+  ],
   [
     "natural resource",
     "Transformation, from forest, primary",
@@ -1369,6 +1429,11 @@
     "Transformation, to forest, intensive, short-cycle",
     "Transformation, to forest, intensive"
   ],
+    [
+    "natural resource",
+    "Transformation, to forest, extensive",
+    "Transformation, to forest, extensive"
+  ],
   [
     "natural resource",
     "Transformation, to industrial area, benthos",
@@ -1443,6 +1508,11 @@
     "natural resource",
     "Transformation, to water bodies, artificial",
     "Transformation, to river, artificial"
+  ],
+    [
+    "natural resource",
+    "Transformation, to heterogeneous, agricultural",
+    "Transformation, to heterogeneous, agricultural"
   ],
   [
     "natural resource",
@@ -2014,6 +2084,11 @@
     "Water, river, Europe without Switzerland",
     "Water, unspecified natural origin"
   ],
+    [
+    "natural resource",
+    "Water, river, Europe without Switzerland",
+    "Water, river"
+  ],
   [
     "natural resource",
     "Water, river, FI",
@@ -2229,6 +2304,11 @@
     "Water, unspecified natural origin, WEU",
     "Water, unspecified natural origin"
   ],
+  [
+    "natural resource",
+    "Water, well",
+    "Water, well, in ground"
+  ],  
   [
     "natural resource",
     "Water, well, in ground, AT",
@@ -2463,6 +2543,16 @@
     "natural resource",
     "Water_3.1_m3",
     "Water, unspecified natural origin"
+  ],
+    [
+    "natural resource",
+    "Wood, hard, standing",
+    "Wood, hard, standing"
+  ],
+  [
+    "natural resource",
+    "Wood, soft, standing",
+    "Wood, soft, standing"
   ],
   [
     "natural resource",

@@ -2,6 +2,7 @@ from .driving_cycles import get_standard_driving_cycle
 from .gradients import get_gradients
 import numexpr as ne
 import numpy as np
+np.seterr(divide='ignore', invalid='ignore')
 import xarray as xr
 
 
@@ -46,12 +47,12 @@ class EnergyConsumptionModel:
 
     """
 
-    def __init__(self, cycle, rho_air=1.204):
+    def __init__(self, cycle, size=["3.5t", "7.5t", "18t", "26t", "32t", "40t", "60t"], rho_air=1.204):
         # If a string is passed, the corresponding driving cycle is retrieved
         if isinstance(cycle, str):
             try:
                 self.cycle_name = cycle
-                cycle = get_standard_driving_cycle(cycle)
+                cycle = get_standard_driving_cycle(cycle, size=size)
 
             except KeyError:
                 raise "The driving cycle specified could not be found."
@@ -67,9 +68,9 @@ class EnergyConsumptionModel:
 
         self.gradient_name = self.cycle_name
         # retrieve road gradients (in degrees) for each second of the driving cycle selected
-        self.gradient = get_gradients(self.gradient_name).reshape(-1, 1, 1, 1, 6)
+        self.gradient = get_gradients(self.gradient_name, size=size).reshape(-1, 1, 1, 1, len(size))
         # reshape the driving cycle
-        self.cycle = cycle.reshape(-1, 1, 1, 6)
+        self.cycle = cycle.reshape(-1, 1, 1, len(size))
 
         self.rho_air = rho_air
 
@@ -82,41 +83,12 @@ class EnergyConsumptionModel:
         self.acceleration = np.zeros_like(self.velocity)
         self.acceleration[1:-1] = (self.velocity[2:] - self.velocity[:-2]) / 2
 
-    def aux_energy_per_km(self, aux_power, efficiency=1):
-        """
-        Calculate energy used other than motive energy per km driven.
-
-        :param aux_power: Total power needed for auxiliaries, heating, and cooling (W)
-        :type aux_power: int
-        :param efficiency: Efficiency of electricity generation (dimensionless, between 0.0 and 1.0).
-                Battery electric vehicles should have efficiencies of one here, as we account for
-                battery efficiencies elsewhere.
-        :type efficiency: float
-
-        :returns: total auxiliary energy in kJ/km
-        :rtype: float
-
-        """
-
-        distance = self.velocity.sum(axis=0)[0][0]
-        # Provide energy in kJ / km (1 J = 1 Ws)
-        auxiliary_energy = (
-            aux_power.T  # Watt
-            * self.velocity.shape[0]  # Number of seconds -> Ws -> J
-            / distance  # m/s * 1s = m -> J/m
-            * 1000  # m / km
-            / 1000  # 1 / (J / kJ)
-        )
-
-        return (auxiliary_energy / efficiency).T
-
     def motive_energy_per_km(
         self,
         driving_mass,
         rr_coef,
         drag_coef,
         frontal_area,
-        ttw_efficiency,
         recuperation_efficiency=0,
         motor_power=0,
         debug_mode=False,
@@ -189,42 +161,36 @@ class EnergyConsumptionModel:
         if not debug_mode:
 
             # Power required: total resistance * velocity
-            total_power = total_resistance * self.velocity
-            total_power = np.clip(total_power, 0, None)
+            total_power = total_resistance * self.velocity / 1000
+
             # Recuperation of the braking power within the limit of the electric engine power
-            recuperated_power = (
-                braking_loss * recuperation_efficiency.values.T
-            ) * self.velocity
-            recuperated_power = np.clip(
-                recuperated_power, 0, motor_power.values.T * 1000
-            )
+            recuperated_power = braking_loss * self.velocity / 1000
 
-            # Subtract recuperated power from total power, if any
-            total_power -= recuperated_power
-            # Total power per driving cycle to total power per km
-            total_power /= distance
-            # From power required at the wheels to power required by the engine
-            total_power /= ttw_efficiency.values.T
-            # From joules to kilojoules
-            total_power /= 1000
-
-            return total_power
+            return total_power.astype("float32"), recuperated_power.astype("float32"), distance
 
         # if `debug_mode` == True, returns instead
         # the power to overcome rolling resistance, air resistance, gradient resistance,
         # inertia and braking resistance, as well as the total power and the energy to overcome it.
         else:
-            rolling_resistance *= self.velocity
-            air_resistance *= self.velocity
-            gradient_resistance *= self.velocity
-            inertia *= self.velocity
-            braking_loss *= self.velocity
-            total_power = total_resistance * self.velocity
-            total_power = np.clip(total_power, 0, None)
+            rolling_resistance *= self.velocity / 1000
+            air_resistance *= self.velocity / 1000
+            gradient_resistance *= self.velocity / 1000
+            inertia *= self.velocity / 1000
+            braking_loss *= self.velocity / 1000
+            total_resistance = (
+                rolling_resistance
+                + air_resistance
+                + gradient_resistance
+                + inertia
+                + braking_loss
+            )
 
-            energy = total_power / ttw_efficiency.values.T
-
-            energy /= 1000
+            recuperated_power = (
+                                        braking_loss * recuperation_efficiency.values.T
+                                )
+            recuperated_power = np.clip(
+                recuperated_power, 0, motor_power.values.T
+            )
 
             return (
                 xr.DataArray(
@@ -243,9 +209,9 @@ class EnergyConsumptionModel:
                     np.squeeze(braking_loss), dims=["values", "year", "powertrain", "size"]
                 ),
                 xr.DataArray(
-                    np.squeeze(total_power), dims=["values", "year", "powertrain", "size"]
+                    np.squeeze(recuperated_power), dims=["values", "year", "powertrain", "size"]
                 ),
                 xr.DataArray(
-                    np.squeeze(energy), dims=["values", "year", "powertrain", "size"]
-                ),
+                    np.squeeze(total_resistance), dims=["values", "year", "powertrain", "size"]
+                )
             )

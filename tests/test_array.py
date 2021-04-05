@@ -10,7 +10,7 @@ def test_type_cip():
 
 
 def test_format_array():
-    tip = TruckInputParameters()
+    tip = BusInputParameters()
     tip.static()
     dcts, array = fill_xarray_from_input_parameters(tip)
 
@@ -21,7 +21,7 @@ def test_format_array():
 
 
 def test_modify_array():
-    tip = TruckInputParameters()
+    tip = BusInputParameters()
     tip.static()
     dcts, array = fill_xarray_from_input_parameters(tip)
 
@@ -45,7 +45,7 @@ def test_modify_array():
 
 
 def test_wrong_param_modify_array():
-    tip = TruckInputParameters()
+    tip = BusInputParameters()
     tip.static()
     dcts, array = fill_xarray_from_input_parameters(tip)
 
