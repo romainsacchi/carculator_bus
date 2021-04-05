@@ -49,7 +49,6 @@ class BusModel:
         self,
         array,
         mappings=None,
-        cycle="Urban delivery",
         country=None,
         fuel_blend=None,
         energy_target={2025: 0.85, 2030: 0.7},
@@ -61,7 +60,7 @@ class BusModel:
 
         self.country = country or "RER"
         self.fuel_blend = self.define_fuel_blends(fuel_blend)
-        self.cycle = cycle
+        self.cycle = get_standard_driving_cycle()
 
         self.energy_target = energy_target
 
@@ -556,7 +555,7 @@ class BusModel:
         self.energy.loc[dict(parameter="transmission efficiency")] = np.clip(np.interp(
             self.energy.loc[dict(parameter="power load")],
             [0, 0.025, .05, .1, .2, .3, .4, .5, .6, .7, .8, .9],
-            [0, 0.6, .75, .85, .88, .91, .91, .91, .91, .91, .91, .91]
+            [0, 0.8,   .9, .95, .96, .96, .96, .96, .96, .96, .96, .96]
         ), .2, 1)
 
         l_pwt = [p for p in self.array.powertrain.values if
@@ -572,7 +571,7 @@ class BusModel:
                 self.energy.loc[dict(parameter="power load",
                                      powertrain=l_pwt)],
                 [0, 0.025, .05, .1, .2, .3, .4, .5, .6, .7, .8, .9],
-                [0, 0.2, .25, .32, .385, .41, .42, .42, .42, .42, .42, .42]
+                [0, 0.2,   .25, .35, .39, .41, .42, .43, .43, .43, .43, .43]
             ), .2, 1)
 
         # Correction for CNG trucks
