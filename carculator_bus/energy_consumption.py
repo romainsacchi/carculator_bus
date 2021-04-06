@@ -1,10 +1,13 @@
 from .driving_cycles import get_standard_driving_cycle
 from .gradients import get_gradients
-import numexpr as ne
 import numpy as np
 np.seterr(divide='ignore', invalid='ignore')
 import xarray as xr
+from . import DATA_DIR
+import csv
 
+
+MONTHLY_AVG_TEMP = "monthly_avg_temp.csv"
 
 def _(o):
     """Add a trailing dimension to make input arrays broadcast correctly"""
@@ -13,6 +16,20 @@ def _(o):
     else:
         return o
 
+def get_country_temperature(country):
+    """
+    Retrieves mothly average temperature
+    :type country: country for which to retrieve temperature values
+    :return:
+    """
+
+    with open(DATA_DIR / MONTHLY_AVG_TEMP, "r"):
+
+        with open(DATA_DIR / MONTHLY_AVG_TEMP) as f:
+            reader = csv.reader(f, delimiter=";")
+            for row in reader:
+                if row[2] == country:
+                    return np.array([int(i) for i in row[3:]])
 
 class EnergyConsumptionModel:
     """
@@ -82,6 +99,49 @@ class EnergyConsumptionModel:
         # Zero at first value
         self.acceleration = np.zeros_like(self.velocity)
         self.acceleration[1:-1] = (self.velocity[2:] - self.velocity[:-2]) / 2
+
+
+
+
+    def aux_energy_per_km(self,
+                          hvac_power,
+                          battery_cooling_unit,
+                          battery_heating_unit,
+                          country="CH",
+                          indoor_temp = 21
+                          ):
+
+        # monthly temperature average (12 values)
+        t = get_country_temperature(country)
+
+        # relation between ambient temperature
+        # and HVAC power required
+        # from https://doi.org/10.1016/j.energy.2018.12.064
+        amb_temp = np.array([-30, -20, -10, 0, 10, 20, 30])
+        pct_power_HVAC = np.array([.95, .54, .29, .13, .04, .08, .45])
+
+        # Heating power as long as ambient temperature
+        # is below the comfort indoor temperature
+
+        p_heating = np.where(t < indoor_temp, np.interp(t, amb_temp, pct_power_HVAC),
+                             0).mean() * hvac_power
+
+        # Cooling power as long as ambient temperature
+        # is above the comfort indoor temperature
+        p_cooling = np.where(t > indoor_temp, np.interp(t, amb_temp, pct_power_HVAC),
+                             0).mean() * hvac_power
+
+        # We want to add power draw for battery cooling
+        # and battery heating
+
+        # battery cooling occuring above 20C
+        p_battery_cooling = np.where(t > 20, battery_cooling_unit, 0)
+
+        # battery heating occuring below 5C
+        p_battery_heating = np.where(t < 5, battery_heating_unit, 0)
+
+        return p_cooling, p_heating, p_battery_cooling, p_battery_heating
+
 
     def motive_energy_per_km(
         self,

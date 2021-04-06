@@ -1,7 +1,6 @@
 [
   "electric utility factor",
   "noise, octave 6, night time, rural",
-  "total cargo mass",
   "battery lifetime replacements",
   "noise, octave 1, evening time, suburban",
   "electric power",
@@ -35,7 +34,6 @@
   "Carbon monoxide direct emissions, rural",
   "Particulate matters direct emissions, urban",
   "Carbon monoxide direct emissions, suburban",
-  "lifetime",
   "battery cell production electricity",
   "noise, octave 7, day time, suburban",
   "noise, octave 1, night time, urban",
@@ -159,7 +157,6 @@
   "Nitrogen dioxide direct emissions, urban",
   "Nitrogen dioxide direct emissions, suburban",
   "Nitrogen dioxide direct emissions, rural",
-  "target range",
   "fuel cell cost per kW",
   "power battery cost per kW",
   "insurance cost",
@@ -259,5 +256,8 @@
   "Chromium direct emissions, rural",
   "Chromium VI direct emissions, rural",
   "Mercury direct emissions, rural",
-  "Cadmium direct emissions, rural"
+  "Cadmium direct emissions, rural",
+  "actual passengers capacity",
+  "daily distance",
+  "number of trips"
 ]

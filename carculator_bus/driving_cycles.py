@@ -4,7 +4,7 @@ import sys
 
 
 def get_standard_driving_cycle(size=["9m", "13m-city", "13m-coach",
-                                    "13-city-double", "13m-coach-double",
+                                    "13m-city-double", "13m-coach-double",
                                     "18m"]):
 
     """Get driving cycle data as a Pandas `Series`.
