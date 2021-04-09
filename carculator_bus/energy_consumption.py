@@ -100,15 +100,12 @@ class EnergyConsumptionModel:
         self.acceleration = np.zeros_like(self.velocity)
         self.acceleration[1:-1] = (self.velocity[2:] - self.velocity[:-2]) / 2
 
-
-
-
     def aux_energy_per_km(self,
                           hvac_power,
                           battery_cooling_unit,
                           battery_heating_unit,
                           country="CH",
-                          indoor_temp = 21
+                          indoor_temp=21
                           ):
 
         # monthly temperature average (12 values)
@@ -120,26 +117,24 @@ class EnergyConsumptionModel:
         amb_temp = np.array([-30, -20, -10, 0, 10, 20, 30])
         pct_power_HVAC = np.array([.95, .54, .29, .13, .04, .08, .45])
 
-        # Heating power as long as ambient temperature
+        # Heating power as long as ambient temperature, in W
         # is below the comfort indoor temperature
 
-        p_heating = np.where(t < indoor_temp, np.interp(t, amb_temp, pct_power_HVAC),
-                             0).mean() * hvac_power
+        p_heating = (np.where(t < indoor_temp, np.interp(t, amb_temp, pct_power_HVAC), 0).mean() * hvac_power).values
 
-        # Cooling power as long as ambient temperature
+        # Cooling power as long as ambient temperature, in W
         # is above the comfort indoor temperature
-        p_cooling = np.where(t > indoor_temp, np.interp(t, amb_temp, pct_power_HVAC),
-                             0).mean() * hvac_power
+        p_cooling = (np.where(t > indoor_temp, np.interp(t, amb_temp, pct_power_HVAC), 0).mean() * hvac_power).values
+
 
         # We want to add power draw for battery cooling
         # and battery heating
 
-        # battery cooling occuring above 20C
-        p_battery_cooling = np.where(t > 20, battery_cooling_unit, 0)
+        # battery cooling occuring above 20C, in W
+        p_battery_cooling = np.where(t > 20, battery_cooling_unit, 0).mean()
 
-        # battery heating occuring below 5C
-        p_battery_heating = np.where(t < 5, battery_heating_unit, 0)
-
+        # battery heating occuring below 5C, in W
+        p_battery_heating = np.where(t < 5, battery_heating_unit, 0).mean()
         return p_cooling, p_heating, p_battery_cooling, p_battery_heating
 
 
@@ -197,7 +192,7 @@ class EnergyConsumptionModel:
         """
 
         # Convert to km; velocity is m/s, times 1 second
-        distance = self.velocity.sum(axis=0)[0][0] / 1000
+        distance = self.velocity.sum(axis=0) / 1000
 
         ones = np.ones_like(self.velocity)
 

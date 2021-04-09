@@ -13,7 +13,7 @@ class ParticulatesEmissionsModel:
 
     by considering:
 
-    - load factor of the vehicle
+    - load factor of the vehicle (ratio passenger over max capacity)
     - number of axles
     - speed levels
 
@@ -33,9 +33,8 @@ class ParticulatesEmissionsModel:
 
     """
 
-    def __init__(self, cycle_name, cycle, number_axles, load_factor):
+    def __init__(self, cycle, number_axles, load_factor):
 
-        self.cycle_name = cycle_name
         self.cycle = np.resize(cycle, (cycle.shape[0], number_axles.shape[-1],
                                             number_axles.shape[2],
                                             number_axles.shape[1],
@@ -43,18 +42,6 @@ class ParticulatesEmissionsModel:
 
         # We determine which sections of the driving cycle correspond to an urban, suburban and rural environment
         # This is to compartmentalize emissions
-        self.cycle_environment = {
-            "Urban delivery": {"urban start": 0, "urban stop": -1},
-            "Long haul": {"rural start": 0, "rural stop": -1},
-            "Regional delivery": {
-                "urban start": 0,
-                "urban stop": 250,
-                "suburban start": 251,
-                "suburban stop": 750,
-                "rural start": 751,
-                "rural stop": -1,
-            },
-        }
 
         self.velocity = self.cycle / 3600 # m/s per second
 

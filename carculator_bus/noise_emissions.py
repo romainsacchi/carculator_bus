@@ -56,20 +56,8 @@ class NoiseEmissionsModel:
 
     """
 
-    def __init__(self, cycle_name):
-
-        self.cycle_name = cycle_name
-        self.cycle_environment = {
-            "Urban delivery": {"urban start": 0},
-            "Long haul": {"rural start": 0},
-            "Regional delivery": {
-                "urban start": 0,
-                "urban stop": 250,
-                "suburban start": 251,
-                "suburban stop": 750,
-                "rural start": 751,
-            },
-        }
+    def __init__(self):
+        pass
 
     def rolling_noise(self, category, cycle):
         """Calculate noise from rolling friction.
@@ -192,7 +180,7 @@ class NoiseEmissionsModel:
 
         return array
 
-    def get_sound_power_per_compartment(self, powertrain_type, category, cycle):
+    def get_sound_power_per_compartment(self, powertrain_type, category, cycle, size):
         """
         Calculate sound energy (in J/s) over the driving cycle duration from sound power (in dB).
         The sound energy sums are further divided into `geographical compartments`: urban, suburban and rural.
@@ -200,6 +188,7 @@ class NoiseEmissionsModel:
         :return: Sound energy (in Joules) per km driven, per geographical compartment.
         :rtype: numpy.array
         """
+
 
         if powertrain_type not in ("combustion", "electric", "hybrid"):
             raise TypeError("The powertrain type is not valid.")
@@ -227,7 +216,6 @@ class NoiseEmissionsModel:
             "where(c != 0, 10 * log10((10 ** (rolling / 10)) + (10 ** (propulsion / 10))), 0)"
         )
 
-
         # convert dBs to Watts (or J/s)
         sound_power = ne.evaluate("(10 ** -12) * (10 ** (total_noise / 10))")
 
@@ -236,50 +224,22 @@ class NoiseEmissionsModel:
         # If the driving cycle selected is instead specified by the user (passed directly as an array), we used
         # speed levels to compartmentalize emissions.
 
-        if self.cycle_name in self.cycle_environment:
-            distance = c.sum(axis=1) / 3600
+        distance = c.sum(axis=1) / 3600
 
-            if "urban start" in self.cycle_environment[self.cycle_name]:
-                start = self.cycle_environment[self.cycle_name]["urban start"]
-                stop = self.cycle_environment[self.cycle_name].get(
-                    "urban stop", c.shape[-1]
-                )
-                urban = np.sum(sound_power[:, :, start:stop], axis=2) / distance
+        for s in size:
+            if s in ["9m", "13m-city", "13m-city-double"]:
 
-            else:
-                urban = np.zeros((8, c.shape[0]))
-
-            if "suburban start" in self.cycle_environment[self.cycle_name]:
-                start = self.cycle_environment[self.cycle_name]["suburban start"]
-                stop = self.cycle_environment[self.cycle_name].get(
-                    "suburban stop", c.shape[-1]
-                )
-                suburban = np.sum(sound_power[:, :, start:stop], axis=2) / distance
-
-            else:
+                urban = np.sum(sound_power, axis=2) / distance
                 suburban = np.zeros((8, c.shape[0]))
-
-            if "rural start" in self.cycle_environment[self.cycle_name]:
-                start = self.cycle_environment[self.cycle_name]["rural start"]
-                stop = self.cycle_environment[self.cycle_name].get(
-                    "rural stop", c.shape[-1]
-                )
-                rural = np.sum(sound_power[:, :, start:stop], axis=2) / distance
-
-            else:
                 rural = np.zeros((8, c.shape[0]))
 
-        else:
-            distance = c.sum(axis=0) / 3600
+            else:
 
-            # sum sound power over duration (J/s * s --> J) and divide by distance (--> J / km) and further
-            # divide into compartments
-            urban = ne.evaluate("sum(where(c <= 50, sound_power, 0), 1)") / distance
-            suburban = (
-                ne.evaluate("sum(where((c > 50) & (c <= 80), sound_power, 0), 1)")
-                / distance
-            )
-            rural = ne.evaluate("sum(where(c > 80, sound_power, 0), 1)") / distance
+                urban = np.zeros((8, c.shape[0]))
+                suburban = np.sum(sound_power[:, :, 4000:12500], axis=2) / distance
+                rural = np.sum(sound_power[:, :, 2000:4000], axis=2) / distance
+                rural += np.sum(sound_power[:, :, 12500:], axis=2) / distance
+
 
         res = np.vstack([urban, suburban, rural]).T
         return res.reshape(-1, 1, 24, 1, 1)

@@ -2,6 +2,7 @@ import numpy as np
 import xarray
 import pandas as pd
 from . import DATA_DIR
+import pickle
 
 
 def _(o):
@@ -16,13 +17,12 @@ def get_emission_factors():
     """ Emissions factors extracted for trucks from HBEFA 4.1
         deatiled by size, powertrain and EURO class for each substance.
     """
-    fp = DATA_DIR / "hbefa_factors_vs_fc.xls"
-    ef = pd.read_excel(fp)
-    return (
-        ef.groupby(["powertrain", "euro_class", "component"])
-        .sum()
-        .to_xarray()/1000
-    ).to_array()
+    fp = DATA_DIR / "hot_buses.pickle"
+
+    with open(fp, 'rb') as f:
+        hot = pickle.load(f)
+
+    return hot
 
 
 class HotEmissionsModel:
@@ -36,28 +36,12 @@ class HotEmissionsModel:
 
     """
 
-    def __init__(self, cycle_name, cycle):
-
-        self.cycle_name = cycle_name
+    def __init__(self, cycle):
         self.cycle = cycle
-        # We determine which sections of the driving cycle correspond to an urban, suburban and rural environment
-        # This is to compartmentalize emissions
-        self.cycle_environment = {
-            "Urban delivery": {"urban start": 0, "urban stop": -1},
-            "Long haul": {"rural start": 0, "rural stop": -1},
-            "Regional delivery": {
-                "urban start": 0,
-                "urban stop": 250,
-                "suburban start": 251,
-                "suburban stop": 750,
-                "rural start": 751,
-                "rural stop": -1,
-            },
-        }
         self.em = get_emission_factors()
 
     def get_emissions_per_powertrain(
-        self, powertrain_type, euro_classes, energy_consumption, debug_mode=False
+        self, powertrain_type, euro_classes, energy_consumption, size, debug_mode=False
     ):
         """
         Calculate hot pollutants emissions given a powertrain type (i.e., diesel, CNG) and a EURO pollution class,
@@ -85,7 +69,7 @@ class HotEmissionsModel:
                 "HC",
                 "CO",
                 "NOx",
-                "PM",
+                "PM2.5",
                 "NO2",
                 "CH4",
                 "NMHC",
@@ -101,19 +85,18 @@ class HotEmissionsModel:
             distance = np.array(distance).reshape(1, 1)
 
         # Emissions for each second of the driving cycle equal:
-        # a * energy consumption + b
-        # with a, b being a coefficient and an intercept respectively given by fitting HBEFA 4.1 data
+        # a * energy consumption
+        # with a being a coefficient  given by fitting HBEFA 4.1 data
         # the fitting of emissions function of energy consumption is described in the notebook
-        # `HBEFA trucks.ipynb` in the folder `dev`.
+        # `HBEFA buses.ipynb` in the folder `dev`.
         a = arr.sel(variable="a").values[:, None, None, :, None, None] * energy_consumption.values
-        b = arr.sel(variable="b").values[:, None, None, :, None, None]
 
         # The receiving array should contain 40 substances, not 10
         arr_shape = list(a.shape)
         arr_shape[0] = 40
         em_arr = np.zeros(tuple(arr_shape))
 
-        em_arr[:10] = a + b
+        em_arr[:10] = a
 
         # Ethane, Propane, Butane, Pentane, Hexane, Cyclohexane, Heptane
         # Ethene, Propene, 1-Pentene, Toluene, m-Xylene, o-Xylene
@@ -177,36 +160,19 @@ class HotEmissionsModel:
         # If the driving cycle selected is instead specified by the user (passed directly as an array), we used
         # speed levels to compartmentalize emissions.
 
-        if "urban start" in self.cycle_environment[self.cycle_name]:
-            start = self.cycle_environment[self.cycle_name]["urban start"]
-            stop = self.cycle_environment[self.cycle_name]["urban stop"]
-            urban = np.sum(em_arr[..., start:stop], axis=-1)
-            urban /= 1000  # going from grams to kg
-            urban /= distance[:, None, None, None]
+        for s in size:
+            if s in ["9m", "13m-city", "13m-city-double"]:
 
-        else:
-            urban = np.zeros((40, self.cycle.shape[-1], em_arr.shape[2], em_arr.shape[3], em_arr.shape[4]))
+                urban = np.sum(em_arr, axis=-1) / 1000 / distance[:, None, None, None]
+                suburban = np.zeros((40, self.cycle.shape[-1], em_arr.shape[2], em_arr.shape[3], em_arr.shape[4]))
+                rural = np.zeros((40, self.cycle.shape[-1], em_arr.shape[2], em_arr.shape[3], em_arr.shape[4]))
 
-        if "suburban start" in self.cycle_environment[self.cycle_name]:
-            start = self.cycle_environment[self.cycle_name]["suburban start"]
-            stop = self.cycle_environment[self.cycle_name]["suburban stop"]
-            suburban = np.sum(em_arr[..., start:stop], axis=-1)
-            suburban /= 1000  # going from grams to kg
-            suburban /= distance[:, None, None, None]
+            else:
 
-        else:
-            suburban = np.zeros((40, self.cycle.shape[-1], em_arr.shape[2], em_arr.shape[3], em_arr.shape[4]))
-
-        if "rural start" in self.cycle_environment[self.cycle_name]:
-            start = self.cycle_environment[self.cycle_name]["rural start"]
-            stop = self.cycle_environment[self.cycle_name]["rural stop"]
-            rural = np.sum(em_arr[..., start:stop], axis=-1)
-            rural /= 1000  # going from grams to kg
-            rural /= distance[:, None, None, None]
-
-        else:
-
-            rural = np.zeros((40, self.cycle.shape[-1], em_arr.shape[2], em_arr.shape[3], em_arr.shape[4]))
+                urban = np.zeros((40, self.cycle.shape[-1], em_arr.shape[2], em_arr.shape[3], em_arr.shape[4]))
+                suburban = np.sum(em_arr[..., 4000:12500], axis=-1) / 1000 / distance[:, None, None, None]
+                rural = np.sum(em_arr[..., 2000:4000], axis=-1) / 1000 / distance[:, None, None, None]
+                rural += np.sum(em_arr[..., 12500:], axis=-1) / 1000 / distance[:, None, None, None]
 
         res = np.vstack((urban, suburban, rural))
 
