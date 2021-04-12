@@ -279,13 +279,18 @@ class ExportInventory:
 
     def rename_vehicles(self):
 
+
+
         d_names = {
             "ICEV-d": "diesel",
             "ICEV-g": "compressed gas",
             "HEV-d": "diesel hybrid",
-            "PHEV-d": "plugin diesel hybrid",
-            "BEV": "battery electric",
-            "FCEV": "fuel cell electric",
+            "PHEV-d": "diesel plugin-hybrid",
+            "BEV-plugin": "electric - overnight charging",
+            "BEV-opp": "electric - opportunity charging",
+            "BEV-motion": "electric - battery-equipped trolleybus",
+            "FCEV": "fuel cell",
+            "TEV": "trolleybus"
         }
 
         for k, value in self.indices.items():
@@ -693,30 +698,36 @@ class ExportInventory:
                 description = self.references[tuple_output[0]]["description"]
                 special_remark = self.references[tuple_output[0]]["special remark"]
             else:
-                key = [k for k in self.references.keys() if k.lower() in tuple_output[0].lower()][0]
-                source = self.references[key]["source"]
-                description = self.references[key]["description"]
-                special_remark = self.references[key]["special remark"]
+                try:
+                    key = [k for k in self.references.keys() if k.lower() in tuple_output[0].lower()][0]
+                    source = self.references[key]["source"]
+                    description = self.references[key]["description"]
+                    special_remark = self.references[key]["special remark"]
+                except IndexError:
+                    print(tuple_output[0])
 
             if ecoinvent_compatibility or ecoinvent_compatibility == False and tuple_output[
                 0] not in activities_to_be_removed:
 
                 string = ""
-                if any(i in tuple_output[0].lower() for i in ("heavy duty", "medium duty")):
+                if any(i in tuple_output[0].lower() for i in ("passenger bus", "passenger bus")):
 
                     d_pwt = {
                         "diesel": "ICEV-d",
                         "compressed gas": "ICEV-g",
                         "diesel hybrid": "HEV-d",
-                        "plugin diesel hybrid": "PHEV-d",
-                        "battery electric": "BEV",
-                        "fuel cell electric": "FCEV"
+                        "diesel plugin-hybrid": "PHEV-d",
+                        "electric - overnight charging": "BEV-plugin",
+                        "electric - opportunity charging": "BEV-opp",
+                        "electric - battery-equipped trolleybus": "BEV-motion",
+                        "fuel cell": "FCEV",
+                        "trolleybus": "TEV"
                     }
 
                     d_units = {
                         "lifetime kilometers": "[km]",
                         "kilometers per year": "[km/year]",
-                        "target range": "[km]",
+                        "daily distance": "[km]",
                         "TtW efficiency": "[%]",
                         "TtW energy": "[kj/km]",
                         'electric energy stored': "[kWh]",
@@ -725,19 +736,20 @@ class ExportInventory:
                         "combustion power": "[kW]",
                         "electric power": "[kW]",
                         'available payload': "[kg]",
-                        'total cargo mass': "[kg]",
-                        'capacity utilization': "[%]",
+                        'average passengers': "[unit]",
+                        'initial passengers capacity': "[unit]",
                         "curb mass": "[kg]",
                         "driving mass": "[kg]",
                         "energy battery mass": "[kg]",
                         'fuel cell system efficiency': "[%]",
+                        "operation time": "[hours]"
 
                     }
 
                     d_names = {
                         "lifetime kilometers": "Km over lifetime",
                         "kilometers per year": "Yearly mileage",
-                        "target range": "Autonomy on a full tank/battery",
+                        "daily distance": "Daily distance driven",
                         "TtW efficiency": "Tank-to-wheel efficiency",
                         "TtW energy": "Tank-to-wheel energy consumption",
                         'electric energy stored': "Battery capacity",
@@ -745,32 +757,41 @@ class ExportInventory:
                         'combustion power share': "Power share from combustion engine",
                         "combustion power": "Combustion engine power",
                         "electric power": "Electric motor power",
-                        'available payload': "Available payload",
-                        'total cargo mass': "Payload",
-                        'capacity utilization': "Load factor",
+                        "average passengers": "Number of passengers onboard",
+                        'initial passengers capacity': "Maximum passenger capacity",
                         "curb mass": "Curb mass (excl. driver and cargo)",
                         "driving mass": "Driving mass (incl. driver and cargo)",
                         "energy battery mass": "Mass of battery",
                         'fuel cell system efficiency': "Fuel cell system efficiency",
+                        "operation time": "Daily operating time"
                     }
 
                     l = [t.strip() for t in tuple_output[0].split(",")]
 
-                    if len(l) == 7:
-                        _, _, pwt, size, year, _, _ = l
+                    if len(l) == 6:
+                        _, _, pwt, size, year, _ = l
                     else:
                         if l[2] == "fleet average":
                             _, _, _, pwt, year = [t.strip() for t in tuple_output[0].split(",")]
                             size = None
                         elif l[3] == "fleet average":
-                            _, _, size, _, _, year = l
+                            _, _, size, _,  year = l
                             pwt = None
                         else:
-                            _, pwt, size, year, _, _ = [t.strip() for t in tuple_output[0].split(",")]
+                            _, pwt, size, year, _ = [t.strip() for t in tuple_output[0].split(",")]
 
                     if size is not None and pwt is not None:
 
-                        size = size.split(" ")[0]
+                        d_map_size = {
+                            '9m midibus': '9m',
+                            '13m single deck urban bus': '13m-city',
+                            '13m single deck coach bus': '13m-coach',
+                            '13m double deck urban bus': '13m-city-double',
+                            '13m double deck coach bus': '13m-coach-double',
+                            '18m articulated urban bus': '18m'
+                        }
+
+                        size = d_map_size[size]
                         pwt = d_pwt[pwt]
 
                         if not vehicle_specs is None:

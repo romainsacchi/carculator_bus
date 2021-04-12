@@ -22,11 +22,12 @@ class BusModel:
 
     :ivar array: multi-dimensional numpy-like array that contains parameters' value(s)
     :vartype array: xarray.DataArray
-    :ivar mappings: Dictionary with names correspondence
-    :vartype mappings: dict
-    :ivar ecm: instance of :class:`EnergyConsumptionModel` class for a given driving cycle
-    :vartype ecm: coarse.energy_consumption.EnergyConsumptionModel
-
+    :ivar country: ISO-2 country code
+    :vartype country: str
+    :ivar energy_target: energy reduction target to achieve, relative to 2020. Should be of format {2025: 0.85, 2030: 0.7}.
+    :ivartype energy_target: dict
+    :ivar ambient_temp: ambient temperature to use to calculate heating and cooling power demand
+    :ivartype ambient_temp: int
     """
 
     def __init__(
@@ -34,13 +35,14 @@ class BusModel:
         array,
         country=None,
         fuel_blend=None,
-        energy_target={2025: 0.85, 2030: 0.7},
+        energy_target={2025: 0.85, 2030: 0.7}, # <-- these are energy targets to achieve for ICE vehicles
+        ambient_temp=None
     ):
 
         self.array = array
         self.bs = BackgroundSystemModel()
 
-        self.country = country or "CH"
+        self.country = country or "CH" # <-- defaults to Switzerland if not specified
         self.fuel_blend = self.define_fuel_blends(fuel_blend)
         self.cycle = get_standard_driving_cycle()
 
@@ -51,6 +53,23 @@ class BusModel:
         self.ecm = EnergyConsumptionModel(
             cycle=self.cycle, size=self.array.coords["size"].values
         )
+
+        if ambient_temp is not None:
+            if isinstance(ambient_temp, int):
+                self.ambient_temp = ambient_temp
+            elif isinstance(ambient_temp, float):
+                self.ambient_temp = int(ambient_temp)
+            elif isinstance(ambient_temp, str):
+                try:
+                    self.ambient_temp = int(ambient_temp)
+                except ValueError:
+                    raise ValueError("The ambient temperature value `ambient_temp` should be an integer value, "
+                                     f"not {type(ambient_temp)}.")
+            else:
+                raise ValueError("The ambient temperature value `ambient_temp` should be an integer value, "
+                                 f"not {type(ambient_temp)}.")
+        else:
+            self.ambient_temp = None
 
     def __call__(self, key):
         """
@@ -108,8 +127,11 @@ class BusModel:
         `combustion engine mass`, `electric engine mass`. `energy battery mass` is influenced by the `curb mass` but also
         by the `daily distance` the truck has. `power` is also varying with `curb_mass`.
 
-        The current solution is to loop through the methods until the change in payload between two iterations is
-        inferior to 0.1%. It is then assumed that the buses are correctly sized.
+        The current solution is to loop through the methods until either:
+        * the change in curb mass between two iterations is inferior to 2%.
+        * or the number of vehicles with a solution has been stable for the last 3 iterations
+        * and that there has been at least 7 iterations
+        It is then assumed that the buses are correctly sized.
 
         :returns: Does not return anything. Modifies ``self.array`` in place.
 
@@ -118,20 +140,31 @@ class BusModel:
         diff = 1.0
         arr = np.array([])
 
+        # whether the vehicles are compliant
         self["is_compliant"] = True
+        # whether the technology is available for the given year
         self["is_available"] = True
 
         print("Finding solutions for buses...")
 
-        while abs(diff) > 0.02 or np.std(arr[-3:]) > 0.05 or len(arr) < 7:
+        while abs(diff) > 0.02 or np.std(arr[-3:]) > 0.05 and len(arr) < 7:
 
+            # driving mass from the previous iteration
             old_driving_mass = self["driving mass"].sum().values
 
+            # calculate the curb and driving mass of the vehicles
             self.set_car_masses()
+            # size the engines and motors
             self.set_power_parameters()
+            # sizes different vehicle components
             self.set_component_masses()
+            # adjust parameters for the fuel cell stack
             self.set_fuel_cell_parameters()
+            # calculate the TtW energy
             self.calculate_ttw_energy()
+            # sizes the batteries
+            # and fuel tanks
+            # given the newly calculated TtW energy
             self.set_battery_fuel_cell_replacements()
             self.set_energy_stored_properties()
             self.set_battery_size()
@@ -153,19 +186,25 @@ class BusModel:
         self.set_electric_utility_factor()
         self.set_electricity_consumption()
         self.set_costs()
+        # defines hot pollutant emissions
+        # along teh driving cycle
         self.set_hot_emissions()
+        # defines abrasion emissions
         self.set_particulates_emission()
+        # defines noise emissions
         self.set_noise_emissions()
         self.create_PHEV()
         self.drop_hybrid()
+        self.check_compliance_of_buses()
 
         print("")
         print("Number of passengers on board")
         print(
-            "'-' BEV with driving mass when fully occupied superior to the permissible gross weight."
+            "'X' BEV with driving mass when fully occupied superior to the permissible gross weight."
         )
-        print("'*' ICEV that do not comply wih energy reduction target.")
+        print("'*' buses that do not comply wih energy reduction target.")
         print("'/' vehicles not available for the specified year or charging strategy.")
+        print("'O' electric vehicles that do not have enough time to charge batteries overnight.")
 
         # If the number of remaining non-compliant vehicles is not zero, then
         if len([y for y in self.array.year.values if y > 2020]) > 0:
@@ -184,40 +223,9 @@ class BusModel:
                     )
                 ] = np.logical_not(non_compliant_vehicles).astype(int)
 
-        # Indicate vehicles not available before 2020
-        l_pwt = [
-            p
-            for p in self.array.powertrain.values
-            if p in ["BEV-opp", "BEV-plugin", "BEV-motion", "FCEV", "PHEV-d", "HEV-d"]
-        ]
 
-        if len(l_pwt) > 0:
 
-            self.array.loc[
-                dict(
-                    powertrain=l_pwt,
-                    parameter="is_available",
-                    year=[y for y in self.array.year.values if y < 2020],
-                )
-            ] = 0
-
-        # Indicates in motion-type amd opportunity-type vehicles not available for inter-city purpose
-
-        l_size = [
-            s
-            for s in self.array.powertrain.values
-            if s in ["13m-coach", "13m-coach-double"]
-        ]
-
-        if len(l_size) > 0:
-            self.array.loc[
-                dict(
-                    powertrain=["BEV-opp", "BEV-motion"],
-                    parameter="is_available",
-                    size=l_size,
-                )
-            ] = 0
-
+        # Display of table with passengers onboard
         t = PrettyTable([""] + self.array.coords["size"].values.tolist())
 
         for pt in self.array.coords["powertrain"].values:
@@ -229,50 +237,15 @@ class BusModel:
 
                 for s in self.array.coords["size"].values:
 
-                    # indicate vehicles where the driving mass when full
-                    # is superior to the gross mass
-                    val = np.asarray(
-                        [
-                            int(w) if (v * x) + y <= z else "-"
-                            for v, w, x, y, z in zip(
-                                self.array.sel(
-                                    parameter=["initial passengers capacity"],
-                                    powertrain=pt,
-                                    year=y,
-                                    value=0,
-                                    size=s,
-                                ).values.tolist(),
-                                self.array.sel(
-                                    parameter=["average passengers"],
-                                    powertrain=pt,
-                                    year=y,
-                                    value=0,
-                                    size=s,
-                                ).values.tolist(),
-                                self.array.sel(
-                                    parameter=["average passenger mass"],
-                                    powertrain=pt,
-                                    year=y,
-                                    value=0,
-                                    size=s,
-                                ).values.tolist(),
-                                self.array.sel(
-                                    parameter=["curb mass"],
-                                    powertrain=pt,
-                                    year=y,
-                                    value=0,
-                                    size=s,
-                                ).values.tolist(),
-                                self.array.sel(
-                                    parameter=["gross mass"],
-                                    powertrain=pt,
-                                    year=y,
-                                    value=0,
-                                    size=s,
-                                ).values.tolist(),
-                            )
-                        ]
-                    )
+                    # fetch number of passengers onboard
+                    val = self.array.sel(
+                            parameter=["average passengers"],
+                            powertrain=pt,
+                            year=y,
+                            value=0,
+                            size=s,
+                        ).values.tolist()
+
                     # indicate vehicles that do not comply with energy target
                     val = np.where(
                         self.array.sel(
@@ -284,6 +257,36 @@ class BusModel:
                         ).values,
                         val,
                         [str(v) + "*" for v in val],
+                    )
+
+
+
+
+
+                    # indicate vehicles that have schedule issues
+                    val = np.where(
+                        self.array.sel(
+                            parameter="has_schedule_issue",
+                            powertrain=pt,
+                            year=y,
+                            value=0,
+                            size=s,
+                        ).values,
+                        "O",
+                        val,
+                    )
+
+                    # indicate vehicles that are too heavy
+                    val = np.where(
+                        self.array.sel(
+                            parameter="is_too_heavy",
+                            powertrain=pt,
+                            year=y,
+                            value=0,
+                            size=s,
+                        ).values,
+                        "X",
+                        val,
                     )
 
                     # indicate vehicles that are not commercially available
@@ -298,6 +301,7 @@ class BusModel:
                         val,
                         "/",
                     )
+
 
                     vals.append(val[0])
 
@@ -380,6 +384,59 @@ class BusModel:
                 return np.array([])
         else:
             return np.array([])
+
+    def check_compliance_of_buses(self):
+
+        # Indicate vehicles not available before 2020
+        # Essentially all BEVs and FCEVs
+        l_pwt = [
+            p
+            for p in self.array.powertrain.values
+            if p in ["BEV-opp", "BEV-plugin", "BEV-motion", "FCEV", "PHEV-d", "HEV-d"]
+        ]
+
+        if len(l_pwt) > 0:
+            self.array.loc[
+                dict(
+                    powertrain=l_pwt,
+                    parameter="is_available",
+                    year=[y for y in self.array.year.values if y < 2020],
+                )
+            ] = 0
+
+        # Indicates in motion-type and opportunity-type vehicles not available for inter-city purpose
+        l_size = [
+            s
+            for s in self.array.coords["size"].values
+            if s in ["13m-coach", "13m-coach-double"]
+        ]
+
+        if len(l_size) > 0:
+            self.array.loc[
+                dict(
+                    powertrain=["BEV-opp", "BEV-motion"],
+                    parameter="is_available",
+                    size=l_size,
+                )
+            ] = 0
+
+        # check that driving mass when fully occupied is inferior to gross mass
+        self["is_too_heavy"] = np.where(
+            (self["curb mass"]
+            + (
+                self["initial passengers capacity"] * self["average passenger mass"]
+             )) < self["gross mass"],
+            0, 1
+        )
+
+        # check that batteries of plugin BEVs
+        # have enough time to charge
+
+        with self("BEV-plugin") as cpm:
+            cpm["has_schedule_issue"] = np.where(
+                ((cpm["electric energy stored"] * 1000 / cpm["plugin charger power"])
+                 < 24 - (cpm["operation time"] / (1 + cpm["battery swap"]))), 0, 1)
+
 
     def adjust_cost(self):
         """
@@ -481,13 +538,14 @@ class BusModel:
         l_pwt = [
             p
             for p in self.array.powertrain.values
-            if p in ["BEV-plugin", "BEV-opp", "BEV-motion", "PHEV-e"]
+            if p in ["BEV-plugin", "BEV-opp", "BEV-motion", "PHEV-e", "TEV"]
         ]
 
         for pt in l_pwt:
             with self(pt) as cpm:
                 cpm["electricity consumption"] = (
                     cpm["TtW energy"] / cpm["battery charge efficiency"]
+                    / cpm["charger efficiency"]
                 ) / 3600
 
     def calculate_ttw_energy(self):
@@ -568,19 +626,22 @@ class BusModel:
             hvac_power=self["HVAC power"],
             battery_cooling_unit=self["battery cooling unit"],
             battery_heating_unit=self["battery heating unit"],
+            ambient_temp=self.ambient_temp
         )
 
         p_cooling = (
-            p_cooling[..., None] * self["cooling energy consumption"].values[..., None]
+            p_cooling[..., None]
+            * self["cooling energy consumption"].values[..., None]
+            / self["heat pump CoP, cooling"].values[..., None]
         )
         p_heating = (
-            p_heating[..., None] * self["heating energy consumption"].values[..., None]
+            p_heating[..., None]
+            * self["heating energy consumption"].values[..., None]
+            / self["heat pump CoP, heating"].values[..., None]
         )
 
         p_battery_cooling = np.resize(p_battery_cooling, p_cooling.shape)
         p_battery_heating = np.resize(p_battery_heating, p_cooling.shape)
-        p_battery_cooling = p_battery_cooling
-        p_battery_heating = p_battery_heating
 
         self.energy.loc[dict(parameter="heating energy")] = p_heating / 1000
         self.energy.loc[dict(parameter="cooling energy")] = p_cooling / 1000
@@ -909,7 +970,10 @@ class BusModel:
         self["battery lifetime replacements"] = finite(
             np.ceil(
                 np.clip(
-                    (self["lifetime kilometers"] / self["battery lifetime kilometers"])
+                    (
+                        (self["lifetime kilometers"] / (1 + self["battery swap"]))
+                         / self["battery lifetime kilometers"]
+                     )
                     - 1,
                     0,
                     None,
@@ -928,11 +992,8 @@ class BusModel:
                     np.clip(
                         (
                             pt["lifetime kilometers"]
-                            / (
-                                pt.ecm.cycle.sum(axis=0)
-                                / pt.ecm.cycle.shape[0]
-                                * pt["fuel cell lifetime hours"].T
-                            )
+                            / pt["average speed"]
+                            / pt["fuel cell lifetime hours"]
                         )
                         - 1,
                         0,
@@ -1044,7 +1105,7 @@ class BusModel:
         if "PHEV-e" in self.array.coords["powertrain"].values:
             with self("PHEV-e") as cpm:
                 cpm["electric utility factor"] = (
-                    1 - np.exp(-0.01147 * cpm["daily distance"])
+                    1 - np.exp(-0.01147 * (cpm["electric energy stored"] * 3600 / cpm["TtW energy"] ))
                 ) ** 1.186185
 
     def create_PHEV(self):
@@ -1069,13 +1130,18 @@ class BusModel:
 
     def set_battery_size(self):
 
-        # battery sizing factor
-        # for fast-charge batteries
-        # we operate only between 40 and 80% SoC
-        # meaning we use only a 40% capacity window
-        # hence, the size factor is 1 / 0.4
-        sizing_factor = 1 / 0.4
+
         with self("BEV-opp") as cpm:
+
+            # battery sizing factor
+            # for fast-charge batteries
+            # we operate only between a limited DoD window
+            # to prevent cell degradation
+            # meaning we use only a specific capacity window
+            # hence, the size factor is 1 / (maximum SoC - maximum DoD)
+            sizing_factor = 1 / (cpm["maximum SoC"] - cpm["battery DoD"])
+
+
             # calculate the number of trips
             # which equals the total daily distance
             # divided by the length of one trip
@@ -1111,15 +1177,18 @@ class BusModel:
         # of opportunity charging BEV buses
 
         with self("BEV-motion") as cpm:
+
+            # battery sizing factor
+            # for fast-charge batteries
+            # we operate only between a limited DoD window
+            # to prevent cell degradation
+            # meaning we use only a specific capacity window
+            # hence, the size factor is 1 / (maximum SoC - maximum DoD)
+            sizing_factor = 1 / (cpm["maximum SoC"] - cpm["battery DoD"])
+
             # calculate the number of trips
             # which equals the total daily distance
             # divided by the length of one trip
-
-            # calculate the number of charging opportunities
-            nb_charging_opp = (
-                cpm["number of trips"] * cpm["charging opportunity per trip"]
-            )
-            sizing_factor = 1 / 0.4
 
             # we assume that catenary systems can charge the
             # equivalent of 1kWh / min
@@ -1128,36 +1197,21 @@ class BusModel:
             # TtW energy [kj/km] - the charging capacity of the catenary system
             # * the share of the trip equipped with catenary
             # gives us the deficit (battery depletion) per km
-            # in Gevizier, around 28% the trip distance is equipped with catenary
+            # in Givisiez, around 28% the trip distance is equipped with catenary
 
             # we add to this a sizing factor
             # to ensure tha the battery is always being charged
             # at a SoC between 40% and 80%
             # to limit degradation
 
-            # gives charging time
-            charging_time = (
-                cpm["trip distance share with catenary"]  # km
-                / cpm["average speed"]  # km/h
-                * 60  # min/h
-            )
-
-            # kWh / minute of charging
-            charging_cap = (
-                (cpm["electric energy stored"] / 100)
-                * 60
-                / cpm["catenary charging capacity"]
-            )
 
             cpm["electric energy stored"] = np.clip(
                 (
                     (cpm["TtW energy"] / 3600)
-                    - (
-                        cpm["trip distance share with catenary"]  # km
-                        / cpm["average speed"]  # km/h
-                        * 60
-                        * charging_cap
-                    )
+                    - (cpm["trip distance share with catenary"] # km/km
+                    / cpm["average speed"] # km/h
+                    * cpm["catenary system power"] / 1000 # kW)
+                )
                 )
                 * sizing_factor
                 * cpm["distance per trip"],
@@ -1166,14 +1220,15 @@ class BusModel:
             )
 
         # Finally, for PHEV-e buses, there's no battery swap
+        # But we limit the battery size to 50 kWh
 
         with self("PHEV-e") as cpm:
-            cpm["electric energy stored"] = (
+            cpm["electric energy stored"] = np.clip((
                 cpm["daily distance"]
                 * (cpm["TtW energy"] / 1000)
                 / cpm["battery DoD"]
                 / 3.6
-            )
+            ), 0, 50)
 
         for pt in [
             pwt
@@ -1744,6 +1799,7 @@ class BusModel:
             for s in self.array.coords["size"].values
             if s in ["13m-city-double", "13m-coach-double", "18m"]
         ]
+
 
         if len(l_pwt_combustion) > 0 and len(l_size_medium) > 0:
             cycle = get_standard_driving_cycle(size=l_size_medium)

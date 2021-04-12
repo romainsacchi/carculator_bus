@@ -32,7 +32,9 @@ def get_standard_driving_cycle(size=["9m", "13m-city", "13m-coach",
         "13m-coach": 3,
         "13m-city-double": 4,
         "13m-coach-double": 5,
-        "18m": 6
+        "18m": 6,
+        "Target speed, city": 7,
+        "Target speed, coach": 8
     }
 
     try:

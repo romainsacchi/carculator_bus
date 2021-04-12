@@ -226,19 +226,20 @@ class NoiseEmissionsModel:
 
         distance = c.sum(axis=1) / 3600
 
-        for s in size:
-            if s in ["9m", "13m-city", "13m-city-double"]:
+        urban = np.zeros((8, c.shape[0]))
+        suburban = np.zeros((8, c.shape[0]))
+        rural = np.zeros((8, c.shape[0]))
 
-                urban = np.sum(sound_power, axis=2) / distance
-                suburban = np.zeros((8, c.shape[0]))
-                rural = np.zeros((8, c.shape[0]))
+        for s, x in enumerate(size):
+            if x in ["9m", "13m-city", "13m-city-double"]:
+
+                urban[:, s] = (np.sum(sound_power, axis=2) / distance)[:, s]
 
             else:
 
-                urban = np.zeros((8, c.shape[0]))
-                suburban = np.sum(sound_power[:, :, 4000:12500], axis=2) / distance
-                rural = np.sum(sound_power[:, :, 2000:4000], axis=2) / distance
-                rural += np.sum(sound_power[:, :, 12500:], axis=2) / distance
+                suburban[:, s] = (np.sum(sound_power[:, :, 4000:12500], axis=2) / distance)[:, s]
+                rural[:, s] = (np.sum(sound_power[:, :, 2000:4000], axis=2) / distance)[:, s]
+                rural[:, s] += (np.sum(sound_power[:, :, 12500:], axis=2) / distance)[:, s]
 
 
         res = np.vstack([urban, suburban, rural]).T

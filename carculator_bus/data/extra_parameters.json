@@ -261,5 +261,7 @@
   "number of trips",
   "distance per trip",
   "average speed",
-  "HVAC mass"
+  "HVAC mass",
+  "is_too_heavy",
+  "has_schedule_issue"
 ]

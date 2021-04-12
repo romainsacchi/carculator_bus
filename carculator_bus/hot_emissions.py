@@ -160,19 +160,20 @@ class HotEmissionsModel:
         # If the driving cycle selected is instead specified by the user (passed directly as an array), we used
         # speed levels to compartmentalize emissions.
 
-        for s in size:
-            if s in ["9m", "13m-city", "13m-city-double"]:
+        urban = np.zeros((40, self.cycle.shape[-1], em_arr.shape[2], em_arr.shape[3], em_arr.shape[4]))
+        suburban = np.zeros((40, self.cycle.shape[-1], em_arr.shape[2], em_arr.shape[3], em_arr.shape[4]))
+        rural = np.zeros((40, self.cycle.shape[-1], em_arr.shape[2], em_arr.shape[3], em_arr.shape[4]))
 
-                urban = np.sum(em_arr, axis=-1) / 1000 / distance[:, None, None, None]
-                suburban = np.zeros((40, self.cycle.shape[-1], em_arr.shape[2], em_arr.shape[3], em_arr.shape[4]))
-                rural = np.zeros((40, self.cycle.shape[-1], em_arr.shape[2], em_arr.shape[3], em_arr.shape[4]))
+        for s, x in enumerate(size):
+            if x in ["9m", "13m-city", "13m-city-double"]:
+
+                urban[:, s] = (np.sum(em_arr, axis=-1) / 1000 / distance[:, None, None, None])[:, s]
 
             else:
 
-                urban = np.zeros((40, self.cycle.shape[-1], em_arr.shape[2], em_arr.shape[3], em_arr.shape[4]))
-                suburban = np.sum(em_arr[..., 4000:12500], axis=-1) / 1000 / distance[:, None, None, None]
-                rural = np.sum(em_arr[..., 2000:4000], axis=-1) / 1000 / distance[:, None, None, None]
-                rural += np.sum(em_arr[..., 12500:], axis=-1) / 1000 / distance[:, None, None, None]
+                suburban[:, s] = (np.sum(em_arr[..., 4000:12500], axis=-1) / 1000 / distance[:, None, None, None])[:, s]
+                rural[:, s] = (np.sum(em_arr[..., 2000:4000], axis=-1) / 1000 / distance[:, None, None, None])[:, s]
+                rural[:, s] += (np.sum(em_arr[..., 12500:], axis=-1) / 1000 / distance[:, None, None, None])[:, s]
 
         res = np.vstack((urban, suburban, rural))
 

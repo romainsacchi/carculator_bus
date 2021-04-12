@@ -31,6 +31,14 @@ def get_country_temperature(country):
                 if row[2] == country:
                     return np.array([int(i) for i in row[3:]])
 
+        print(f"Could not find monthly average temperature series for {country}. Uses those for CH instead.")
+
+        with open(DATA_DIR / MONTHLY_AVG_TEMP) as f:
+            reader = csv.reader(f, delimiter=";")
+            for row in reader:
+                if row[2] == "CH":
+                    return np.array([int(i) for i in row[3:]])
+
 class EnergyConsumptionModel:
     """
     Calculate energy consumption of a vehicle for a given driving cycle and vehicle parameters.
@@ -72,7 +80,7 @@ class EnergyConsumptionModel:
                 cycle = get_standard_driving_cycle(cycle, size=size)
 
             except KeyError:
-                raise "The driving cycle specified could not be found."
+                raise KeyError("The driving cycle specified could not be found.")
 
         # if an array is passed instead, then it is used directly
         elif isinstance(cycle, np.ndarray):
@@ -81,7 +89,7 @@ class EnergyConsumptionModel:
 
         # if not, it's a problem
         else:
-            raise "The format of the driving cycle is not valid."
+            raise TypeError("The format of the driving cycle is not valid.")
 
         self.gradient_name = self.cycle_name
         # retrieve road gradients (in degrees) for each second of the driving cycle selected
@@ -105,36 +113,40 @@ class EnergyConsumptionModel:
                           battery_cooling_unit,
                           battery_heating_unit,
                           country="CH",
-                          indoor_temp=21
+                          indoor_temp=20,
+                          ambient_temp=None
                           ):
 
+        # use ambient temperature if provided, otherwise
         # monthly temperature average (12 values)
-        t = get_country_temperature(country)
+        if ambient_temp is not None:
+            t = np.resize(ambient_temp, (12,))
+        else:
+            t = get_country_temperature(country)
 
         # relation between ambient temperature
         # and HVAC power required
         # from https://doi.org/10.1016/j.energy.2018.12.064
-        amb_temp = np.array([-30, -20, -10, 0, 10, 20, 30])
-        pct_power_HVAC = np.array([.95, .54, .29, .13, .04, .08, .45])
+        amb_temp = np.array([-30, -20, -10, 0, 10, 20, 30, 40])
+        pct_power_HVAC = np.array([.95, .54, .29, .13, .04, .08, .45, .7])
 
         # Heating power as long as ambient temperature, in W
         # is below the comfort indoor temperature
-
         p_heating = (np.where(t < indoor_temp, np.interp(t, amb_temp, pct_power_HVAC), 0).mean() * hvac_power).values
 
         # Cooling power as long as ambient temperature, in W
         # is above the comfort indoor temperature
-        p_cooling = (np.where(t > indoor_temp, np.interp(t, amb_temp, pct_power_HVAC), 0).mean() * hvac_power).values
+        p_cooling = (np.where(t >= indoor_temp, np.interp(t, amb_temp, pct_power_HVAC), 0).mean() * hvac_power).values
 
 
         # We want to add power draw for battery cooling
         # and battery heating
 
-        # battery cooling occuring above 20C, in W
-        p_battery_cooling = np.where(t > 20, battery_cooling_unit, 0).mean()
+        # battery cooling occurring above 20C, in W
+        p_battery_cooling = np.where(t > 20, battery_cooling_unit, 0).mean(axis=-1)
 
-        # battery heating occuring below 5C, in W
-        p_battery_heating = np.where(t < 5, battery_heating_unit, 0).mean()
+        # battery heating occurring below 5C, in W
+        p_battery_heating = np.where(t < 5, battery_heating_unit, 0).mean(axis=-1)
         return p_cooling, p_heating, p_battery_cooling, p_battery_heating
 
 
