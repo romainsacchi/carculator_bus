@@ -8262,10 +8262,8 @@
         "comment": "LTO batteries cannot be charged back to a SoC of 100%.",
         "status": "Acceptable",
         "kind": "distribution",
-        "uncertainty_type": 5,
-        "loc": 0.9,
-        "minimum": 0.675,
-        "maximum": 1.125
+        "uncertainty_type": 1,
+        "loc": 0.9
     },
     "273-2010-maximum SoC": {
         "amount": 0.9,
@@ -8290,10 +8288,8 @@
         "comment": "LTO batteries cannot be charged back to a SoC of 100%.",
         "status": "Acceptable",
         "kind": "distribution",
-        "uncertainty_type": 5,
-        "loc": 0.9,
-        "minimum": 0.675,
-        "maximum": 1.125
+        "uncertainty_type": 1,
+        "loc": 0.9
     },
     "274-2020-maximum SoC": {
         "amount": 0.9,
@@ -8318,10 +8314,8 @@
         "comment": "LTO batteries cannot be charged back to a SoC of 100%.",
         "status": "Acceptable",
         "kind": "distribution",
-        "uncertainty_type": 5,
-        "loc": 0.9,
-        "minimum": 0.675,
-        "maximum": 1.125
+        "uncertainty_type": 1,
+        "loc": 0.9
     },
     "275-2030-maximum SoC": {
         "amount": 0.9,
@@ -8346,10 +8340,8 @@
         "comment": "LTO batteries cannot be charged back to a SoC of 100%.",
         "status": "Acceptable",
         "kind": "distribution",
-        "uncertainty_type": 5,
-        "loc": 0.9,
-        "minimum": 0.675,
-        "maximum": 1.125
+        "uncertainty_type": 1,
+        "loc": 0.9
     },
     "276-2040-maximum SoC": {
         "amount": 0.9,
@@ -8374,10 +8366,8 @@
         "comment": "LTO batteries cannot be charged back to a SoC of 100%.",
         "status": "Acceptable",
         "kind": "distribution",
-        "uncertainty_type": 5,
-        "loc": 0.9,
-        "minimum": 0.675,
-        "maximum": 1.125
+        "uncertainty_type": 1,
+        "loc": 0.9
     },
     "277-2050-maximum SoC": {
         "amount": 0.9,
@@ -8402,10 +8392,8 @@
         "comment": "LTO batteries cannot be charged back to a SoC of 100%.",
         "status": "Acceptable",
         "kind": "distribution",
-        "uncertainty_type": 5,
-        "loc": 0.9,
-        "minimum": 0.675,
-        "maximum": 1.125
+        "uncertainty_type": 1,
+        "loc": 0.9
     },
     "278-2000-battery DoD": {
         "amount": 0.4,
@@ -24590,7 +24578,7 @@
         "maximum": 491.25
     },
     "818-2000-initial passengers capacity": {
-        "amount": 43,
+        "amount": 34,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -24617,12 +24605,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 43,
-        "minimum": 32.25,
-        "maximum": 53.75
+        "loc": 34,
+        "minimum": 25.5,
+        "maximum": 42.5
     },
     "819-2010-initial passengers capacity": {
-        "amount": 43,
+        "amount": 34,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -24649,12 +24637,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 43,
-        "minimum": 32.25,
-        "maximum": 53.75
+        "loc": 34,
+        "minimum": 25.5,
+        "maximum": 42.5
     },
     "820-2020-initial passengers capacity": {
-        "amount": 43,
+        "amount": 34,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -24681,12 +24669,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 43,
-        "minimum": 32.25,
-        "maximum": 53.75
+        "loc": 34,
+        "minimum": 25.5,
+        "maximum": 42.5
     },
     "821-2030-initial passengers capacity": {
-        "amount": 43,
+        "amount": 34,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -24713,12 +24701,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 43,
-        "minimum": 32.25,
-        "maximum": 53.75
+        "loc": 34,
+        "minimum": 25.5,
+        "maximum": 42.5
     },
     "822-2040-initial passengers capacity": {
-        "amount": 43,
+        "amount": 34,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -24745,12 +24733,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 43,
-        "minimum": 32.25,
-        "maximum": 53.75
+        "loc": 34,
+        "minimum": 25.5,
+        "maximum": 42.5
     },
     "823-2050-initial passengers capacity": {
-        "amount": 43,
+        "amount": 34,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -24777,9 +24765,9 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 43,
-        "minimum": 32.25,
-        "maximum": 53.75
+        "loc": 34,
+        "minimum": 25.5,
+        "maximum": 42.5
     },
     "824-2000-initial passengers capacity": {
         "amount": 64,
@@ -25742,7 +25730,7 @@
         "maximum": 187.5
     },
     "854-2000-average passengers": {
-        "amount": 16,
+        "amount": 8,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -25769,12 +25757,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 16,
-        "minimum": 12,
-        "maximum": 20
+        "loc": 8,
+        "minimum": 6,
+        "maximum": 10
     },
     "855-2010-average passengers": {
-        "amount": 16,
+        "amount": 8,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -25801,12 +25789,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 16,
-        "minimum": 12,
-        "maximum": 20
+        "loc": 8,
+        "minimum": 6,
+        "maximum": 10
     },
     "856-2020-average passengers": {
-        "amount": 16,
+        "amount": 8,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -25833,12 +25821,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 16,
-        "minimum": 12,
-        "maximum": 20
+        "loc": 8,
+        "minimum": 6,
+        "maximum": 10
     },
     "857-2030-average passengers": {
-        "amount": 16,
+        "amount": 8,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -25865,12 +25853,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 16,
-        "minimum": 12,
-        "maximum": 20
+        "loc": 8,
+        "minimum": 6,
+        "maximum": 10
     },
     "858-2040-average passengers": {
-        "amount": 16,
+        "amount": 8,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -25897,12 +25885,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 16,
-        "minimum": 12,
-        "maximum": 20
+        "loc": 8,
+        "minimum": 6,
+        "maximum": 10
     },
     "859-2050-average passengers": {
-        "amount": 16,
+        "amount": 8,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -25929,12 +25917,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 16,
-        "minimum": 12,
-        "maximum": 20
+        "loc": 8,
+        "minimum": 6,
+        "maximum": 10
     },
     "860-2000-average passengers": {
-        "amount": 21,
+        "amount": 14,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -25961,12 +25949,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 21,
-        "minimum": 15.75,
-        "maximum": 26.25
+        "loc": 14,
+        "minimum": 10.5,
+        "maximum": 17.5
     },
     "861-2010-average passengers": {
-        "amount": 21,
+        "amount": 14,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -25993,12 +25981,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 21,
-        "minimum": 15.75,
-        "maximum": 26.25
+        "loc": 14,
+        "minimum": 10.5,
+        "maximum": 17.5
     },
     "862-2020-average passengers": {
-        "amount": 21,
+        "amount": 14,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -26025,12 +26013,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 21,
-        "minimum": 15.75,
-        "maximum": 26.25
+        "loc": 14,
+        "minimum": 10.5,
+        "maximum": 17.5
     },
     "863-2030-average passengers": {
-        "amount": 21,
+        "amount": 14,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -26057,12 +26045,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 21,
-        "minimum": 15.75,
-        "maximum": 26.25
+        "loc": 14,
+        "minimum": 10.5,
+        "maximum": 17.5
     },
     "864-2040-average passengers": {
-        "amount": 21,
+        "amount": 14,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -26089,12 +26077,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 21,
-        "minimum": 15.75,
-        "maximum": 26.25
+        "loc": 14,
+        "minimum": 10.5,
+        "maximum": 17.5
     },
     "865-2050-average passengers": {
-        "amount": 21,
+        "amount": 14,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -26121,44 +26109,44 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
+        "loc": 14,
+        "minimum": 10.5,
+        "maximum": 17.5
+    },
+    "866-2000-average passengers": {
+        "amount": 21,
+        "category": "Driving",
+        "powertrain": [
+            "PHEV-c-d",
+            "PHEV-e",
+            "ICEV-d",
+            "ICEV-g",
+            "BEV-opp",
+            "BEV-plugin",
+            "BEV-motion",
+            "TEV",
+            "FCEV",
+            "HEV-d",
+            "PHEV-d"
+        ],
+        "sizes": [
+            "13m-coach"
+        ],
+        "year": 2000,
+        "name": "average passengers",
+        "unit": "unit",
+        "importance": "Critical",
+        "source": "",
+        "comment": "",
+        "status": "To be improved",
+        "kind": "distribution",
+        "uncertainty_type": 5,
         "loc": 21,
         "minimum": 15.75,
         "maximum": 26.25
     },
-    "866-2000-average passengers": {
-        "amount": 19,
-        "category": "Driving",
-        "powertrain": [
-            "PHEV-c-d",
-            "PHEV-e",
-            "ICEV-d",
-            "ICEV-g",
-            "BEV-opp",
-            "BEV-plugin",
-            "BEV-motion",
-            "TEV",
-            "FCEV",
-            "HEV-d",
-            "PHEV-d"
-        ],
-        "sizes": [
-            "13m-coach"
-        ],
-        "year": 2000,
-        "name": "average passengers",
-        "unit": "unit",
-        "importance": "Critical",
-        "source": "",
-        "comment": "",
-        "status": "To be improved",
-        "kind": "distribution",
-        "uncertainty_type": 5,
-        "loc": 19,
-        "minimum": 14.25,
-        "maximum": 23.75
-    },
     "867-2010-average passengers": {
-        "amount": 19,
+        "amount": 21,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -26185,12 +26173,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 19,
-        "minimum": 14.25,
-        "maximum": 23.75
+        "loc": 21,
+        "minimum": 15.75,
+        "maximum": 26.25
     },
     "868-2020-average passengers": {
-        "amount": 19,
+        "amount": 21,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -26217,12 +26205,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 19,
-        "minimum": 14.25,
-        "maximum": 23.75
+        "loc": 21,
+        "minimum": 15.75,
+        "maximum": 26.25
     },
     "869-2030-average passengers": {
-        "amount": 19,
+        "amount": 21,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -26249,12 +26237,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 19,
-        "minimum": 14.25,
-        "maximum": 23.75
+        "loc": 21,
+        "minimum": 15.75,
+        "maximum": 26.25
     },
     "870-2040-average passengers": {
-        "amount": 19,
+        "amount": 21,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -26281,12 +26269,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 19,
-        "minimum": 14.25,
-        "maximum": 23.75
+        "loc": 21,
+        "minimum": 15.75,
+        "maximum": 26.25
     },
     "871-2050-average passengers": {
-        "amount": 19,
+        "amount": 21,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -26313,12 +26301,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 19,
-        "minimum": 14.25,
-        "maximum": 23.75
+        "loc": 21,
+        "minimum": 15.75,
+        "maximum": 26.25
     },
     "872-2000-average passengers": {
-        "amount": 40,
+        "amount": 28,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -26345,12 +26333,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 40,
-        "minimum": 30,
-        "maximum": 50
+        "loc": 28,
+        "minimum": 21,
+        "maximum": 35
     },
     "873-2010-average passengers": {
-        "amount": 40,
+        "amount": 28,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -26377,12 +26365,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 40,
-        "minimum": 30,
-        "maximum": 50
+        "loc": 28,
+        "minimum": 21,
+        "maximum": 35
     },
     "874-2020-average passengers": {
-        "amount": 40,
+        "amount": 28,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -26409,12 +26397,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 40,
-        "minimum": 30,
-        "maximum": 50
+        "loc": 28,
+        "minimum": 21,
+        "maximum": 35
     },
     "875-2030-average passengers": {
-        "amount": 40,
+        "amount": 28,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -26441,12 +26429,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 40,
-        "minimum": 30,
-        "maximum": 50
+        "loc": 28,
+        "minimum": 21,
+        "maximum": 35
     },
     "876-2040-average passengers": {
-        "amount": 40,
+        "amount": 28,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -26473,12 +26461,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 40,
-        "minimum": 30,
-        "maximum": 50
+        "loc": 28,
+        "minimum": 21,
+        "maximum": 35
     },
     "877-2050-average passengers": {
-        "amount": 40,
+        "amount": 28,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -26505,12 +26493,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 40,
-        "minimum": 30,
-        "maximum": 50
+        "loc": 28,
+        "minimum": 21,
+        "maximum": 35
     },
     "878-2000-average passengers": {
-        "amount": 36,
+        "amount": 42,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -26537,12 +26525,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 36,
-        "minimum": 27,
-        "maximum": 45
+        "loc": 42,
+        "minimum": 31.5,
+        "maximum": 52.5
     },
     "879-2010-average passengers": {
-        "amount": 36,
+        "amount": 42,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -26569,12 +26557,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 36,
-        "minimum": 27,
-        "maximum": 45
+        "loc": 42,
+        "minimum": 31.5,
+        "maximum": 52.5
     },
     "880-2020-average passengers": {
-        "amount": 36,
+        "amount": 42,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -26601,12 +26589,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 36,
-        "minimum": 27,
-        "maximum": 45
+        "loc": 42,
+        "minimum": 31.5,
+        "maximum": 52.5
     },
     "881-2030-average passengers": {
-        "amount": 36,
+        "amount": 42,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -26633,12 +26621,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 36,
-        "minimum": 27,
-        "maximum": 45
+        "loc": 42,
+        "minimum": 31.5,
+        "maximum": 52.5
     },
     "882-2040-average passengers": {
-        "amount": 36,
+        "amount": 42,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -26665,12 +26653,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 36,
-        "minimum": 27,
-        "maximum": 45
+        "loc": 42,
+        "minimum": 31.5,
+        "maximum": 52.5
     },
     "883-2050-average passengers": {
-        "amount": 36,
+        "amount": 42,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -26697,12 +26685,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 36,
-        "minimum": 27,
-        "maximum": 45
+        "loc": 42,
+        "minimum": 31.5,
+        "maximum": 52.5
     },
     "884-2000-average passengers": {
-        "amount": 75,
+        "amount": 36,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -26729,12 +26717,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 75,
-        "minimum": 56.25,
-        "maximum": 93.75
+        "loc": 36,
+        "minimum": 27,
+        "maximum": 45
     },
     "885-2010-average passengers": {
-        "amount": 75,
+        "amount": 36,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -26761,12 +26749,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 75,
-        "minimum": 56.25,
-        "maximum": 93.75
+        "loc": 36,
+        "minimum": 27,
+        "maximum": 45
     },
     "886-2020-average passengers": {
-        "amount": 75,
+        "amount": 36,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -26793,12 +26781,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 75,
-        "minimum": 56.25,
-        "maximum": 93.75
+        "loc": 36,
+        "minimum": 27,
+        "maximum": 45
     },
     "887-2030-average passengers": {
-        "amount": 75,
+        "amount": 36,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -26825,12 +26813,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 75,
-        "minimum": 56.25,
-        "maximum": 93.75
+        "loc": 36,
+        "minimum": 27,
+        "maximum": 45
     },
     "888-2040-average passengers": {
-        "amount": 75,
+        "amount": 36,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -26857,12 +26845,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 75,
-        "minimum": 56.25,
-        "maximum": 93.75
+        "loc": 36,
+        "minimum": 27,
+        "maximum": 45
     },
     "889-2050-average passengers": {
-        "amount": 75,
+        "amount": 36,
         "category": "Driving",
         "powertrain": [
             "PHEV-c-d",
@@ -26889,9 +26877,9 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 75,
-        "minimum": 56.25,
-        "maximum": 93.75
+        "loc": 36,
+        "minimum": 27,
+        "maximum": 45
     },
     "890-2000-average passenger mass": {
         "amount": 75,
