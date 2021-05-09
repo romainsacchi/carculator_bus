@@ -1,6 +1,5 @@
 import numpy as np
 import xarray
-import pandas as pd
 from . import DATA_DIR
 import pickle
 
@@ -70,11 +69,11 @@ class HotEmissionsModel:
                 "CO",
                 "NOx",
                 "PM2.5",
-                "NO2",
                 "CH4",
                 "NMHC",
                 "N2O",
                 "NH3",
+                "Pb",
                 "Benzene",
             ],
         ).transpose("component", "euro_class", "variable")
@@ -128,7 +127,7 @@ class HotEmissionsModel:
         ])
 
 
-        em_arr[10:30] = (em_arr[6] * ratios_NMHC.reshape(1, 1, 1, -1, 1)).transpose(3, 0, 1, 2, 4)[:, :, :, :, None, :]
+        em_arr[10:30] = em_arr[6]*ratios_NMHC[:, None, None, None, None, None]
 
         # remaining NMVOC
         em_arr[6] *= (1 - np.sum(ratios_NMHC))

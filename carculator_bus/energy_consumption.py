@@ -5,6 +5,7 @@ np.seterr(divide='ignore', invalid='ignore')
 import xarray as xr
 from . import DATA_DIR
 import csv
+import atmos
 
 
 MONTHLY_AVG_TEMP = "monthly_avg_temp.csv"
@@ -29,7 +30,7 @@ def get_country_temperature(country):
             reader = csv.reader(f, delimiter=";")
             for row in reader:
                 if row[2] == country:
-                    return np.array([int(i) for i in row[3:]])
+                    return np.array([float(i) for i in row[3:]])
 
         print(f"Could not find monthly average temperature series for {country}. Uses those for CH instead.")
 
@@ -38,6 +39,15 @@ def get_country_temperature(country):
             for row in reader:
                 if row[2] == "CH":
                     return np.array([int(i) for i in row[3:]])
+
+
+def get_air_density(t):
+    """
+    Returns air density given the temperature
+    :param t:
+    :return:
+    """
+    return atmos.calculate('rho', Tv=t + 273.15, p=101325)
 
 class EnergyConsumptionModel:
     """
@@ -72,12 +82,18 @@ class EnergyConsumptionModel:
 
     """
 
-    def __init__(self, cycle, size=["3.5t", "7.5t", "18t", "26t", "32t", "40t", "60t"], rho_air=1.204):
+
+
+    def __init__(self, cycle,
+                 size,
+                 country="CH",
+                 ambient_temp=None,
+                 ):
         # If a string is passed, the corresponding driving cycle is retrieved
         if isinstance(cycle, str):
             try:
                 self.cycle_name = cycle
-                cycle = get_standard_driving_cycle(cycle, size=size)
+                cycle = get_standard_driving_cycle(size=size)
 
             except KeyError:
                 raise KeyError("The driving cycle specified could not be found.")
@@ -93,11 +109,16 @@ class EnergyConsumptionModel:
 
         self.gradient_name = self.cycle_name
         # retrieve road gradients (in degrees) for each second of the driving cycle selected
-        self.gradient = get_gradients(self.gradient_name, size=size).reshape(-1, 1, 1, 1, len(size))
+        self.gradient = get_gradients(size=size).reshape(-1, 1, 1, 1, len(size))
         # reshape the driving cycle
         self.cycle = cycle.reshape(-1, 1, 1, len(size))
 
-        self.rho_air = rho_air
+        if ambient_temp is not None:
+            self.t = np.resize(ambient_temp, (12,))
+        else:
+            self.t = get_country_temperature(country)
+
+        self.rho_air = get_air_density(self.t).mean()
 
         # Unit conversion km/h to m/s
         self.velocity = (self.cycle * 1000) / 3600
@@ -112,17 +133,12 @@ class EnergyConsumptionModel:
                           hvac_power,
                           battery_cooling_unit,
                           battery_heating_unit,
-                          country="CH",
                           indoor_temp=20,
-                          ambient_temp=None
                           ):
 
         # use ambient temperature if provided, otherwise
         # monthly temperature average (12 values)
-        if ambient_temp is not None:
-            t = np.resize(ambient_temp, (12,))
-        else:
-            t = get_country_temperature(country)
+
 
         # relation between ambient temperature
         # and HVAC power required
@@ -132,21 +148,21 @@ class EnergyConsumptionModel:
 
         # Heating power as long as ambient temperature, in W
         # is below the comfort indoor temperature
-        p_heating = (np.where(t < indoor_temp, np.interp(t, amb_temp, pct_power_HVAC), 0).mean() * hvac_power).values
+        p_heating = (np.where(self.t < indoor_temp, np.interp(self.t, amb_temp, pct_power_HVAC), 0).mean() * hvac_power).values
 
         # Cooling power as long as ambient temperature, in W
         # is above the comfort indoor temperature
-        p_cooling = (np.where(t >= indoor_temp, np.interp(t, amb_temp, pct_power_HVAC), 0).mean() * hvac_power).values
+        p_cooling = (np.where(self.t >= indoor_temp, np.interp(self.t, amb_temp, pct_power_HVAC), 0).mean() * hvac_power).values
 
 
         # We want to add power draw for battery cooling
         # and battery heating
 
         # battery cooling occurring above 20C, in W
-        p_battery_cooling = np.where(t > 20, battery_cooling_unit, 0).mean(axis=-1)
+        p_battery_cooling = np.where(self.t[:, None, None, None, None] > 20, battery_cooling_unit, 0).mean(axis=-1)
 
         # battery heating occurring below 5C, in W
-        p_battery_heating = np.where(t < 5, battery_heating_unit, 0).mean(axis=-1)
+        p_battery_heating = np.where(self.t[:, None, None, None, None] < 5, battery_heating_unit, 0).mean(axis=-1)
         return p_cooling, p_heating, p_battery_cooling, p_battery_heating
 
 
@@ -211,6 +227,7 @@ class EnergyConsumptionModel:
         # Resistance from the tire rolling: rolling resistance coefficient * driving mass * 9.81
         rolling_resistance = (driving_mass * rr_coef * 9.81).T.values * ones
         # Resistance from the drag: frontal area * drag coefficient * air density * 1/2 * velocity^2
+
         air_resistance = (
             frontal_area * drag_coef * self.rho_air / 2
         ).T.values * np.power(self.velocity, 2)

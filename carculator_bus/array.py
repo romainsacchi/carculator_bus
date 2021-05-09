@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import stats_arrays as sa
 import xarray as xr
+import itertools
 
 
 def fill_xarray_from_input_parameters(bip, sensitivity=False, scope=None):
@@ -50,13 +51,6 @@ def fill_xarray_from_input_parameters(bip, sensitivity=False, scope=None):
         if "year" not in scope:
             scope["year"] = bip.years
 
-    # Make sure to include PHEV-e and PHEV-c-d if
-    # PHEV-d is listed
-
-    if "PHEV-d" in scope["powertrain"]:
-        for pt in ["PHEV-e", "PHEV-c-d"]:
-            if pt not in scope["powertrain"]:
-                scope["powertrain"].append(pt)
 
 
     if any(s for s in scope["size"] if s not in bip.sizes):
@@ -106,7 +100,8 @@ def fill_xarray_from_input_parameters(bip, sensitivity=False, scope=None):
             ],
             dims=["size", "powertrain", "parameter", "year", "value"],
         ).astype("float32")
-    # if the purpose is ot do a sensitivity analysis
+
+    # if the purpose is to do a sensitivity analysis
     # then the length of the dimensions `value` equals the number of parameters
     else:
         params = ["reference"]
@@ -121,7 +116,7 @@ def fill_xarray_from_input_parameters(bip, sensitivity=False, scope=None):
                     len(params),
                 )
             ),
-            coords=[bip.sizes, bip.powertrains, bip.parameters, bip.years, params, ],
+            coords=[scope["size"], scope["powertrain"], bip.parameters, scope["year"], params],
             dims=["size", "powertrain", "parameter", "year", "value"],
         ).astype("float32")
 
@@ -161,33 +156,37 @@ def fill_xarray_from_input_parameters(bip, sensitivity=False, scope=None):
     else:
         # if `sensitivity` == True, the values of each parameter is
         # incremented by 10% when `value` == `parameter`
-        for param in bip.input_parameters:
+        for x, param in enumerate(bip.input_parameters):
             names = [n for n in bip.metadata if bip.metadata[n]['name'] == param]
 
-            pwt = set(bip.metadata[param]["powertrain"]) if isinstance(bip.metadata[param]["powertrain"], list) \
-                else set([bip.metadata[param]["powertrain"]])
+            pwt = list(set(itertools.chain.from_iterable([bip.metadata[name]["powertrain"] for name in names])))
 
-            size = set(bip.metadata[param]["sizes"]) if isinstance(bip.metadata[param]["sizes"], list) \
-                else set([bip.metadata[param]["sizes"]])
+            size = list(set(itertools.chain.from_iterable([bip.metadata[name]["sizes"] for name in names])))
 
-            year = set(bip.metadata[param]["year"]) if isinstance(bip.metadata[param]["year"], list) \
-                else set([bip.metadata[param]["year"]])
+            year = [str(bip.metadata[name]["year"]) for name in names]
+            year = list(set(year))
+            year = [int(y) for y in year]
 
             for name in names:
-                vals = [bip.values[name] for _ in range(0, len(bip.input_parameters) + 1)]
-                vals[bip.input_parameters.index(param) + 1] *= 1.1
 
-                array.loc[
-                    dict(
-                        powertrain=[p for p in pwt
-                                    if p in scope["powertrain"]],
-                        size=[s for s in size
-                              if s in scope["size"]],
-                        year=[y for y in year
-                              if y in scope["year"]],
-                        parameter=bip.metadata[name]["name"],
-                    )
-                ] = vals
+                if any(p for p in pwt if p in scope["powertrain"]) \
+                    and any(s for s in size if s in scope["size"]) \
+                    and any(y for y in year if y in scope["year"]):
+
+                    vals = [bip.values[name] for _ in range(0, len(bip.input_parameters) + 1)]
+                    vals[x + 1] *= 1.1
+
+                    array.loc[
+                        dict(
+                            powertrain=[p for p in pwt
+                                        if p in scope["powertrain"]],
+                            size=[s for s in size
+                                  if s in scope["size"]],
+                            year=[y for y in year
+                                  if y in scope["year"]],
+                            parameter=bip.metadata[name]["name"],
+                        )
+                    ] = vals
 
     return (size_dict, powertrain_dict, parameter_dict, year_dict), array
 

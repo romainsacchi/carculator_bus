@@ -86,7 +86,7 @@ class InventoryCalculation:
                         },
                  'diesel':{
                         'primary fuel':{
-                            'type':'synthetic diesel',
+                            'type':'synthetic diesel - energy allocation',
                             'share':[0.9, 0.8, 0.7, 0.6]
                             },
                         'secondary fuel':{
@@ -172,7 +172,7 @@ class InventoryCalculation:
     diesel
     biodiesel - algae
     biodiesel - cooking oil
-    synthetic diesel
+    synthetic diesel - economic allocation
     synthetic diesel - energy allocation
 
 
@@ -377,7 +377,7 @@ class InventoryCalculation:
         self.index_combustion_wo_cng = [
             self.inputs[i]
             for i in self.inputs
-            if any(ele in i[0] for ele in ["ICEV-d", "PHEV-d", "HEV-d"])
+            if any(ele in i[0] for ele in ["ICEV-d",  "HEV-d"])
         ]
         self.index_diesel = [self.inputs[i] for i in self.inputs if "ICEV-d" in i[0]]
         self.index_all_diesel = [
@@ -395,260 +395,133 @@ class InventoryCalculation:
         self.index_fuel_cell = [self.inputs[i] for i in self.inputs if "FCEV" in i[0]]
 
         self.map_non_fuel_emissions = {
-            (
-                "Methane, fossil",
-                ("air", "non-urban air or from high stacks"),
-                "kilogram",
-            ): "Methane direct emissions, suburban",
-            (
-                "Methane, fossil",
-                ("air", "low population density, long-term"),
-                "kilogram",
-            ): "Methane direct emissions, rural",
-            (
-                "Ammonia",
-                ("air", "non-urban air or from high stacks"),
-                "kilogram",
-            ): "Ammonia direct emissions, suburban",
-            (
-                "NMVOC, non-methane volatile organic compounds, unspecified origin",
-                ("air", "urban air close to ground"),
-                "kilogram",
-            ): "NMVOC direct emissions, urban",
-            (
-                "Dinitrogen monoxide",
-                ("air", "low population density, long-term"),
-                "kilogram",
-            ): "Dinitrogen oxide direct emissions, rural",
-            (
-                "Nitrogen oxides",
-                ("air", "urban air close to ground"),
-                "kilogram",
-            ): "Nitrogen oxides direct emissions, urban",
-            (
-                "Ammonia",
-                ("air", "urban air close to ground"),
-                "kilogram",
-            ): "Ammonia direct emissions, urban",
-            (
-                "Particulates, < 2.5 um",
-                ("air", "non-urban air or from high stacks"),
-                "kilogram",
-            ): "Particulate matters direct emissions, suburban",
-            (
-                "Carbon monoxide, fossil",
-                ("air", "urban air close to ground"),
-                "kilogram",
-            ): "Carbon monoxide direct emissions, urban",
-            (
-                "Nitrogen oxides",
-                ("air", "low population density, long-term"),
-                "kilogram",
-            ): "Nitrogen oxides direct emissions, rural",
-            (
-                "NMVOC, non-methane volatile organic compounds, unspecified origin",
-                ("air", "non-urban air or from high stacks"),
-                "kilogram",
-            ): "NMVOC direct emissions, suburban",
-            (
-                "Benzene",
-                ("air", "non-urban air or from high stacks"),
-                "kilogram",
-            ): "Benzene direct emissions, suburban",
-            (
-                "Ammonia",
-                ("air", "low population density, long-term"),
-                "kilogram",
-            ): "Ammonia direct emissions, rural",
-            (
-                "NMVOC, non-methane volatile organic compounds, unspecified origin",
-                ("air", "low population density, long-term"),
-                "kilogram",
-            ): "NMVOC direct emissions, rural",
-            (
-                "Particulates, < 2.5 um",
-                ("air", "urban air close to ground"),
-                "kilogram",
-            ): "Particulate matters direct emissions, urban",
-            (
-                "Dinitrogen monoxide",
-                ("air", "non-urban air or from high stacks"),
-                "kilogram",
-            ): "Dinitrogen oxide direct emissions, suburban",
-            (
-                "Carbon monoxide, fossil",
-                ("air", "low population density, long-term"),
-                "kilogram",
-            ): "Carbon monoxide direct emissions, rural",
-            (
-                "Methane, fossil",
-                ("air", "urban air close to ground"),
-                "kilogram",
-            ): "Methane direct emissions, urban",
-            (
-                "Carbon monoxide, fossil",
-                ("air", "non-urban air or from high stacks"),
-                "kilogram",
-            ): "Carbon monoxide direct emissions, suburban",
-            (
-                "Particulates, < 2.5 um",
-                ("air", "low population density, long-term"),
-                "kilogram",
-            ): "Particulate matters direct emissions, rural",
-            (
-                "Benzene",
-                ("air", "low population density, long-term"),
-                "kilogram",
-            ): "Benzene direct emissions, rural",
-            (
-                "Nitrogen oxides",
-                ("air", "non-urban air or from high stacks"),
-                "kilogram",
-            ): "Nitrogen oxides direct emissions, suburban",
-            (
-                "Benzene",
-                ("air", "urban air close to ground"),
-                "kilogram",
-            ): "Benzene direct emissions, urban",
-            (
-                "Dinitrogen monoxide",
-                ("air", "urban air close to ground"),
-                "kilogram",
-            ): "Dinitrogen oxide direct emissions, urban",
-            (
-                "Nitrogen oxides",
-                ("air", "urban air close to ground"),
-                "kilogram",
-            ): "Nitrogen dioxide direct emissions, urban",
-            (
-                "Nitrogen oxides",
-                ("air", "non-urban air or from high stacks"),
-                "kilogram",
-            ): "Nitrogen dioxide direct emissions, suburban",
-            (
-                "Nitrogen oxides",
-                ("air", "low population density, long-term"),
-                "kilogram",
-            ): "Nitrogen dioxide direct emissions, rural",
-            ('Ethane', ('air', 'urban air close to ground'), 'kilogram'): 'Ethane direct emissions, rural',
-            ('Propane', ('air', 'urban air close to ground'), 'kilogram'): 'Propane direct emissions, rural',
-            ('Butane', ('air', 'urban air close to ground'), 'kilogram'): 'Butane direct emissions, rural',
-            ('Pentane', ('air', 'urban air close to ground'), 'kilogram'): 'Pentane direct emissions, rural',
-            ('Hexane', ('air', 'urban air close to ground'), 'kilogram'): 'Hexane direct emissions, rural',
-            ('Cyclohexane', ('air', 'urban air close to ground'), 'kilogram'): 'Cyclohexane direct emissions, rural',
-            ('Heptane', ('air', 'urban air close to ground'), 'kilogram'): 'Heptane direct emissions, rural',
-            ('Ethene', ('air', 'urban air close to ground'), 'kilogram'): 'Ethene direct emissions, rural',
-            ('Propene', ('air', 'urban air close to ground'), 'kilogram'): 'Propene direct emissions, rural',
-            ('1-Pentene', ('air', 'urban air close to ground'), 'kilogram'): '1-Pentene direct emissions, rural',
-            ('Toluene', ('air', 'urban air close to ground'), 'kilogram'): 'Toluene direct emissions, rural',
-            ('m-Xylene', ('air', 'urban air close to ground'), 'kilogram'): 'm-Xylene direct emissions, rural',
-            ('o-Xylene', ('air', 'urban air close to ground'), 'kilogram'): 'o-Xylene direct emissions, rural',
-            ('Formaldehyde', ('air', 'urban air close to ground'), 'kilogram'): 'Formaldehyde direct emissions, rural',
-            ('Acetaldehyde', ('air', 'urban air close to ground'), 'kilogram'): 'Acetaldehyde direct emissions, rural',
-            ('Benzaldehyde', ('air', 'urban air close to ground'), 'kilogram'): 'Benzaldehyde direct emissions, rural',
-            ('Acetone', ('air', 'urban air close to ground'), 'kilogram'): 'Acetone direct emissions, rural',
-            ('Methyl ethyl ketone', ('air', 'urban air close to ground'),
-             'kilogram'): 'Methyl ethyl ketone direct emissions, rural',
-            ('Acrolein', ('air', 'urban air close to ground'), 'kilogram'): 'Acrolein direct emissions, rural',
-            ('Styrene', ('air', 'urban air close to ground'), 'kilogram'): 'Styrene direct emissions, rural',
-            ('Ethane', ('air', 'non-urban air or from high stacks'), 'kilogram'): 'Ethane direct emissions, suburban',
-            ('Propane', ('air', 'non-urban air or from high stacks'), 'kilogram'): 'Propane direct emissions, suburban',
-            ('Butane', ('air', 'non-urban air or from high stacks'), 'kilogram'): 'Butane direct emissions, suburban',
-            ('Pentane', ('air', 'non-urban air or from high stacks'), 'kilogram'): 'Pentane direct emissions, suburban',
-            ('Hexane', ('air', 'non-urban air or from high stacks'), 'kilogram'): 'Hexane direct emissions, suburban',
-            ('Cyclohexane', ('air', 'non-urban air or from high stacks'),
-             'kilogram'): 'Cyclohexane direct emissions, suburban',
-            ('Heptane', ('air', 'non-urban air or from high stacks'), 'kilogram'): 'Heptane direct emissions, suburban',
-            ('Ethene', ('air', 'non-urban air or from high stacks'), 'kilogram'): 'Ethene direct emissions, suburban',
-            ('Propene', ('air', 'non-urban air or from high stacks'), 'kilogram'): 'Propene direct emissions, suburban',
-            ('1-Pentene', ('air', 'non-urban air or from high stacks'),
-             'kilogram'): '1-Pentene direct emissions, suburban',
-            ('Toluene', ('air', 'non-urban air or from high stacks'), 'kilogram'): 'Toluene direct emissions, suburban',
-            ('m-Xylene', ('air', 'non-urban air or from high stacks'),
-             'kilogram'): 'm-Xylene direct emissions, suburban',
-            ('o-Xylene', ('air', 'non-urban air or from high stacks'),
-             'kilogram'): 'o-Xylene direct emissions, suburban',
-            ('Formaldehyde', ('air', 'non-urban air or from high stacks'),
-             'kilogram'): 'Formaldehyde direct emissions, suburban',
-            ('Acetaldehyde', ('air', 'non-urban air or from high stacks'),
-             'kilogram'): 'Acetaldehyde direct emissions, suburban',
-            ('Benzaldehyde', ('air', 'non-urban air or from high stacks'),
-             'kilogram'): 'Benzaldehyde direct emissions, suburban',
-            ('Acetone', ('air', 'non-urban air or from high stacks'), 'kilogram'): 'Acetone direct emissions, suburban',
-            ('Methyl ethyl ketone', ('air', 'non-urban air or from high stacks'),
-             'kilogram'): 'Methyl ethyl ketone direct emissions, suburban',
-            ('Acrolein', ('air', 'non-urban air or from high stacks'),
-             'kilogram'): 'Acrolein direct emissions, suburban',
-            ('Styrene', ('air', 'non-urban air or from high stacks'), 'kilogram'): 'Styrene direct emissions, suburban',
-            ('Ethane', ('air', 'low population density, long-term'), 'kilogram'): 'Ethane direct emissions, rural',
-            ('Propane', ('air', 'low population density, long-term'), 'kilogram'): 'Propane direct emissions, rural',
-            ('Butane', ('air', 'low population density, long-term'), 'kilogram'): 'Butane direct emissions, rural',
-            ('Pentane', ('air', 'low population density, long-term'), 'kilogram'): 'Pentane direct emissions, rural',
-            ('Hexane', ('air', 'low population density, long-term'), 'kilogram'): 'Hexane direct emissions, rural',
-            ('Cyclohexane', ('air', 'low population density, long-term'),
-             'kilogram'): 'Cyclohexane direct emissions, rural',
-            ('Heptane', ('air', 'low population density, long-term'), 'kilogram'): 'Heptane direct emissions, rural',
-            ('Ethene', ('air', 'low population density, long-term'), 'kilogram'): 'Ethene direct emissions, rural',
-            ('Propene', ('air', 'low population density, long-term'), 'kilogram'): 'Propene direct emissions, rural',
-            (
-            '1-Pentene', ('air', 'low population density, long-term'), 'kilogram'): '1-Pentene direct emissions, rural',
-            ('Toluene', ('air', 'low population density, long-term'), 'kilogram'): 'Toluene direct emissions, rural',
-            ('m-Xylene', ('air', 'low population density, long-term'), 'kilogram'): 'm-Xylene direct emissions, rural',
-            ('o-Xylene', ('air', 'low population density, long-term'), 'kilogram'): 'o-Xylene direct emissions, rural',
-            ('Formaldehyde', ('air', 'low population density, long-term'),
-             'kilogram'): 'Formaldehyde direct emissions, rural',
-            ('Acetaldehyde', ('air', 'low population density, long-term'),
-             'kilogram'): 'Acetaldehyde direct emissions, rural',
-            ('Benzaldehyde', ('air', 'low population density, long-term'),
-             'kilogram'): 'Benzaldehyde direct emissions, rural',
-            ('Acetone', ('air', 'low population density, long-term'), 'kilogram'): 'Acetone direct emissions, rural',
-            ('Methyl ethyl ketone', ('air', 'low population density, long-term'),
-             'kilogram'): 'Methyl ethyl ketone direct emissions, rural',
-            ('Acrolein', ('air', 'low population density, long-term'), 'kilogram'): 'Acrolein direct emissions, rural',
-            ('Styrene', ('air', 'low population density, long-term'), 'kilogram'): 'Styrene direct emissions, rural',
-            ('PAH, polycyclic aromatic hydrocarbons', ('air', 'urban air close to ground'),
-             'kilogram'): 'PAH, polycyclic aromatic hydrocarbons direct emissions, rural',
-            ('Arsenic', ('air', 'urban air close to ground'), 'kilogram'): 'Arsenic direct emissions, rural',
-            ('Selenium', ('air', 'urban air close to ground'), 'kilogram'): 'Selenium direct emissions, rural',
-            ('Zinc', ('air', 'urban air close to ground'), 'kilogram'): 'Zinc direct emissions, rural',
-            ('Copper', ('air', 'urban air close to ground'), 'kilogram'): 'Copper direct emissions, rural',
-            ('Nickel', ('air', 'urban air close to ground'), 'kilogram'): 'Nickel direct emissions, rural',
-            ('Chromium', ('air', 'urban air close to ground'), 'kilogram'): 'Chromium direct emissions, rural',
-            ('Chromium VI', ('air', 'urban air close to ground'), 'kilogram'): 'Chromium VI direct emissions, rural',
-            ('Mercury', ('air', 'urban air close to ground'), 'kilogram'): 'Mercury direct emissions, rural',
-            ('Cadmium', ('air', 'urban air close to ground'), 'kilogram'): 'Cadmium direct emissions, rural',
-            ('PAH, polycyclic aromatic hydrocarbons', ('air', 'non-urban air or from high stacks'),
-             'kilogram'): 'PAH, polycyclic aromatic hydrocarbons direct emissions, suburban',
-            ('Arsenic', ('air', 'non-urban air or from high stacks'), 'kilogram'): 'Arsenic direct emissions, suburban',
-            ('Selenium', ('air', 'non-urban air or from high stacks'),
-             'kilogram'): 'Selenium direct emissions, suburban',
-            ('Zinc', ('air', 'non-urban air or from high stacks'), 'kilogram'): 'Zinc direct emissions, suburban',
-            ('Copper', ('air', 'non-urban air or from high stacks'), 'kilogram'): 'Copper direct emissions, suburban',
-            ('Nickel', ('air', 'non-urban air or from high stacks'), 'kilogram'): 'Nickel direct emissions, suburban',
-            ('Chromium', ('air', 'non-urban air or from high stacks'),
-             'kilogram'): 'Chromium direct emissions, suburban',
-            ('Chromium VI', ('air', 'non-urban air or from high stacks'),
-             'kilogram'): 'Chromium VI direct emissions, suburban',
-            ('Mercury', ('air', 'non-urban air or from high stacks'), 'kilogram'): 'Mercury direct emissions, suburban',
-            ('Cadmium', ('air', 'low population density, long-term'), 'kilogram'): 'Cadmium direct emissions, suburban',
-            ('PAH, polycyclic aromatic hydrocarbons', ('air', 'low population density, long-term'),
-             'kilogram'): 'PAH, polycyclic aromatic hydrocarbons direct emissions, rural',
-            ('Arsenic', ('air', 'low population density, long-term'), 'kilogram'): 'Arsenic direct emissions, rural',
-            ('Selenium', ('air', 'low population density, long-term'), 'kilogram'): 'Selenium direct emissions, rural',
-            ('Zinc', ('air', 'low population density, long-term'), 'kilogram'): 'Zinc direct emissions, rural',
-            ('Copper', ('air', 'low population density, long-term'), 'kilogram'): 'Copper direct emissions, rural',
-            ('Nickel', ('air', 'low population density, long-term'), 'kilogram'): 'Nickel direct emissions, rural',
-            ('Chromium', ('air', 'low population density, long-term'), 'kilogram'): 'Chromium direct emissions, rural',
-            ('Chromium VI', ('air', 'low population density, long-term'),
-             'kilogram'): 'Chromium VI direct emissions, rural',
-            ('Mercury', ('air', 'low population density, long-term'), 'kilogram'): 'Mercury direct emissions, rural',
-            ('Cadmium', ('air', 'low population density, long-term'), 'kilogram'): 'Cadmium direct emissions, rural',
-
+            ('1-Pentene', ('air','low population density, long-term'), 'kilogram'): "1-Pentene direct emissions, rural",
+            ('1-Pentene', ('air','non-urban air or from high stacks'), 'kilogram'): "1-Pentene direct emissions, suburban",
+            ('1-Pentene', ('air','urban air close to ground'), 'kilogram'): "1-Pentene direct emissions, urban",
+            ('Acetaldehyde', ('air','low population density, long-term'), 'kilogram'): "Acetaldehyde direct emissions, rural",
+            ('Acetaldehyde', ('air','non-urban air or from high stacks'), 'kilogram'): "Acetaldehyde direct emissions, suburban",
+            ('Acetaldehyde', ('air','urban air close to ground'), 'kilogram'): "Acetaldehyde direct emissions, urban",
+            ('Acetone', ('air','low population density, long-term'), 'kilogram'): "Acetone direct emissions, rural",
+            ('Acetone', ('air','non-urban air or from high stacks'), 'kilogram'): "Acetone direct emissions, suburban",
+            ('Acetone', ('air','urban air close to ground'), 'kilogram'): "Acetone direct emissions, urban",
+            ('Acrolein', ('air','low population density, long-term'), 'kilogram'): "Acrolein direct emissions, rural",
+            ('Acrolein', ('air','non-urban air or from high stacks'), 'kilogram'): "Acrolein direct emissions, suburban",
+            ('Acrolein', ('air','urban air close to ground'), 'kilogram'): "Acrolein direct emissions, urban",
+            ("Ammonia", ('air','low population density, long-term'), 'kilogram'): "Ammonia direct emissions, rural",
+            ("Ammonia", ('air','non-urban air or from high stacks'), 'kilogram'): "Ammonia direct emissions, suburban",
+            ("Ammonia", ('air','urban air close to ground'), 'kilogram'): "Ammonia direct emissions, urban",
+            ('Arsenic', ('air','low population density, long-term'), 'kilogram'): "Arsenic direct emissions, rural",
+            ('Arsenic', ('air','non-urban air or from high stacks'), 'kilogram'): "Arsenic direct emissions, suburban",
+            ('Arsenic', ('air','urban air close to ground'), 'kilogram'): "Arsenic direct emissions, urban",
+            ('Benzaldehyde', ('air','low population density, long-term'), 'kilogram'): "Benzaldehyde direct emissions, rural",
+            ('Benzaldehyde', ('air','non-urban air or from high stacks'), 'kilogram'): "Benzaldehyde direct emissions, suburban",
+            ('Benzaldehyde', ('air','urban air close to ground'), 'kilogram'): "Benzaldehyde direct emissions, urban",
+            ("Benzene", ('air','low population density, long-term'), 'kilogram'): "Benzene direct emissions, rural",
+            ("Benzene", ('air','non-urban air or from high stacks'), 'kilogram'): "Benzene direct emissions, suburban",
+            ("Benzene", ('air','urban air close to ground'), 'kilogram'): "Benzene direct emissions, urban",
+            ('Butane', ('air','low population density, long-term'), 'kilogram'): "Butane direct emissions, rural",
+            ('Butane', ('air','non-urban air or from high stacks'), 'kilogram'): "Butane direct emissions, suburban",
+            ('Butane', ('air','urban air close to ground'), 'kilogram'): "Butane direct emissions, urban",
+            ('Cadmium', ('air','low population density, long-term'), 'kilogram'): "Cadmium direct emissions, rural",
+            ('Cadmium', ('air','non-urban air or from high stacks'), 'kilogram'): "Cadmium direct emissions, suburban",
+            ('Cadmium', ('air','urban air close to ground'), 'kilogram'): "Cadmium direct emissions, urban",
+            ("Carbon monoxide, fossil", ('air','low population density, long-term'), 'kilogram'): "Carbon monoxide direct emissions, rural",
+            ("Carbon monoxide, fossil", ('air','non-urban air or from high stacks'), 'kilogram'): "Carbon monoxide direct emissions, suburban",
+            ("Carbon monoxide, fossil", ('air','urban air close to ground'), 'kilogram'): "Carbon monoxide direct emissions, urban",
+            ('Chromium', ('air','low population density, long-term'), 'kilogram'): "Chromium direct emissions, rural",
+            ('Chromium', ('air','non-urban air or from high stacks'), 'kilogram'): "Chromium direct emissions, suburban",
+            ('Chromium', ('air','urban air close to ground'), 'kilogram'): "Chromium direct emissions, urban",
+            ('Chromium VI', ('air','low population density, long-term'), 'kilogram'): "Chromium VI direct emissions, rural",
+            ('Chromium VI', ('air','non-urban air or from high stacks'), 'kilogram'): "Chromium VI direct emissions, suburban",
+            ('Chromium VI', ('air','urban air close to ground'), 'kilogram'): "Chromium VI direct emissions, urban",
+            ('Copper', ('air','low population density, long-term'), 'kilogram'): "Copper direct emissions, rural",
+            ('Copper', ('air','non-urban air or from high stacks'), 'kilogram'): "Copper direct emissions, suburban",
+            ('Copper', ('air','urban air close to ground'), 'kilogram'): "Copper direct emissions, urban",
+            ('Cyclohexane', ('air','low population density, long-term'), 'kilogram'): "Cyclohexane direct emissions, rural",
+            ('Cyclohexane', ('air','non-urban air or from high stacks'), 'kilogram'): "Cyclohexane direct emissions, suburban",
+            ('Cyclohexane', ('air','urban air close to ground'), 'kilogram'): "Cyclohexane direct emissions, urban",
+            ("Dinitrogen monoxide", ('air','low population density, long-term'), 'kilogram'): "Dinitrogen oxide direct emissions, rural",
+            ("Dinitrogen monoxide", ('air','non-urban air or from high stacks'), 'kilogram'): "Dinitrogen oxide direct emissions, suburban",
+            ("Dinitrogen monoxide", ('air','urban air close to ground'), 'kilogram'): "Dinitrogen oxide direct emissions, urban",
+            ('Ethane', ('air','low population density, long-term'), 'kilogram'): "Ethane direct emissions, rural",
+            ('Ethane', ('air','non-urban air or from high stacks'), 'kilogram'): "Ethane direct emissions, suburban",
+            ('Ethane', ('air','urban air close to ground'), 'kilogram'): "Ethane direct emissions, urban",
+            ('Ethene', ('air','low population density, long-term'), 'kilogram'): "Ethene direct emissions, rural",
+            ('Ethene', ('air','non-urban air or from high stacks'), 'kilogram'): "Ethene direct emissions, suburban",
+            ('Ethene', ('air','urban air close to ground'), 'kilogram'): "Ethene direct emissions, urban",
+            ('Formaldehyde', ('air','low population density, long-term'), 'kilogram'): "Formaldehyde direct emissions, rural",
+            ('Formaldehyde', ('air','non-urban air or from high stacks'), 'kilogram'): "Formaldehyde direct emissions, suburban",
+            ('Formaldehyde', ('air','urban air close to ground'), 'kilogram'): "Formaldehyde direct emissions, urban",
+            ('Heptane', ('air','low population density, long-term'), 'kilogram'): "Heptane direct emissions, rural",
+            ('Heptane', ('air','non-urban air or from high stacks'), 'kilogram'): "Heptane direct emissions, suburban",
+            ('Heptane', ('air','urban air close to ground'), 'kilogram'): "Heptane direct emissions, urban",
+            ('Hexane', ('air','low population density, long-term'), 'kilogram'): "Hexane direct emissions, rural",
+            ('Hexane', ('air','non-urban air or from high stacks'), 'kilogram'): "Hexane direct emissions, suburban",
+            ('Hexane', ('air','urban air close to ground'), 'kilogram'): "Hexane direct emissions, urban",
+            ('PAH, polycyclic aromatic hydrocarbons', ('air','low population density, long-term'), 'kilogram'): "Hydrocarbons direct emissions, rural",
+            ('PAH, polycyclic aromatic hydrocarbons', ('air','non-urban air or from high stacks'), 'kilogram'): "Hydrocarbons direct emissions, suburban",
+            ('PAH, polycyclic aromatic hydrocarbons', ('air','urban air close to ground'), 'kilogram'): "Hydrocarbons direct emissions, urban",
+            ("Lead", ('air','low population density, long-term'), 'kilogram'): "Lead direct emissions, rural",
+            ("Lead", ('air','non-urban air or from high stacks'), 'kilogram'): "Lead direct emissions, suburban",
+            ("Lead", ('air','urban air close to ground'), 'kilogram'): "Lead direct emissions, urban",
+            ('Mercury', ('air','low population density, long-term'), 'kilogram'): "Mercury direct emissions, rural",
+            ('Mercury', ('air','non-urban air or from high stacks'), 'kilogram'): "Mercury direct emissions, suburban",
+            ('Mercury', ('air','urban air close to ground'), 'kilogram'): "Mercury direct emissions, urban",
+            ("Methane, fossil", ('air','low population density, long-term'), 'kilogram'): "Methane direct emissions, rural",
+            ("Methane, fossil", ('air','non-urban air or from high stacks'), 'kilogram'): "Methane direct emissions, suburban",
+            ("Methane, fossil", ('air','urban air close to ground'), 'kilogram'): "Methane direct emissions, urban",
+            ('Methyl ethyl ketone', ('air','low population density, long-term'), 'kilogram'): "Methyl ethyl ketone direct emissions, rural",
+            ('Methyl ethyl ketone', ('air','non-urban air or from high stacks'), 'kilogram'): "Methyl ethyl ketone direct emissions, suburban",
+            ('Methyl ethyl ketone', ('air','urban air close to ground'), 'kilogram'): "Methyl ethyl ketone direct emissions, urban",
+            ('m-Xylene', ('air','low population density, long-term'), 'kilogram'): "m-Xylene direct emissions, rural",
+            ('m-Xylene', ('air','non-urban air or from high stacks'), 'kilogram'): "m-Xylene direct emissions, suburban",
+            ('m-Xylene', ('air','urban air close to ground'), 'kilogram'): "m-Xylene direct emissions, urban",
+            ('Nickel', ('air','low population density, long-term'), 'kilogram'): "Nickel direct emissions, rural",
+            ('Nickel', ('air','non-urban air or from high stacks'), 'kilogram'): "Nickel direct emissions, suburban",
+            ('Nickel', ('air','urban air close to ground'), 'kilogram'): "Nickel direct emissions, urban",
+            ("Nitrogen oxides", ('air','low population density, long-term'), 'kilogram'): "Nitrogen oxides direct emissions, rural",
+            ("Nitrogen oxides", ('air','non-urban air or from high stacks'), 'kilogram'): "Nitrogen oxides direct emissions, suburban",
+            ("Nitrogen oxides", ('air','urban air close to ground'), 'kilogram'): "Nitrogen oxides direct emissions, urban",
+            ("NMVOC, non-methane volatile organic compounds, unspecified origin", ('air','low population density, long-term'), 'kilogram'): "NMVOC direct emissions, rural",
+            ("NMVOC, non-methane volatile organic compounds, unspecified origin", ('air','non-urban air or from high stacks'), 'kilogram'): "NMVOC direct emissions, suburban",
+            ("NMVOC, non-methane volatile organic compounds, unspecified origin", ('air','urban air close to ground'), 'kilogram'): "NMVOC direct emissions, urban",
+            ('o-Xylene', ('air','low population density, long-term'), 'kilogram'): "o-Xylene direct emissions, rural",
+            ('o-Xylene', ('air','non-urban air or from high stacks'), 'kilogram'): "o-Xylene direct emissions, suburban",
+            ('o-Xylene', ('air','urban air close to ground'), 'kilogram'): "o-Xylene direct emissions, urban",
+            ('PAH, polycyclic aromatic hydrocarbons', ('air','low population density, long-term'), 'kilogram'): "PAH, polycyclic aromatic hydrocarbons direct emissions, rural",
+            ('PAH, polycyclic aromatic hydrocarbons', ('air','non-urban air or from high stacks'), 'kilogram'): "PAH, polycyclic aromatic hydrocarbons direct emissions, suburban",
+            ('PAH, polycyclic aromatic hydrocarbons', ('air','urban air close to ground'), 'kilogram'): "PAH, polycyclic aromatic hydrocarbons direct emissions, urban",
+            ("Particulates, < 2.5 um", ('air','low population density, long-term'), 'kilogram'): "Particulate matters direct emissions, rural",
+            ("Particulates, < 2.5 um", ('air','non-urban air or from high stacks'), 'kilogram'): "Particulate matters direct emissions, suburban",
+            ("Particulates, < 2.5 um", ('air','urban air close to ground'), 'kilogram'): "Particulate matters direct emissions, urban",
+            ('Pentane', ('air','low population density, long-term'), 'kilogram'): "Pentane direct emissions, rural",
+            ('Pentane', ('air','non-urban air or from high stacks'), 'kilogram'): "Pentane direct emissions, suburban",
+            ('Pentane', ('air','urban air close to ground'), 'kilogram'): "Pentane direct emissions, urban",
+            ('Propane', ('air','low population density, long-term'), 'kilogram'): "Propane direct emissions, rural",
+            ('Propane', ('air','non-urban air or from high stacks'), 'kilogram'): "Propane direct emissions, suburban",
+            ('Propane', ('air','urban air close to ground'), 'kilogram'): "Propane direct emissions, urban",
+            ('Propene', ('air','low population density, long-term'), 'kilogram'): "Propene direct emissions, rural",
+            ('Propene', ('air','non-urban air or from high stacks'), 'kilogram'): "Propene direct emissions, suburban",
+            ('Propene', ('air','urban air close to ground'), 'kilogram'): "Propene direct emissions, urban",
+            ('Selenium', ('air','low population density, long-term'), 'kilogram'): "Selenium direct emissions, rural",
+            ('Selenium', ('air','non-urban air or from high stacks'), 'kilogram'): "Selenium direct emissions, suburban",
+            ('Selenium', ('air','urban air close to ground'), 'kilogram'): "Selenium direct emissions, urban",
+            ('Styrene', ('air','low population density, long-term'), 'kilogram'): "Styrene direct emissions, rural",
+            ('Styrene', ('air','non-urban air or from high stacks'), 'kilogram'): "Styrene direct emissions, suburban",
+            ('Styrene', ('air','urban air close to ground'), 'kilogram'): "Styrene direct emissions, urban",
+            ('Toluene', ('air','low population density, long-term'), 'kilogram'): "Toluene direct emissions, rural",
+            ('Toluene', ('air','non-urban air or from high stacks'), 'kilogram'): "Toluene direct emissions, suburban",
+            ('Toluene', ('air','urban air close to ground'), 'kilogram'): "Toluene direct emissions, urban",
+            ('Zinc', ('air','low population density, long-term'), 'kilogram'): "Zinc direct emissions, rural",
+            ('Zinc', ('air','non-urban air or from high stacks'), 'kilogram'): "Zinc direct emissions, suburban",
+            ('Zinc', ('air','urban air close to ground'), 'kilogram'): "Zinc direct emissions, urban",
         }
+
 
         self.index_emissions = [
             self.inputs[i] for i in self.map_non_fuel_emissions.keys()
         ]
+
 
         self.map_noise_emissions = {
             (
@@ -1073,6 +946,16 @@ class InventoryCalculation:
             self.inputs[("Methane, fossil", ("air",), "kilogram")]
         )
 
+        # emissions from the diesel generator of the trolleybus
+        d["direct - exhaust"].append(
+            self.inputs[
+                ('diesel, burned in diesel-electric generating set, 18.5kW',
+                 'GLO',
+                 'megajoule',
+                 'diesel, burned in diesel-electric generating set, 18.5kW')
+            ]
+        )
+
         d["direct - exhaust"].extend(self.index_emissions)
         d["direct - exhaust"].extend(self.index_noise)
 
@@ -1128,7 +1011,7 @@ class InventoryCalculation:
             np.zeros((self.A.shape[1], self.B.shape[1], len(self.scope["year"])))
         )
 
-        f = np.float32(np.zeros((np.shape(self.A)[1])))
+        f = np.zeros((np.shape(self.A)[1]))
 
         # Collect indices of activities contributing to the first level for year `y`
         ind_trucks = [self.inputs[i] for i in self.inputs if "transport, passenger bus, " in i[0]
@@ -1163,16 +1046,20 @@ class InventoryCalculation:
         )
 
         arr = (
-            self.A[:, :, -self.number_of_cars :].transpose(0, 2, 1).reshape(shape)
+            self.A[:, :, -self.number_of_cars:].transpose(0, 2, 1).reshape(shape)
             * new_arr.transpose(1, 2, 0)[:, None, None, None, ...]
             * -1
         )
         arr = arr[..., self.split_indices].sum(axis=-1)
 
-        results[...] = arr.transpose(0, 2, 3, 4, 5, 1)
-
         if sensitivity:
+
+            results[...] = arr.transpose(0, 2, 3, 4, 5, 1).sum(axis=-2)
             results /= results.sel(parameter="reference")
+
+
+        else:
+            results[...] = arr.transpose(0, 2, 3, 4, 5, 1)
 
         if self.scope["fu"]["unit"] == "pkm":
             load_factor = 1
@@ -1190,7 +1077,10 @@ class InventoryCalculation:
                 ),
             )
 
-        return results.astype("float32") * load_factor * self.compliant_vehicles
+        if sensitivity:
+            return results.astype("float32") * load_factor * self.compliant_vehicles.values[None, ...]
+        else:
+            return results.astype("float32") * load_factor * self.compliant_vehicles
 
     def add_additional_activities(self):
         # Add as many rows and columns as cars to consider
@@ -1236,7 +1126,7 @@ class InventoryCalculation:
                     )
                 ] = maximum
 
-            if {"BEV-opp", "BEV-plugin", "BEV-motion", "TEV", "PHEV-d"}.intersection(set(self.scope["powertrain"])):
+            if {"BEV-opp", "BEV-depot", "BEV-motion", "PHEV-d"}.intersection(set(self.scope["powertrain"])):
                 maximum += 1
                 self.inputs[
                     (
@@ -1403,7 +1293,7 @@ class InventoryCalculation:
         new_A[0 : np.shape(initial_A)[0], 0 : np.shape(initial_A)[0]] = initial_A
 
         # Resize the matrix to fit the number of iterations in `array`
-        new_A = np.resize(new_A.astype("float32"), (self.array.shape[1], new_A.shape[0], new_A.shape[1]))
+        new_A = np.resize(new_A, (self.array.shape[1], new_A.shape[0], new_A.shape[1]))
         return new_A
 
     def build_fleet_vehicles(self):
@@ -1487,11 +1377,10 @@ class InventoryCalculation:
                         "ICEV-g": "gas",
                         "HEV-d": "diesel",
                         "PHEV-d": "diesel",
-                        "BEV-plugin": "electric",
+                        "BEV-depot": "electric",
                         "BEV-opp": "electric",
                         "BEV-motion": "electric",
                         "FCEV": "hydrogen",
-                        "TEV": "electric",
                     }
 
                     ind_supply = [
@@ -1609,11 +1498,10 @@ class InventoryCalculation:
                     "ICEV-g": "gas",
                     "HEV-d": "diesel",
                     "PHEV-d": "diesel",
-                    "BEV-plugin": "electric",
+                    "BEV-depot": "electric",
                     "BEV-opp": "electric",
                     "BEV-motion": "electric",
                     "FCEV": "hydrogen",
-                    "TEV": "electric",
                 }
 
                 for fuel_type in set(d_map_fuel.values()):
@@ -1704,11 +1592,10 @@ class InventoryCalculation:
             "ICEV-g": "gas",
             "HEV-d": "diesel",
             "PHEV-d": "diesel",
-            "BEV-plugin": "electric",
+            "BEV-depot": "electric",
             "BEV-opp": "electric",
             "BEV-motion": "electric",
             "FCEV": "hydrogen",
-            "TEV": "electric",
         }
 
         for fuel_type in set(d_map_fuel.values()):
@@ -1962,6 +1849,7 @@ class InventoryCalculation:
                                indices_to_preserve)]
 
         self.rev_inputs = {v: k for v, k in enumerate(self.rev_inputs.values())}
+        self.inputs = {v: k for k, v in self.rev_inputs.items()}
 
     def export_lci(
         self,
@@ -2270,6 +2158,7 @@ class InventoryCalculation:
             self.create_electricity_market_for_battery_production()
 
             # Create fuel markets
+            self.create_fuel_markets()
             self.fuel_dictionary = self.create_fuel_dictionary()
 
             self.set_inputs_in_A_matrix(self.array.values)
@@ -2347,12 +2236,11 @@ class InventoryCalculation:
                         self.get_index_vehicle_from_array(
                             [
                                 "BEV-motion",
-                                "BEV-plugin",
+                                "BEV-depot",
                                 "BEV-opp",
-                                "TEV",
                                 "FCEV",
                                 "PHEV-p",
-                                "PHEV-d",
+                                
                                 "ICEV-p",
                                 "ICEV-d",
                                 "HEV-p",
@@ -2367,12 +2255,11 @@ class InventoryCalculation:
                         self.get_index_vehicle_from_array(
                             [
                                 "BEV-motion",
-                                "BEV-plugin",
+                                "BEV-depot",
                                 "BEV-opp",
-                                "TEV",
                                 "FCEV",
                                 "PHEV-p",
-                                "PHEV-d",
+                                
                                 "ICEV-p",
                                 "ICEV-d",
                                 "HEV-p",
@@ -2819,11 +2706,43 @@ class InventoryCalculation:
                         -1 * secondary_share[y]
                     )
 
+                    def learning_rate_fuel(fuel, year, share, val):
+                        if fuel == "electrolysis":
+                            # apply some learning rate for electrolysis
+                            electrolysis = -.3538 * (float(year) - 2010) + 58.589
+                            electricity = (val - 58 + electrolysis) * share
+
+                        elif fuel == "synthetic diesel - energy allocation":
+                            # apply some learning rate for electrolysis
+                            h2 = .42
+                            electrolysis = -.3538 * (float(year) - 2010) + 58.589
+                            electricity = val - (h2 * 58)
+                            electricity += (electrolysis * h2)
+                            electricity *= share
+
+                        elif fuel == "synthetic diesel - economic allocation":
+                            # apply some learning rate for electrolysis
+                            h2 = .183
+                            electrolysis = -.3538 * (float(year) - 2010) + 58.589
+                            electricity = val - (h2 * 58)
+                            electricity += (electrolysis * h2)
+                            electricity *= share
+
+                        else:
+                            electricity = val * share
+                        return electricity
+
+                    additional_electricity_primary = learning_rate_fuel(primary, year, primary_share[y],
+                                                                        self.fuel_dictionary[primary][
+                                                                            "additional electricity"])
+
+                    additional_electricity_secondary = learning_rate_fuel(secondary, year, secondary_share[y],
+                                                                          self.fuel_dictionary[secondary][
+                                                                              "additional electricity"])
+
                     additional_electricity = (
-                        self.fuel_dictionary[primary]["additional electricity"] * primary_share[y]
-                    ) + (
-                        self.fuel_dictionary[secondary]["additional electricity"]
-                        * secondary_share[y]
+                            additional_electricity_primary
+                            + additional_electricity_secondary
                     )
 
                     if additional_electricity > 0:
@@ -2837,7 +2756,7 @@ class InventoryCalculation:
                             -1 * additional_electricity
                         )
 
-        if any(pt in self.scope["powertrain"] for pt in ["BEV-plugin", "BEV-opp", "BEV-motion", "TEV", "PHEV-d"]):
+        if any(pt in self.scope["powertrain"] for pt in ["BEV-depot", "BEV-opp", "BEV-motion", "PHEV-d"]):
             for year in self.scope["year"]:
                 fuel_type = "electricity"
                 dataset_name = d_dataset_name[fuel_type] + str(year)
@@ -2868,7 +2787,7 @@ class InventoryCalculation:
         index_output = [self.inputs[i] for val in value_out for i in self.inputs
                         if val.lower() in i[0].lower()]
 
-        f = np.float32(np.zeros((np.shape(self.A)[1])))
+        f = np.zeros((np.shape(self.A)[1]))
 
         f[index_output] = 1
 
@@ -3114,9 +3033,9 @@ class InventoryCalculation:
                     "biodiesel, vehicle grade",
                 )
             },
-            "synthetic diesel": {
+            "synthetic diesel - economic allocation": {
                 "name": (
-                    "Diesel, synthetic, from electrolysis-based hydrogen, economic allocation, at fuelling station",
+                    "diesel production, synthetic, from electrolysis-based hydrogen, economic allocation, at fuelling station",
                     "RER",
                     "kilogram",
                     "diesel, synthetic, vehicle grade",
@@ -3124,7 +3043,7 @@ class InventoryCalculation:
             },
             "synthetic diesel - energy allocation": {
                 "name": (
-                    "Diesel, synthetic, from electrolysis-based hydrogen, energy allocation, at fuelling station",
+                    "diesel production, synthetic, from electrolysis-based hydrogen, energy allocation, at fuelling station",
                     "RER",
                     "kilogram",
                     "diesel, synthetic, vehicle grade",
@@ -3307,13 +3226,13 @@ class InventoryCalculation:
 
         # Other components, for non-electric and hybrid trucks
         index = self.get_index_vehicle_from_array(
-            ["ICEV-d", "PHEV-d", "HEV-d", "ICEV-g"]
+            ["ICEV-d",  "HEV-d", "ICEV-g"]
         )
         ind_A = [
             self.inputs[i]
             for i in self.inputs
             if "transport, passenger bus, " in i[0]
-            and any(x in i[0] for x in ["ICEV-d", "PHEV-d", "HEV-d", "ICEV-g"])
+            and any(x in i[0] for x in ["ICEV-d",  "HEV-d", "ICEV-g"])
         ]
         self.A[
             :,
@@ -3334,11 +3253,11 @@ class InventoryCalculation:
         ).T
 
         # Other components, for electric trucks
-        index = self.get_index_vehicle_from_array(["BEV-opp", "BEV-plugin", "BEV-motion", "FCEV", "TEV"])
+        index = self.get_index_vehicle_from_array(["BEV-opp", "BEV-depot", "BEV-motion", "FCEV", ])
         ind_A = [
             self.inputs[i]
             for i in self.inputs
-            if "transport, passenger bus, " in i[0] and any(x in i[0] for x in ["BEV", "FCEV", "TEV"])
+            if "transport, passenger bus, " in i[0] and any(x in i[0] for x in ["BEV", "FCEV",])
         ]
 
         self.A[
@@ -3566,12 +3485,12 @@ class InventoryCalculation:
 
         # Battery BoP for all electric and hybrid buses
 
-        index = self.get_index_vehicle_from_array(["BEV-plugin", "BEV-opp", "BEV-motion", "FCEV", "PHEV-d", "HEV-d"])
+        index = self.get_index_vehicle_from_array(["BEV-depot", "BEV-opp", "BEV-motion", "FCEV",  "HEV-d"])
         ind_A = [
             self.inputs[i]
             for i in self.inputs
             if "transport, passenger bus, " in i[0]
-            and any(x in i[0] for x in ["BEV-plugin", "BEV-opp", "BEV-motion", "FCEV", "PHEV-d", "HEV-d"])
+            and any(x in i[0] for x in ["BEV-depot", "BEV-opp", "BEV-motion", "FCEV",  "HEV-d"])
         ]
 
         self.A[
@@ -3584,9 +3503,7 @@ class InventoryCalculation:
                     + array[
                         self.array_inputs["battery lifetime replacements"], :, index
                     ]
-                    + array[
-                        self.array_inputs["battery swap"], :, index
-                    ]
+
                 )
             )
             / array[self.array_inputs["lifetime kilometers"], :, index]
@@ -3605,12 +3522,12 @@ class InventoryCalculation:
             "Battery cell",
         )
 
-        index = self.get_index_vehicle_from_array(["BEV-plugin", "FCEV", "PHEV-d", "HEV-d"])
+        index = self.get_index_vehicle_from_array(["BEV-depot", "FCEV",  "HEV-d"])
         ind_A = [
             self.inputs[i]
             for i in self.inputs
             if "transport, passenger bus, " in i[0]
-               and any(x in i[0] for x in ["BEV-plugin", "FCEV", "PHEV-d", "HEV-d"])
+               and any(x in i[0] for x in ["BEV-depot", "FCEV",  "HEV-d"])
         ]
 
         self.A[:, self.inputs[battery_cell_label], ind_A] = (
@@ -3621,9 +3538,7 @@ class InventoryCalculation:
                     + array[
                         self.array_inputs["battery lifetime replacements"], :, index
                     ]
-                    + array[
-                      self.array_inputs["battery swap"], :, index
-                      ]
+
                 )
             )
             / array[self.array_inputs["lifetime kilometers"], :, index]
@@ -3658,9 +3573,7 @@ class InventoryCalculation:
                                 + array[
                                   self.array_inputs["battery lifetime replacements"], :, index
                                   ]
-                                + array[
-                                  self.array_inputs["battery swap"], :, index
-                                  ]
+
                         )
                 )
                 / array[self.array_inputs["lifetime kilometers"], :, index]
@@ -3771,9 +3684,7 @@ class InventoryCalculation:
                     + array[
                         self.array_inputs["battery lifetime replacements"], :, index
                     ]
-                    + + array[
-                        self.array_inputs["battery swap"], :, index
-                    ]
+
                 )
             )
             / array[self.array_inputs["lifetime kilometers"], :, index]
@@ -3785,9 +3696,9 @@ class InventoryCalculation:
         index_A = [
             self.inputs[c]
             for c in self.inputs
-            if any(ele in c[0] for ele in ["ICEV-d", "PHEV-d", "HEV-d"])
+            if any(ele in c[0] for ele in ["ICEV-d",  "HEV-d"])
         ]
-        index = self.get_index_vehicle_from_array(["ICEV-d", "PHEV-d", "HEV-d"])
+        index = self.get_index_vehicle_from_array(["ICEV-d",  "HEV-d"])
 
         self.A[
             :,
@@ -3860,59 +3771,97 @@ class InventoryCalculation:
             * -1
         ).T
 
-        if self.B is not None:
+        try:
             sum_renew, co2_intensity_tech = self.define_renewable_rate_in_mix()
+        except:
+            sum_renew = [0] * len(self.scope["year"])
+            co2_intensity_tech = [0] * len(self.scope["year"])
 
+        for y, year in enumerate(self.scope["year"]):
 
-            for y, year in enumerate(self.scope["year"]):
+            if y + 1 == len(self.scope["year"]):
+                end_str = "\n * "
+            else:
+                end_str = "\n \t * "
 
-                if y + 1 == len(self.scope["year"]):
-                    end_str = "\n * "
-                else:
-                    end_str = "\n \t * "
+            print(
+                "in "
+                + str(year)
+                + ", % of renewable: "
+                + str(np.round(sum_renew[y] * 100, 0))
+                + "%"
+                + ", GHG intensity per kWh: "
+                + str(int(np.sum(co2_intensity_tech[y] * self.mix[y])))
+                + " g. CO2-eq.",
+                end=end_str,
+            )
 
-                print(
-                    "in "
-                    + str(year)
-                    + ", % of renewable: "
-                    + str(np.round(sum_renew[y] * 100, 0))
-                    + "%"
-                    + ", GHG intensity per kWh: "
-                    + str(int(np.sum(co2_intensity_tech[y] * self.mix[y])))
-                    + " g. CO2-eq.",
-                    end=end_str,
+            if any(True for x in ["BEV-opp", "BEV-depot", "BEV-motion", "PHEV-d"] if x in self.scope["powertrain"]):
+
+                index = self.get_index_vehicle_from_array(
+                    ["BEV-opp", "BEV-depot", "BEV-motion"], year, method="and"
                 )
 
-                if any(True for x in ["BEV-opp", "BEV-plugin", "BEV-motion", "PHEV-d", "TEV"] if x in self.scope["powertrain"]):
-
-                    index = self.get_index_vehicle_from_array(
-                        ["BEV-opp", "BEV-plugin", "BEV-motion", "PHEV-d", "TEV"], year, method="and"
+                self.A[
+                    np.ix_(
+                        np.arange(self.iterations),
+                        [
+                            self.inputs[i]
+                            for i in self.inputs
+                            if str(year) in i[0]
+                            and "electricity supply for electric vehicles" in i[0]
+                        ],
+                        [
+                            self.inputs[i]
+                            for i in self.inputs
+                            if str(year) in i[0]
+                            and "transport, passenger bus, " in i[0]
+                            and any(True for x in ["BEV-opp", "BEV-depot", "BEV-motion", ] if x in i[0])
+                        ],
                     )
+                ] = (
+                    array[self.array_inputs["electricity consumption"], :, index]
+                    / array[self.array_inputs["average passengers"], :, index]
+                    * -1
+                ).T.reshape(
+                    self.iterations, 1, -1
+                )
 
-                    self.A[
-                        np.ix_(
-                            np.arange(self.iterations),
-                            [
-                                self.inputs[i]
-                                for i in self.inputs
-                                if str(year) in i[0]
-                                and "electricity supply for electric vehicles" in i[0]
-                            ],
-                            [
-                                self.inputs[i]
-                                for i in self.inputs
-                                if str(year) in i[0]
-                                and "transport, passenger bus, " in i[0]
-                                and any(True for x in ["BEV-opp", "BEV-plugin", "BEV-motion", "PHEV-d", "TEV"] if x in i[0])
-                            ],
-                        )
-                    ] = (
-                        array[self.array_inputs["electricity consumption"], :, index]
-                        / array[self.array_inputs["average passengers"], :, index]
-                        * -1
-                    ).T.reshape(
-                        self.iterations, 1, -1
-                    )
+        # add the diesel consumption from the generator for BEV-motion buses
+        # anterior to 2020
+        if any(True for x in ["BEV-motion"] if x in self.scope["powertrain"]):
+
+            index = self.get_index_vehicle_from_array(
+                ["BEV-motion"], [2000, 2010], method="and"
+            )
+
+
+            self.A[
+                np.ix_(
+                    np.arange(self.iterations),
+                    [
+                        self.inputs[i]
+                        for i in self.inputs
+                        if "diesel, burned in diesel-electric generating set, 18.5kW" in i[0]
+                    ],
+                    [
+                        self.inputs[i]
+                        for i in self.inputs
+                        if "transport, passenger bus, " in i[0]
+                           and any(True for x in ["BEV-motion"] if x in i[0])
+                           and any(True for x in [2000, 2010] if str(x) in i[0])
+                    ],
+                )
+            ] = (
+                    array[self.array_inputs["oxidation energy stored"], :, index] # kWh
+                    / array[self.array_inputs["daily distance"], :, index] # km
+                    / array[self.array_inputs["average passengers"], :, index] # passengers
+                    * 3.6 # MJ/kWh
+                    * -1
+            ).T.reshape(
+                self.iterations, 1, -1
+            )
+
 
         if "FCEV" in self.scope["powertrain"]:
 
@@ -4121,8 +4070,8 @@ class InventoryCalculation:
                     * -1
                 ).T
 
-        if [i for i in self.scope["powertrain"] if i in ["ICEV-d", "PHEV-d", "HEV-d"]]:
-            index = self.get_index_vehicle_from_array(["ICEV-d", "PHEV-d", "HEV-d"])
+        if [i for i in self.scope["powertrain"] if i in ["ICEV-d",  "HEV-d"]]:
+            index = self.get_index_vehicle_from_array(["ICEV-d",  "HEV-d"])
 
             print(
                 "{} is completed by {}.".format(
@@ -4156,7 +4105,7 @@ class InventoryCalculation:
                     for i in self.inputs
                     if str(year) in i[0]
                     and "transport, passenger bus, " in i[0]
-                    and any(x in i[0] for x in ["ICEV-d", "PHEV-d", "HEV-d"])
+                    and any(x in i[0] for x in ["ICEV-d",  "HEV-d"])
                 ]
 
                 ind_array = [
@@ -4323,7 +4272,7 @@ class InventoryCalculation:
             self.inputs[i]
             for i in self.inputs
             if "transport, passenger bus, " in i[0]
-               and any(x in i[0] for x in ["BEV-opp", "BEV-plugin", "BEV-motion", "FCEV", "HEV-d", "PHEV-d", "TEV"])
+               and any(x in i[0] for x in ["BEV-opp", "BEV-depot", "BEV-motion", "FCEV", "HEV-d",  ])
         ]
 
         self.A[
@@ -4364,7 +4313,8 @@ class InventoryCalculation:
 
         # Exhaust emissions
         # Non-fuel based emissions
-        self.A[:, self.index_emissions, -self.number_of_cars :] = (
+
+        self.A[:, self.index_emissions, -self.number_of_cars:] = (
             array[
                 [
                     self.array_inputs[self.map_non_fuel_emissions[self.rev_inputs[x]]]
@@ -4405,7 +4355,7 @@ class InventoryCalculation:
               * (
                   1
                   + array[self.array_inputs["battery lifetime replacements"]]
-                  + array[self.array_inputs["battery swap"]]
+
                 )
               )
             / array[self.array_inputs["lifetime kilometers"]]
@@ -4452,7 +4402,7 @@ class InventoryCalculation:
         # Hence, we calculate the lifetime of the bus
 
         index = self.get_index_vehicle_from_array(
-            ["BEV-plugin", "PHEV-d"],
+            ["BEV-depot", "PHEV-d"],
         )
 
         self.A[
@@ -4467,7 +4417,7 @@ class InventoryCalculation:
                     self.inputs[i]
                     for i in self.inputs
                     if "transport, passenger bus, " in i[0]
-                       and any(True for x in ["BEV-plugin", "PHEV-d"] if x in i[0])
+                       and any(True for x in ["BEV-depot", "PHEV-d"] if x in i[0])
                 ],
             )
         ] = (
@@ -4519,11 +4469,11 @@ class InventoryCalculation:
 
         # In-motion charging BEV buses
         # The overhead lines have a lifetime of 40 years
-        # And 10 buses use it
+        # And 30 buses use it
         # Hence, we calculate the lifetime of the bus
 
         index = self.get_index_vehicle_from_array(
-            ["BEV-motion", "TEV"],
+            ["BEV-motion"],
         )
 
         self.A[
@@ -4538,14 +4488,14 @@ class InventoryCalculation:
                     self.inputs[i]
                     for i in self.inputs
                     if "transport, passenger bus, " in i[0]
-                       and any(True for x in ["BEV-motion", "TEV"] if x in i[0])
+                       and any(True for x in ["BEV-motion"] if x in i[0])
                 ],
             )
         ] = (
                 (array[self.array_inputs["lifetime kilometers"], :, index]
                  / array[self.array_inputs["kilometers per year"], :, index])
                 / 40  # lifetime of the charger
-                / 10  # 10 buses for one charger
+                / 30  # 30 buses for one charger
                 / array[self.array_inputs["lifetime kilometers"], :, index]
                 / array[self.array_inputs["average passengers"], :, index]
                 * -1
@@ -4672,13 +4622,13 @@ class InventoryCalculation:
 
         # Other components, for non-electric and hybrid trucks
         index = self.get_index_vehicle_from_array(
-            ["ICEV-d", "PHEV-d", "HEV-d", "ICEV-g"]
+            ["ICEV-d", "HEV-d", "ICEV-g"]
         )
         ind_A = [
             self.inputs[i]
             for i in self.inputs
             if "Passenger bus" in i[0]
-            and any(x in i[0] for x in ["ICEV-d", "PHEV-d", "HEV-d", "ICEV-g"])
+            and any(x in i[0] for x in ["ICEV-d", "HEV-d", "ICEV-g"])
             and i[2] == "unit"
         ]
         self.A[
@@ -4695,11 +4645,11 @@ class InventoryCalculation:
         ] = (array[self.array_inputs["other components mass"], :, index] * -1).T
 
         # Other components, for electric trucks
-        index = self.get_index_vehicle_from_array(["BEV-opp", "BEV-plugin", "BEV-motion", "FCEV", "TEV"])
+        index = self.get_index_vehicle_from_array(["BEV-opp", "BEV-depot", "BEV-motion", "FCEV"])
         ind_A = [
             self.inputs[i]
             for i in self.inputs
-            if "Passenger bus" in i[0] and any(x in i[0] for x in ["BEV-opp", "BEV-plugin", "BEV-motion", "FCEV", "TEV"])
+            if "Passenger bus" in i[0] and any(x in i[0] for x in ["BEV-opp", "BEV-depot", "BEV-motion", "FCEV"])
                and i[2] == "unit"
         ]
         self.A[
@@ -4872,12 +4822,12 @@ class InventoryCalculation:
         )
 
         # Battery
-        index = self.get_index_vehicle_from_array(["BEV-plugin", "BEV-opp", "BEV-motion", "FCEV", "PHEV-d", "HEV-d"])
+        index = self.get_index_vehicle_from_array(["BEV-depot", "BEV-opp", "BEV-motion", "FCEV", "HEV-d"])
         ind_A = [
             self.inputs[i]
             for i in self.inputs
             if "Passenger bus" in i[0]
-            and any(x in i[0] for x in ["BEV-plugin", "BEV-opp", "BEV-motion", "FCEV", "PHEV-d", "HEV-d"])
+            and any(x in i[0] for x in ["BEV-depot", "BEV-opp", "BEV-motion", "FCEV", "HEV-d"])
             and i[2] == "unit"
         ]
 
@@ -4891,9 +4841,7 @@ class InventoryCalculation:
                     + array[
                         self.array_inputs["battery lifetime replacements"], :, index
                     ]
-                    + array[
-                      self.array_inputs["battery swap"], :, index
-                      ]
+
                 )
             )
             * -1
@@ -4909,12 +4857,12 @@ class InventoryCalculation:
             "Battery cell",
         )
 
-        index = self.get_index_vehicle_from_array(["BEV-plugin", "FCEV", "PHEV-d", "HEV-d"])
+        index = self.get_index_vehicle_from_array(["BEV-depot", "FCEV",  "HEV-d"])
         ind_A = [
             self.inputs[i]
             for i in self.inputs
             if "Passenger bus" in i[0]
-               and any(x in i[0] for x in ["BEV-plugin", "FCEV", "PHEV-d", "HEV-d"])
+               and any(x in i[0] for x in ["BEV-depot", "FCEV",  "HEV-d"])
                and i[2] == "unit"
         ]
 
@@ -4926,9 +4874,7 @@ class InventoryCalculation:
                     + array[
                         self.array_inputs["battery lifetime replacements"], :, index
                     ]
-                    + array[
-                      self.array_inputs["battery swap"], :, index
-                      ]
+
                 )
             )
             * -1
@@ -4961,9 +4907,7 @@ class InventoryCalculation:
                                 + array[
                                   self.array_inputs["battery lifetime replacements"], :, index
                                   ]
-                                + array[
-                                  self.array_inputs["battery swap"], :, index
-                                  ]
+
                         )
                 )
                 * -1
@@ -5049,9 +4993,7 @@ class InventoryCalculation:
                     + array[
                         self.array_inputs["battery lifetime replacements"], :, index
                     ]
-                    + array[
-                      self.array_inputs["battery swap"], :, index
-                      ]
+
                 )
             )
             * -1
@@ -5076,9 +5018,7 @@ class InventoryCalculation:
                     + array[
                         self.array_inputs["battery lifetime replacements"], :, index
                     ]
-                    + array[
-                      self.array_inputs["battery swap"], :, index
-                      ]
+
                 )
             )
             * -1
@@ -5088,10 +5028,10 @@ class InventoryCalculation:
         index_A = [
             self.inputs[c]
             for c in self.inputs
-            if any(ele in c[0] for ele in ["ICEV-d", "PHEV-d", "HEV-d"])
+            if any(ele in c[0] for ele in ["ICEV-d",  "HEV-d"])
             and c[2] == "unit"
         ]
-        index = self.get_index_vehicle_from_array(["ICEV-d", "PHEV-d", "HEV-d"])
+        index = self.get_index_vehicle_from_array(["ICEV-d",  "HEV-d"])
 
         self.A[
             :,
@@ -5200,60 +5140,96 @@ class InventoryCalculation:
                  / (array[self.array_inputs["average passengers"]])
             )
 
-        if self.B is not None:
+        try:
             sum_renew, co2_intensity_tech = self.define_renewable_rate_in_mix()
+        except:
+            sum_renew = [0] * len(self.scope["year"])
+            co2_intensity_tech = [0] * len(self.scope["year"])
 
-            for y, year in enumerate(self.scope["year"]):
+        for y, year in enumerate(self.scope["year"]):
 
-                if y + 1 == len(self.scope["year"]):
-                    end_str = "\n * "
-                else:
-                    end_str = "\n \t * "
+            if y + 1 == len(self.scope["year"]):
+                end_str = "\n * "
+            else:
+                end_str = "\n \t * "
 
-                print(
-                    "in "
-                    + str(year)
-                    + ", % of renewable: "
-                    + str(np.round(sum_renew[y] * 100, 0))
-                    + "%"
-                    + ", GHG intensity per kWh: "
-                    + str(int(np.sum(co2_intensity_tech[y] * self.mix[y])))
-                    + " g. CO2-eq.",
-                    end=end_str,
+            print(
+                "in "
+                + str(year)
+                + ", % of renewable: "
+                + str(np.round(sum_renew[y] * 100, 0))
+                + "%"
+                + ", GHG intensity per kWh: "
+                + str(int(np.sum(co2_intensity_tech[y] * self.mix[y])))
+                + " g. CO2-eq.",
+                end=end_str,
+            )
+
+            if any(True for x in ["BEV-depot", "BEV-opp", "BEV-motion", "PHEV-d"] if x in self.scope["powertrain"]):
+
+                index = self.get_index_vehicle_from_array(
+                    ["BEV-depot", "BEV-opp", "BEV-motion", "PHEV-d"], year, method="and"
                 )
 
-                if any(True for x in ["BEV-plugin", "BEV-opp", "BEV-motion", "PHEV-d", "TEV"] if x in self.scope["powertrain"]):
-
-                    index = self.get_index_vehicle_from_array(
-                        ["BEV-plugin", "BEV-opp", "BEV-motion", "PHEV-d", "TEV"], year, method="and"
+                self.A[
+                    np.ix_(
+                        np.arange(self.iterations),
+                        [
+                            self.inputs[i]
+                            for i in self.inputs
+                            if str(year) in i[0]
+                            and "electricity supply for electric vehicles" in i[0]
+                        ],
+                        [
+                            self.inputs[i]
+                            for i in self.inputs
+                            if str(year) in i[0]
+                            and "transport, passenger bus, " in i[0]
+                            and "market" not in i[0]
+                            and "kilometer" in i[2]
+                            and any(True for x in ["BEV-depot", "BEV-opp", "BEV-motion", "PHEV-d"] if x in i[0])
+                        ],
                     )
+                ] = (
+                    array[self.array_inputs["electricity consumption"], :, index]
+                    / (array[self.array_inputs["average passengers"], :, index] )
+                    * -1
+                ).T.reshape(
+                    self.iterations, 1, -1
+                )
 
-                    self.A[
-                        np.ix_(
-                            np.arange(self.iterations),
-                            [
-                                self.inputs[i]
-                                for i in self.inputs
-                                if str(year) in i[0]
-                                and "electricity supply for electric vehicles" in i[0]
-                            ],
-                            [
-                                self.inputs[i]
-                                for i in self.inputs
-                                if str(year) in i[0]
-                                and "transport, passenger bus, " in i[0]
-                                and "market" not in i[0]
-                                and "kilometer" in i[2]
-                                and any(True for x in ["BEV-plugin", "BEV-opp", "BEV-motion", "PHEV-d", "TEV"] if x in i[0])
-                            ],
-                        )
-                    ] = (
-                        array[self.array_inputs["electricity consumption"], :, index]
-                        / (array[self.array_inputs["average passengers"], :, index] )
-                        * -1
-                    ).T.reshape(
-                        self.iterations, 1, -1
-                    )
+        # add the diesel consumption from the generator for BEV-motion buses
+        # anterior to 2020
+        if any(True for x in ["BEV-motion"] if x in self.scope["powertrain"]):
+            index = self.get_index_vehicle_from_array(
+                ["BEV-motion"], [2000, 2010], method="and"
+            )
+
+
+            self.A[
+                np.ix_(
+                    np.arange(self.iterations),
+                    [
+                        self.inputs[i]
+                        for i in self.inputs
+                        if "diesel, burned in diesel-electric generating set, 18.5kW" in i[0]
+                    ],
+                    [
+                        self.inputs[i]
+                        for i in self.inputs
+                        if "transport, passenger bus, " in i[0]
+                           and any(True for x in ["BEV-motion"] if x in i[0])
+                           and any(True for x in [2000, 2010] if str(x) in i[0])
+                    ],
+                )
+            ] = (
+                    array[self.array_inputs["oxidation energy stored"], :, index]
+                    / array[self.array_inputs["daily distance"], :, index]
+                    / array[self.array_inputs["average passengers"], :, index]
+                    * -1
+            ).T.reshape(
+                self.iterations, 1, -1
+            )
 
         if "FCEV" in self.scope["powertrain"]:
 
@@ -5472,8 +5448,8 @@ class InventoryCalculation:
                     * -1
                 ).T
 
-        if [i for i in self.scope["powertrain"] if i in ["ICEV-d", "PHEV-d", "HEV-d"]]:
-            index = self.get_index_vehicle_from_array(["ICEV-d", "PHEV-d", "HEV-d"])
+        if [i for i in self.scope["powertrain"] if i in ["ICEV-d",  "HEV-d"]]:
+            index = self.get_index_vehicle_from_array(["ICEV-d",  "HEV-d"])
 
             print(
                 "{} is completed by {}.".format(
@@ -5507,7 +5483,7 @@ class InventoryCalculation:
                     for i in self.inputs
                     if str(year) in i[0]
                     and "transport, passenger bus, " in i[0]
-                    and any(x in i[0] for x in ["ICEV-d", "PHEV-d", "HEV-d"])
+                    and any(x in i[0] for x in ["ICEV-d",  "HEV-d"])
                        and "kilometer" in i[2]
                 ]
 
@@ -5684,7 +5660,7 @@ class InventoryCalculation:
             self.inputs[i]
             for i in self.inputs
             if "transport, passenger bus, " in i[0]
-               and any(x in i[0] for x in ["BEV-opp", "BEV-plugin", "BEV-motion", "FCEV", "HEV-d", "PHEV-d", "TEV"])
+               and any(x in i[0] for x in ["BEV-opp", "BEV-depot", "BEV-motion", "FCEV", "HEV-d", "PHEV-d"])
                and "kilometer" in i[2]
         ]
 
@@ -5729,23 +5705,36 @@ class InventoryCalculation:
         # Exhaust emissions
         # Non-fuel based emissions
 
+        ind_A = [
+            self.inputs[i]
+            for i in self.inputs
+            if "transport, passenger bus, " in i[0]
+               and any(x in i[0] for x in ["ICEV-d", "ICEV-g", "HEV-d"])
+               and "kilometer" in i[2]
+        ]
+
+        ind_array = self.get_index_vehicle_from_array(["ICEV-d", "ICEV-g", "HEV-d"])
 
         self.A[
 
             np.ix_(
                 np.arange(self.iterations),
                 self.index_emissions,
-                [self.inputs[i] for i in self.inputs
-                 if "transport, passenger bus, " in i[0] and "kilometer" in i[2] and "market" not in i[0]],
+                ind_A,
             )
         ] = (
             array[
-                [
-                    self.array_inputs[self.map_non_fuel_emissions[self.rev_inputs[x]]]
-                    for x in self.index_emissions
-                ]
+                np.ix_(
+
+                    [
+                        self.array_inputs[self.map_non_fuel_emissions[self.rev_inputs[x]]]
+                        for x in self.index_emissions
+                    ],
+                    np.arange(self.iterations),
+                    ind_array
+                )
             ]
-            / (array[self.array_inputs["average passengers"], :])
+            / (array[self.array_inputs["average passengers"], :, ind_array]).T
             * -1
         ).transpose([1, 0, 2])
 
@@ -5761,7 +5750,7 @@ class InventoryCalculation:
             * (
                     1
                     + array[self.array_inputs["battery lifetime replacements"]]
-                    + array[self.array_inputs["battery swap"]]
+
             )
         )
 
@@ -5813,7 +5802,7 @@ class InventoryCalculation:
         # Hence, we calculate the lifetime of the bus
 
         index = self.get_index_vehicle_from_array(
-            ["BEV-plugin", "PHEV-d"],
+            ["BEV-depot", "PHEV-d"],
         )
 
         self.A[
@@ -5828,7 +5817,7 @@ class InventoryCalculation:
                     self.inputs[i]
                     for i in self.inputs
                     if "transport, passenger bus, " in i[0]
-                       and any(True for x in ["BEV-plugin", "PHEV-d"] if x in i[0])
+                       and any(True for x in ["BEV-depot", "PHEV-d"] if x in i[0])
                 ],
             )
         ] = (
@@ -5880,11 +5869,11 @@ class InventoryCalculation:
 
         # In-motion charging BEV buses
         # The overhead lines have a lifetime of 40 years
-        # And 10 buses use it
+        # And 30 buses use it
         # Hence, we calculate the lifetime of the bus
 
         index = self.get_index_vehicle_from_array(
-            ["BEV-motion", "TEV"],
+            ["BEV-motion"],
         )
 
         self.A[
@@ -5899,14 +5888,14 @@ class InventoryCalculation:
                     self.inputs[i]
                     for i in self.inputs
                     if "transport, passenger bus, " in i[0]
-                       and any(True for x in ["BEV-motion", "TEV"] if x in i[0])
+                       and any(True for x in ["BEV-motion"] if x in i[0])
                 ],
             )
         ] = (
                 (array[self.array_inputs["lifetime kilometers"], :, index]
                  / array[self.array_inputs["kilometers per year"], :, index])
                 / 40  # lifetime of the charger
-                / 10  # 10 buses for one charger
+                / 30  # 10 buses for one charger
                 / array[self.array_inputs["lifetime kilometers"], :, index]
                 / array[self.array_inputs["average passengers"], :, index]
                 * -1

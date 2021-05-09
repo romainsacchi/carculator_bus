@@ -44,14 +44,14 @@ class BusModel:
 
         self.country = country or "CH" # <-- defaults to Switzerland if not specified
         self.fuel_blend = self.define_fuel_blends(fuel_blend)
-        self.cycle = get_standard_driving_cycle()
+        self.cycle = get_standard_driving_cycle(size=array.coords["size"].values)
 
         self.energy_target = energy_target
 
         self.energy = None
 
         self.ecm = EnergyConsumptionModel(
-            cycle=self.cycle, size=self.array.coords["size"].values
+            cycle=self.cycle, size=self.array.coords["size"].values, ambient_temp=ambient_temp, country=self.country,
         )
 
         if ambient_temp is not None:
@@ -137,7 +137,7 @@ class BusModel:
 
         """
 
-        diff = 1.0
+        diff = 1
         arr = np.array([])
 
         # whether the vehicles are compliant
@@ -169,11 +169,15 @@ class BusModel:
             self.set_energy_stored_properties()
             self.set_battery_size()
 
-            if len(self.array.year.values) > 1:
-                # if there are vehicles after 2020, we need to ensure CO2 standards compliance
-                # return an array with non-compliant vehicles
-                non_compliant_vehicles = self.adjust_combustion_power_share()
-                arr = np.append(arr, non_compliant_vehicles.sum())
+            if self.energy_target is not None:
+                if len(self.array.year.values) > 1:
+                    # if there are vehicles after 2020, we need to ensure CO2 standards compliance
+                    # return an array with non-compliant vehicles
+                    non_compliant_vehicles = self.adjust_combustion_power_share()
+                    arr = np.append(arr, non_compliant_vehicles.sum())
+                else:
+                    arr = np.append(arr, [0])
+                    non_compliant_vehicles = 0
             else:
                 arr = np.append(arr, [0])
                 non_compliant_vehicles = 0
@@ -183,7 +187,6 @@ class BusModel:
             ].sum()
 
         self.adjust_cost()
-        self.set_electric_utility_factor()
         self.set_electricity_consumption()
         self.set_costs()
         # defines hot pollutant emissions
@@ -193,8 +196,6 @@ class BusModel:
         self.set_particulates_emission()
         # defines noise emissions
         self.set_noise_emissions()
-        self.create_PHEV()
-        self.drop_hybrid()
         self.check_compliance_of_buses()
 
         print("")
@@ -242,7 +243,7 @@ class BusModel:
                             parameter=["average passengers"],
                             powertrain=pt,
                             year=y,
-                            value=0,
+                            value="reference" if "reference" in self.array.coords["value"] else 0,
                             size=s,
                         ).values.tolist()
 
@@ -252,7 +253,7 @@ class BusModel:
                             parameter="is_compliant",
                             powertrain=pt,
                             year=y,
-                            value=0,
+                            value="reference" if "reference" in self.array.coords["value"] else 0,
                             size=s,
                         ).values,
                         val,
@@ -269,7 +270,7 @@ class BusModel:
                             parameter="has_schedule_issue",
                             powertrain=pt,
                             year=y,
-                            value=0,
+                            value="reference" if "reference" in self.array.coords["value"] else 0,
                             size=s,
                         ).values,
                         "O",
@@ -282,7 +283,7 @@ class BusModel:
                             parameter="is_too_heavy",
                             powertrain=pt,
                             year=y,
-                            value=0,
+                            value="reference" if "reference" in self.array.coords["value"] else 0,
                             size=s,
                         ).values,
                         "X",
@@ -295,7 +296,7 @@ class BusModel:
                             parameter="is_available",
                             powertrain=pt,
                             year=y,
-                            value=0,
+                            value="reference" if "reference" in self.array.coords["value"] else 0,
                             size=s,
                         ).values,
                         val,
@@ -392,7 +393,7 @@ class BusModel:
         l_pwt = [
             p
             for p in self.array.powertrain.values
-            if p in ["BEV-opp", "BEV-plugin", "BEV-motion", "FCEV", "PHEV-d", "HEV-d"]
+            if p in ["BEV-opp", "BEV-depot", "FCEV", "HEV-d"]
         ]
 
         if len(l_pwt) > 0:
@@ -409,33 +410,64 @@ class BusModel:
             s
             for s in self.array.coords["size"].values
             if s in ["13m-coach", "13m-coach-double"]
+            and any(p for p in self.array.powertrain.values
+                    if p in ["BEV-opp", "BEV-motion"])
         ]
 
         if len(l_size) > 0:
             self.array.loc[
                 dict(
-                    powertrain=["BEV-opp", "BEV-motion"],
+                    powertrain=[p for p in self.array.powertrain.values
+                    if p in ["BEV-opp", "BEV-motion"]],
                     parameter="is_available",
                     size=l_size,
                 )
             ] = 0
 
-        # check that driving mass when fully occupied is inferior to gross mass
+        # Indicate that in-motion bus are only available for 13m and 18m sizes
+        l_size = [
+            s
+            for s in self.array.coords["size"].values
+            if s in ["9m", "13m-city-double"]
+            and "BEV-motion" in self.array.powertrain.values
+        ]
+
+        if len(l_size) > 0:
+            self.array.loc[
+                dict(
+                    powertrain="BEV-motion",
+                    parameter="is_available",
+                    size=l_size,
+                )
+            ] = 0
+
+        # if the mass allowance left
+        # if not enough to welcome the average passenger number +50%
+        # then the bus is too heavy as undersized for peak times
         self["is_too_heavy"] = np.where(
-            (self["curb mass"]
-            + (
-                self["initial passengers capacity"] * self["average passenger mass"]
-             )) < self["gross mass"],
-            0, 1
-        )
+            np.floor((self["gross mass"] - self["curb mass"]) / self["average passenger mass"])
+            > self["average passengers"] * 1.5,
+        0, 1)
+
+
+
+        # check that driving mass when fully occupied is inferior to gross mass
+        #self["is_too_heavy"] = np.where(
+        #    (self["curb mass"]
+        #    + (
+        #        self["initial passengers capacity"] * self["average passenger mass"]
+        #     )) < self["gross mass"],
+        #    0, 1
+        #)
 
         # check that batteries of plugin BEVs
         # have enough time to charge
 
-        with self("BEV-plugin") as cpm:
-            cpm["has_schedule_issue"] = np.where(
-                ((cpm["electric energy stored"] * 1000 / cpm["plugin charger power"])
-                 < 24 - (cpm["operation time"] / (1 + cpm["battery swap"]))), 0, 1)
+        if "BEV-depot" in self.array.powertrain.values:
+            with self("BEV-depot") as cpm:
+                cpm["has_schedule_issue"] = np.where(
+                    (cpm["electric energy stored"] * 1000 / cpm["plugin charger power"])
+                     < (24 - cpm["operation time"]), 0, 1)
 
 
     def adjust_cost(self):
@@ -485,7 +517,7 @@ class BusModel:
         l_pwt = [
             p
             for p in self.array.powertrain.values
-            if p in ["BEV-opp", "BEV-plugin", "BEV-motion", "PHEV-e", "PHEV-c-d"]
+            if p in ["BEV-opp", "BEV-depot", "BEV-motion"]
         ]
 
         if len(l_pwt) > 0:
@@ -499,7 +531,7 @@ class BusModel:
         l_pwt = [
             p
             for p in self.array.powertrain.values
-            if p in ["ICEV-d", "ICEV-g", "PHEV-c-d", "FCEV", "HEV-d"]
+            if p in ["ICEV-d", "ICEV-g", "FCEV", "HEV-d"]
         ]
 
         if len(l_pwt) > 0:
@@ -519,17 +551,6 @@ class BusModel:
                 (1, 1, n_year, n_iterations),
             )
 
-    def drop_hybrid(self):
-        """
-        This method drops the powertrains, `PHEV-c-d` and `PHEV-e` as they were only used to create the
-        `PHEV` powertrain.
-        :returns: Does not return anything. Modifies ``self.array`` in place.
-        """
-        l_pwt = [
-            p for p in self.array.powertrain.values if p not in ["PHEV-c-d", "PHEV-e"]
-        ]
-        self.array = self.array.sel(powertrain=l_pwt)
-
     def set_electricity_consumption(self):
         """
         This method calculates the total electricity consumption for BEV and plugin-hybrid vehicles
@@ -538,7 +559,7 @@ class BusModel:
         l_pwt = [
             p
             for p in self.array.powertrain.values
-            if p in ["BEV-plugin", "BEV-opp", "BEV-motion", "PHEV-e", "TEV"]
+            if p in ["BEV-depot", "BEV-opp", "BEV-motion"]
         ]
 
         for pt in l_pwt:
@@ -607,10 +628,6 @@ class BusModel:
             * -1
         )
 
-        # we assume no energy recuperated for TEVs
-        self.energy.loc[
-            dict(parameter="recuperated energy at wheels", powertrain="TEV")
-        ] = 0
 
         self.energy.loc[dict(parameter="power load")] = (
             motive_power.T + recuperated_power.T
@@ -622,11 +639,9 @@ class BusModel:
             p_battery_cooling,
             p_battery_heating,
         ) = self.ecm.aux_energy_per_km(
-            country=self.country,
             hvac_power=self["HVAC power"],
             battery_cooling_unit=self["battery cooling unit"],
             battery_heating_unit=self["battery heating unit"],
-            ambient_temp=self.ambient_temp
         )
 
         p_cooling = (
@@ -652,70 +667,29 @@ class BusModel:
             self["auxiliary power base demand"].values[..., None] / 1000
         )
 
-        self.energy.loc[
-            dict(
-                parameter=[
-                    "heating energy",
-                    "cooling energy",
-                    "battery management energy",
-                    "auxiliary base energy",
-                ],
-                size="9m",
-                second=np.arange(7696, 17918),
-            )
-        ] = 0
+        cycle_boundaries = {
+            "9m": (7696, 17918),
+            "13m-city": (7753, 17918),
+            "13m-coach": (16134, 17918),
+            "13m-city-double": (7839, 17918),
+            "18m": (7965, 17918),
+        }
 
-        self.energy.loc[
-            dict(
-                parameter=[
-                    "heating energy",
-                    "cooling energy",
-                    "battery management energy",
-                    "auxiliary base energy",
-                ],
-                size="13m-city",
-                second=np.arange(7753, 17918),
-            )
-        ] = 0
-
-        self.energy.loc[
-            dict(
-                parameter=[
-                    "heating energy",
-                    "cooling energy",
-                    "battery management energy",
-                    "auxiliary base energy",
-                ],
-                size="13m-coach",
-                second=np.arange(16134, 17918),
-            )
-        ] = 0
-
-        self.energy.loc[
-            dict(
-                parameter=[
-                    "heating energy",
-                    "cooling energy",
-                    "battery management energy",
-                    "auxiliary base energy",
-                ],
-                size="13m-city-double",
-                second=np.arange(7839, 17918),
-            )
-        ] = 0
-
-        self.energy.loc[
-            dict(
-                parameter=[
-                    "heating energy",
-                    "cooling energy",
-                    "battery management energy",
-                    "auxiliary base energy",
-                ],
-                size="18m",
-                second=np.arange(7965, 17918),
-            )
-        ] = 0
+        for b in cycle_boundaries:
+            if b in self.array.coords["size"].values:
+                self.energy.loc[
+                    dict(
+                        parameter=[
+                            "heating energy",
+                            "cooling energy",
+                            "battery management energy",
+                            "auxiliary base energy",
+                        ],
+                        size=b,
+                        second=np.arange(cycle_boundaries[b][0],
+                                         cycle_boundaries[b][1]),
+                    )
+                ] = 0
 
         self.energy.loc[dict(parameter="auxiliary energy")] = self.energy.loc[
             dict(
@@ -737,7 +711,7 @@ class BusModel:
         l_pwt = [
             p
             for p in self.array.powertrain.values
-            if p in ["BEV-opp", "BEV-plugin", "BEV-motion", "FCEV", "PHEV-e", "TEV"]
+            if p in ["BEV-opp", "BEV-depot", "BEV-motion", "FCEV"]
         ]
 
         idx = [i for i, j in enumerate(self.array.powertrain.values) if j in l_pwt]
@@ -768,7 +742,7 @@ class BusModel:
         l_pwt = [
             p
             for p in self.array.powertrain.values
-            if p in ["ICEV-d", "HEV-d", "PHEV-c-d", "ICEV-g"]
+            if p in ["ICEV-d", "HEV-d", "ICEV-g"]
         ]
 
         if len(l_pwt) > 0:
@@ -782,16 +756,16 @@ class BusModel:
                     [
                         0,
                         0.2,
-                        0.25,
-                        0.35,
+                        0.26,
+                        0.36,
+                        0.37,
                         0.39,
-                        0.41,
-                        0.42,
-                        0.43,
-                        0.43,
-                        0.43,
-                        0.43,
-                        0.43,
+                        0.39,
+                        0.39,
+                        0.39,
+                        0.39,
+                        0.39,
+                        0.39,
                     ],
                 ),
                 0.2,
@@ -811,11 +785,10 @@ class BusModel:
             )
 
         # Correction for electric motors
-
         l_pwt = [
             p
             for p in self.array.powertrain.values
-            if p in ["BEV-opp", "BEV-plugin", "BEV-motion", "PHEV-e", "TEV"]
+            if p in ["BEV-opp", "BEV-depot", "BEV-motion"]
         ]
 
         if len(l_pwt) > 0:
@@ -844,19 +817,19 @@ class BusModel:
             )
 
         self.energy.loc[dict(parameter="motive energy")] = (
-            self.energy.loc[dict(parameter="motive energy at wheels")]
-            / self.energy.loc[dict(parameter="transmission efficiency")]
+                self.energy.loc[dict(parameter="motive energy at wheels")]
+                / self.energy.loc[dict(parameter="transmission efficiency")]
         )
 
         self.energy.loc[dict(parameter="motive energy")] = np.clip(
             self.energy.loc[dict(parameter="motive energy")],
-            1,
+            0,
             self["power"].values[..., None],
         )
-
         self.energy.loc[dict(parameter="motive energy")] /= self.energy.loc[
             dict(parameter="engine efficiency")
         ]
+
 
         # a round trip from and to the wheels has to be accounted for
         self.energy.loc[dict(parameter="recuperated energy")] = np.clip(
@@ -887,21 +860,16 @@ class BusModel:
             / distance
         ).T
 
-        self["TtW efficiency"] = (
-            (
-                (
-                    self.energy.sel(parameter="motive energy at wheels").sum(
-                        dim="second"
-                    )
-                    + self.energy.sel(parameter="auxiliary energy").sum(dim="second")
-                ).T
-                / distance
-            ).T
-        ) / self["TtW energy"]
-
         self["auxiliary energy"] = (
-            self.energy.sel(parameter="auxiliary energy").sum(dim="second").T / distance
+                self.energy.sel(parameter="auxiliary energy").sum(dim="second").T / distance
         ).T
+
+        self["TtW efficiency"] = np.nanmean(np.where(
+            self.energy.loc[dict(parameter="power load")] == 0,
+            np.nan,
+            (self.energy.loc[dict(parameter="transmission efficiency")]
+            * self.energy.loc[dict(parameter="engine efficiency")])
+        ), axis=-1)
 
     def set_fuel_cell_parameters(self):
         """
@@ -971,8 +939,7 @@ class BusModel:
             np.ceil(
                 np.clip(
                     (
-                        (self["lifetime kilometers"] / (1 + self["battery swap"]))
-                         / self["battery lifetime kilometers"]
+                        self["lifetime kilometers"] / self["battery lifetime kilometers"]
                      )
                     - 1,
                     0,
@@ -1096,143 +1063,103 @@ class BusModel:
             "HVAC system mass per kW"
         ] + self["HVAC system fixed mass"]
 
-    def set_electric_utility_factor(self):
-        """
-        From Plotz et al. 2017
-        The electric utility factor is defined by the range
-        :return:
-        """
-        if "PHEV-e" in self.array.coords["powertrain"].values:
-            with self("PHEV-e") as cpm:
-                cpm["electric utility factor"] = (
-                    1 - np.exp(-0.01147 * (cpm["electric energy stored"] * 3600 / cpm["TtW energy"] ))
-                ) ** 1.186185
-
-    def create_PHEV(self):
-        """ PHEV-p/d is the range-weighted average between PHEV-c-p/PHEV-c-d and PHEV-e.
-        """
-
-        if "PHEV-e" in self.array.coords["powertrain"].values:
-            self.array.loc[{"powertrain": "PHEV-d"}] = (
-                self.array.loc[{"powertrain": "PHEV-e"}]
-                * self.array.loc[
-                    {"powertrain": "PHEV-e", "parameter": "electric utility factor"}
-                ]
-            ) + (
-                self.array.loc[{"powertrain": "PHEV-c-d"}]
-                * (
-                    1
-                    - self.array.loc[
-                        {"powertrain": "PHEV-e", "parameter": "electric utility factor"}
-                    ]
-                )
-            )
-
     def set_battery_size(self):
 
 
-        with self("BEV-opp") as cpm:
+        if "BEV-opp" in self.array.powertrain.values:
+            with self("BEV-opp") as cpm:
 
-            # battery sizing factor
-            # for fast-charge batteries
-            # we operate only between a limited DoD window
-            # to prevent cell degradation
-            # meaning we use only a specific capacity window
-            # hence, the size factor is 1 / (maximum SoC - maximum DoD)
-            sizing_factor = 1 / (cpm["maximum SoC"] - cpm["battery DoD"])
+                # battery sizing factor
+                # for fast-charge batteries
+                # we operate only between a limited DoD window
+                # to prevent cell degradation
+                # meaning we use only a specific capacity window
+                # hence, the size factor is 1 / (maximum SoC - maximum DoD)
+                sizing_factor = 1 / (cpm["maximum SoC"] - cpm["battery DoD"])
 
 
-            # calculate the number of trips
-            # which equals the total daily distance
-            # divided by the length of one trip
+                # calculate the number of trips
+                # which equals the total daily distance
+                # divided by the length of one trip
 
-            # calculate the number of charging opportunities
+                # calculate the number of charging opportunities
 
-            cpm["electric energy stored"] = (
-                cpm["distance per trip"]
-                * (cpm["TtW energy"] / 1000)
-                * sizing_factor
-                / 3.6
-                / cpm["charging opportunity per trip"]
-            )
+                cpm["electric energy stored"] = (
+                    cpm["distance per trip"]
+                    * (cpm["TtW energy"] / 1000)
+                    * sizing_factor
+                    / 3.6
+                    / cpm["charging opportunity per trip"]
+                )
 
         # for plugin-in BEV buses, we need to consider
         # whether the battery can be swapped during the day
         # we also add a 25% margin to the battery capacity
-        with self("BEV-plugin") as cpm:
-            cpm["electric energy stored"] = (
-                cpm["daily distance"]
-                * (cpm["TtW energy"] / 1000)
-                / cpm["battery DoD"]
-                / 3.6
-                / (1 + self["battery swap"])
-                * 1.25
-            )
-
-        # for trolley BEV buses, it is more complex
-        # as the size of the battery depends on the
-        # extent of the presence of catenary lines
-        # so we use the following rule of thumb:
-        # the battery capacity is a third of that
-        # of opportunity charging BEV buses
-
-        with self("BEV-motion") as cpm:
-
-            # battery sizing factor
-            # for fast-charge batteries
-            # we operate only between a limited DoD window
-            # to prevent cell degradation
-            # meaning we use only a specific capacity window
-            # hence, the size factor is 1 / (maximum SoC - maximum DoD)
-            sizing_factor = 1 / (cpm["maximum SoC"] - cpm["battery DoD"])
-
-            # calculate the number of trips
-            # which equals the total daily distance
-            # divided by the length of one trip
-
-            # we assume that catenary systems can charge the
-            # equivalent of 1kWh / min
-            # according to the Zeus project https://www.vdv.de/zeeus-ebus-report-internet.pdfx
-
-            # TtW energy [kj/km] - the charging capacity of the catenary system
-            # * the share of the trip equipped with catenary
-            # gives us the deficit (battery depletion) per km
-            # in Givisiez, around 28% the trip distance is equipped with catenary
-
-            # we add to this a sizing factor
-            # to ensure tha the battery is always being charged
-            # at a SoC between 40% and 80%
-            # to limit degradation
-
-
-            cpm["electric energy stored"] = np.clip(
-                (
-                    (cpm["TtW energy"] / 3600)
-                    - (cpm["trip distance share with catenary"] # km/km
-                    / cpm["average speed"] # km/h
-                    * cpm["catenary system power"] / 1000 # kW)
+        if "BEV-depot" in self.array.powertrain.values:
+            with self("BEV-depot") as cpm:
+                cpm["electric energy stored"] = (
+                    cpm["daily distance"]
+                    * (cpm["TtW energy"] / 1000)
+                    / cpm["battery DoD"]
+                    / 3.6
+                    * 1.25
                 )
+
+            # for trolley BEV buses, it is more complex
+            # as the size of the battery depends on the
+            # extent of the presence of catenary lines
+            # so we use the following rule of thumb:
+            # the battery capacity is a third of that
+            # of opportunity charging BEV buses
+
+        if "BEV-motion" in self.array.powertrain.values:
+            with self("BEV-motion") as cpm:
+
+                # battery sizing factor
+                # for fast-charge batteries
+                # we operate only between a limited DoD window
+                # to prevent cell degradation
+                # meaning we use only a specific capacity window
+                # hence, the size factor is 1 / (maximum SoC - maximum DoD)
+                sizing_factor = 1 / (cpm["maximum SoC"] - cpm["battery DoD"])
+
+                # calculate the number of trips
+                # which equals the total daily distance
+                # divided by the length of one trip
+
+                # we assume that catenary systems can charge the
+                # equivalent of 1kWh / min
+                # according to the Zeus project https://www.vdv.de/zeeus-ebus-report-internet.pdfx
+
+                # TtW energy [kj/km] - the charging capacity of the catenary system
+                # * the share of the trip equipped with catenary
+                # gives us the deficit (battery depletion) per km
+                # in Givisiez, around 28% the trip distance is equipped with catenary
+
+                # we add to this a sizing factor
+                # to ensure tha the battery is always being charged
+                # at a SoC between 40% and 80%
+                # to limit degradation
+
+
+                cpm["electric energy stored"] = np.clip(
+                    (
+                        (cpm["TtW energy"] / 3600)
+                        - (cpm["trip distance share with catenary"] # km/km
+                        / cpm["average speed"] # km/h
+                        * cpm["catenary system power"] / 1000 # kW)
+                    )
+                    )
+                    * sizing_factor
+                    * cpm["use of auxiliary battery"]
+                    * cpm["distance per trip"],
+                    0,
+                    None,
                 )
-                * sizing_factor
-                * cpm["distance per trip"],
-                0,
-                None,
-            )
-
-        # Finally, for PHEV-e buses, there's no battery swap
-        # But we limit the battery size to 50 kWh
-
-        with self("PHEV-e") as cpm:
-            cpm["electric energy stored"] = np.clip((
-                cpm["daily distance"]
-                * (cpm["TtW energy"] / 1000)
-                / cpm["battery DoD"]
-                / 3.6
-            ), 0, 50)
 
         for pt in [
             pwt
-            for pwt in ["BEV-opp", "BEV-plugin", "BEV-motion", "PHEV-e"]
+            for pwt in ["BEV-opp", "BEV-depot", "BEV-motion"]
             if pwt in self.array.coords["powertrain"].values
         ]:
             with self(pt) as cpm:
@@ -1249,6 +1176,20 @@ class BusModel:
                     cpm["energy battery mass"] - cpm["battery cell mass"]
                 )
 
+        # kWh electricity/kg battery cell
+        self["battery cell production energy electricity share"] = self[
+            "battery cell production energy electricity share"
+        ].clip(min=0, max=1)
+        self["battery cell production electricity"] = (
+                self["battery cell production energy"]
+                * self["battery cell production energy electricity share"]
+        )
+        # MJ heat/kg battery cell
+        self["battery cell production heat"] = (
+                                                       self["battery cell production energy"]
+                                                       - self["battery cell production electricity"]
+                                               ) * 3.6
+
     def set_energy_stored_properties(self):
         """
         First, fuel mass is defined. It is dependent on the range required.
@@ -1258,7 +1199,6 @@ class BusModel:
         d_map_fuel = {
             "ICEV-d": "diesel",
             "HEV-d": "diesel",
-            "PHEV-c-d": "diesel",
             "ICEV-g": "cng",
             "FCEV": "hydrogen",
         }
@@ -1281,7 +1221,7 @@ class BusModel:
 
         for pt in [
             pwt
-            for pwt in ["ICEV-d", "HEV-d", "PHEV-c-d", "ICEV-g"]
+            for pwt in ["ICEV-d", "HEV-d",  "ICEV-g"]
             if pwt in self.array.coords["powertrain"].values
         ]:
 
@@ -1311,13 +1251,19 @@ class BusModel:
 
                 if pt == "ICEV-g":
                     # Based on manufacturer data
+                    # We use a four-cyclinder configuration
+                    # Of 320L each
+                    # A cylinder of 320L @ 200 bar can hold 57.6 kg of CNG
+                    nb_cylinder = np.ceil(cpm["fuel mass"] / 57.6)
+
                     cpm["fuel tank mass"] = (
-                        (0.018 * np.power(cpm["fuel mass"], 2))
-                        + (0.6011 * cpm["fuel mass"])
+                        (0.018 * np.power(57.6, 2))
+                        - (0.6011 * 57.6)
                         + 52.235
-                    )
+                    ) * nb_cylinder
 
                 else:
+
                     # From Wolff et al. 2020, Sustainability, DOI: 10.3390/su12135396.
                     # We adjusted though the intercept from the original function (-54)
                     # because we size here trucks based on the range autonomy
@@ -1328,7 +1274,7 @@ class BusModel:
 
         for pt in [
             pwt
-            for pwt in ["ICEV-d", "HEV-d", "PHEV-c-d", "ICEV-g"]
+            for pwt in ["ICEV-d", "HEV-d", "ICEV-g"]
             if pwt in self.array.coords["powertrain"].values
         ]:
             with self(pt) as cpm:
@@ -1356,19 +1302,26 @@ class BusModel:
                     + 10.805
                 )
 
-        # kWh electricity/kg battery cell
-        self["battery cell production energy electricity share"] = self[
-            "battery cell production energy electricity share"
-        ].clip(min=0, max=1)
-        self["battery cell production electricity"] = (
-            self["battery cell production energy"]
-            * self["battery cell production energy electricity share"]
-        )
-        # MJ heat/kg battery cell
-        self["battery cell production heat"] = (
-            self["battery cell production energy"]
-            - self["battery cell production electricity"]
-        ) * 3.6
+        # for older trolley BEV buses,
+        # the share driven without the overhead
+        # contact lines require a diesel generator
+
+        if "BEV-motion" in self.array.coords["powertrain"].values:
+            with self("BEV-motion") as cpm:
+
+                cpm["oxidation energy stored"] = np.clip(
+                    (
+                            (cpm["TtW energy"] / 3600)
+                            * (1 - cpm["trip distance share with catenary"])
+
+                    )
+                    / cpm["generator efficiency"]
+                    * cpm["daily distance"]
+                    * (1 - cpm["use of auxiliary battery"]),
+                    0,
+                    None,
+                )
+
 
     def set_costs(self):
 
@@ -1426,7 +1379,7 @@ class BusModel:
         # For battery, need to divide cost of electricity in battery by efficiency of charging
         for pt in [
             pwt
-            for pwt in ["BEV-opp", "BEV-plugin", "BEV-motion", "PHEV-e"]
+            for pwt in ["BEV-opp", "BEV-depot", "BEV-motion",]
             if pwt in self.array.coords["powertrain"].values
         ]:
             with self(pt) as cpm:
@@ -1695,7 +1648,7 @@ class BusModel:
         l_pwt = [
             p
             for p in self.array.powertrain.values
-            if p in ["ICEV-d", "PHEV-c-d", "HEV-d"]
+            if p in ["ICEV-d", "HEV-d"]
         ]
 
         if len(l_pwt) > 0:
@@ -1779,13 +1732,13 @@ class BusModel:
         l_pwt_combustion = [
             p
             for p in self.array.powertrain.values
-            if p in ["ICEV-g", "ICEV-d", "PHEV-c-d"]
+            if p in ["ICEV-g", "ICEV-d", ]
         ]
 
         l_pwt_electric = [
             p
             for p in self.array.powertrain.values
-            if p in ["BEV-opp", "BEV-plugin", "BEV-motion", "FCEV", "PHEV-e", "TEV"]
+            if p in ["BEV-opp", "BEV-depot", "BEV-motion", "FCEV", ]
         ]
 
         l_size_medium = [
@@ -2011,7 +1964,7 @@ class BusModel:
                     "biodiesel - algae",
                     "biodiesel - palm oil",
                     "biodiesel - rapeseed oil",
-                    "synthetic diesel",
+                    "synthetic diesel - energy allocation",
                 ],
             },
             "cng": {
@@ -2058,7 +2011,12 @@ class BusModel:
         else:
             primary = default_fuels[fuel_type]["primary"]
             secondary = default_fuels[fuel_type]["secondary"]
-            secondary_share = self.get_share_biofuel()
+
+            if primary == "electrolysis":
+                secondary_share = np.zeros_like(self.scope["year"])
+            else:
+                secondary_share = self.get_share_biofuel()
+
             primary_share = 1 - np.array(secondary_share)
 
         return primary, secondary, primary_share, secondary_share
@@ -2077,7 +2035,7 @@ class BusModel:
             "biodiesel - palm oil": 31.7,
             "biodiesel - rapeseed oil": 31.7,
             "biodiesel - algae": 31.7,
-            "synthetic diesel": 43.3,
+            "synthetic diesel - economic allocation": 43.3,
             "synthetic diesel - energy allocation": 43.3,
             "cng": 50,
             "lpg": 49.3,
@@ -2110,7 +2068,7 @@ class BusModel:
             "biodiesel - algae": 2.85,
             "biodiesel - palm oil": 2.85,
             "biodiesel - rapeseed oil": 2.85,
-            "synthetic diesel": 3.16,
+            "synthetic diesel - economic allocation": 3.16,
             "synthetic diesel - energy allocation": 3.16,
             "cng": 2.65,
             "lpg": 3.01,

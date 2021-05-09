@@ -12,10 +12,10 @@
   <a href="https://carculator_bus.readthedocs.io/en/latest/" target="_blank"><img src="https://readthedocs.org/projects/carculator_bus/badge/?version=latest"></a>
  </p>
 
-Prospective environmental and economic life cycle assessment of medium and heavy duty vehicles.
+Prospective environmental and economic life cycle assessment of urban and coach buses.
 
 A fully parameterized Python model developed by the [Technology Assessment group](https://www.psi.ch/en/ta) of the
-[Paul Scherrer Institut](https://www.psi.ch/en) to perform life cycle assessments (LCA) of medium and heavy duty trucks.
+[Paul Scherrer Institut](https://www.psi.ch/en) to perform life cycle assessments (LCA) of urban and coach buses.
 Based on the Life Cycle Assessment tool for passenger vehicles [carculator](https://github.com/romainsacchi/carculator).
 
 See [the documentation](https://carculator_bus.readthedocs.io/en/latest/index.html) for more detail, validation, etc.

@@ -3,7 +3,7 @@ import numpy as np
 import sys
 
 
-def get_gradients(name="Urban delivery", size=["3.5t", "7.5t", "18t", "26t", "32t", "40t", "60t"]):
+def get_gradients(size=["3.5t", "7.5t", "18t", "26t", "32t", "40t", "60t"]):
 
     """Get gradient data as a Pandas `Series`.
 

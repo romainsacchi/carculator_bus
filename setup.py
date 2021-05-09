@@ -48,7 +48,7 @@ setup(
         "pycountry"
     ],
     url="https://github.com/romainsacchi/carculator_bus",
-    description="Prospective environmental and economic life cycle assessment of public transport and heavy goods vehicles",
+    description="Prospective environmental and economic life cycle assessment of urban and coach buses",
     classifiers=[
         "Intended Audience :: End Users/Desktop",
         "Intended Audience :: Developers",

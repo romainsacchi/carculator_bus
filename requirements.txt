@@ -10,3 +10,5 @@ numexpr
 bw2io
 prettytable
 pycountry
+atmos
+pypardiso

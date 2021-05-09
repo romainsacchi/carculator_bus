@@ -1,7 +1,7 @@
 Modeling and assumptions
 ========================
 
-The modeling of medium and heavy goods vehicles in the past, present and future is complex and relies on many assumptions.
+The modeling of urban and coach buses in the past, present and future is complex and relies on many assumptions.
 With **carculator_bus**, we wish to be transparent about those: assumptions and modeling approaches should ideally be easily
 criticized and modified if need be.
 

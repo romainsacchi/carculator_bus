@@ -2,7 +2,7 @@ Introduction
 ============
 
 ``carculator_bus`` is a parameterized model that allows to generate and characterize life cycle inventories for different
-heavy goods vehicle configurations, according to selected:
+bus configurations, according to selected:
 
 * powertrain technologies (9): diesel engine, electric motor, hybrid, plugin-hybrid, etc.,
 * year of operation (2): 2000, 2010, 2020, 2030, 2040 and 2050 (with the possibility to interpolate in between)
