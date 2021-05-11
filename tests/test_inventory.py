@@ -5,7 +5,7 @@ import pytest
 tip = BusInputParameters()
 tip.static()
 _, array = fill_xarray_from_input_parameters(tip)
-tm = BusModel(array, cycle="Long haul", country="CH")
+tm = BusModel(array, country="CH")
 tm.set_all()
 
 
@@ -40,12 +40,12 @@ def test_scope():
         tm,
         method="recipe",
         method_type="midpoint",
-        scope={"powertrain": ["ICEV-d"], "size": ["40t"]},
+        scope={"powertrain": ["ICEV-d"], "size": ["9m"]},
     )
     results = ic.calculate_impacts()
 
-    assert "60t" not in results.coords["size"].values
-    assert "BEV" not in results.coords["powertrain"].values
+    assert "13m-city" not in results.coords["size"].values
+    assert "BEV-opp" not in results.coords["powertrain"].values
 
 
 def test_fuel_blend():
@@ -67,7 +67,7 @@ def test_fuel_blend():
             },
     }
 
-    tm = BusModel(array, cycle="Long haul", country="CH", fuel_blend=fb)
+    tm = BusModel(array, country="CH", fuel_blend=fb)
     tm.set_all()
 
 
@@ -127,7 +127,7 @@ def test_fuel_blend():
                     },
                 }
 
-        tm = BusModel(array, cycle="Long haul", country="CH", fuel_blend=fb)
+        tm = BusModel(array, country="CH", fuel_blend=fb)
         tm.set_all()
         ic = InventoryCalculation(
             tm,

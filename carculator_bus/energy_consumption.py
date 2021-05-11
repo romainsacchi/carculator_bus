@@ -82,9 +82,8 @@ class EnergyConsumptionModel:
 
     """
 
-
-
-    def __init__(self, cycle,
+    def __init__(self,
+                 cycle,
                  size,
                  country="CH",
                  ambient_temp=None,

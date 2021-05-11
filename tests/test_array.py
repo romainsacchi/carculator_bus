@@ -58,5 +58,5 @@ def test_wrong_param_modify_array():
 
     modify_xarray_from_custom_parameters(dict_param, array)
     with pytest.raises(KeyError) as wrapped_error:
-        array.sel(powertrain="ICEV-d", size="40t", year=2020, parameter="foo")
+        array.sel(powertrain="ICEV-d", size="13m-city", year=2020, parameter="foo")
     assert wrapped_error.type == KeyError

@@ -4,7 +4,7 @@ import numpy as np
 tip = BusInputParameters()
 tip.static()
 _, array = fill_xarray_from_input_parameters(tip)
-tm = BusModel(array, cycle="Long haul", country="CH")
+tm = BusModel(array, country="CH")
 tm.set_all()
 
 #def test_energy_target_compliance():
@@ -33,7 +33,7 @@ def test_ttw_energy_against_VECTO():
 def test_auxiliary_power_demand():
     # The auxilliary power demand must be lower for combustion trucks
     assert np.all(tm.array.sel(powertrain="ICEV-d", year=2020, parameter="auxiliary power demand", value=0) <
-            tm.array.sel(powertrain="BEV", year=2020, parameter="auxiliary power demand", value=0))
+            tm.array.sel(powertrain="BEV-opp", year=2020, parameter="auxiliary power demand", value=0))
 
 def test_battery_replacement():
     # Battery replacements cannot be lower than 0
@@ -41,7 +41,7 @@ def test_battery_replacement():
 
 def test_cargo_mass():
     # Cargo mass cannot be superior to available payload
-    assert np.all(tm["total cargo mass"] <= tm["available payload"])
+    assert np.all(tm["curb mass"] <= tm["driving mass"])
 
     # Cargo mass must equal the available payload * load factor
     #assert np.allclose((tm["available payload"] * tm["capacity utilization"]), tm["total cargo mass"])
@@ -64,7 +64,7 @@ def test_fuel_blends():
 
 def test_battery_mass():
     # Battery mass must equal cell mass and BoP mass
-    with tm("BEV") as cpm:
+    with tm("BEV-opp") as cpm:
         assert np.allclose(
             cpm["energy battery mass"],
             cpm["battery cell mass"] + cpm["battery BoP mass"]
@@ -83,7 +83,7 @@ def test_battery_mass():
 
 def test_noise_emissions():
     # Noise emissions with Urban delivery must only affect urban area
-    tm = BusModel(array, cycle="Urban delivery", country="CH")
+    tm = BusModel(array, country="CH")
     tm.set_all()
 
     list_comp = ["rural", "suburban"]

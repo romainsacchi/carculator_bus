@@ -17,8 +17,8 @@ def test_motive_energy():
     tip = BusInputParameters()
     tip.static()
     _, array = fill_xarray_from_input_parameters(tip)
-    tm = BusModel(array, cycle="Long haul", country="CH")
+    tm = BusModel(array, country="CH")
     tm.set_all()
 
-    assert (tm.array.sel(powertrain=["ICEV-d", "ICEV-g"], parameter="TtW energy", size="40t")/1000*100/42.4).min() > 14
-    assert (tm.array.sel(powertrain=["ICEV-d", "ICEV-g"], parameter="TtW energy", size="40t")/1000*100/42.4).max() < 45
+    assert (tm.array.sel(powertrain=["ICEV-d", "ICEV-g"], parameter="TtW energy", size="13m-city")/1000*100/42.4).min() > 14
+    assert (tm.array.sel(powertrain=["ICEV-d", "ICEV-g"], parameter="TtW energy", size="13m-city")/1000*100/42.4).max() < 45

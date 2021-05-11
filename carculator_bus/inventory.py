@@ -1286,7 +1286,11 @@ class InventoryCalculation:
         if not filepath.is_file():
             raise FileNotFoundError("The technology matrix could not be found.")
 
-        initial_A = np.genfromtxt(filepath, delimiter=";")
+        # build matrix A from coordinates
+        A_coords = np.genfromtxt(filepath, delimiter=";")
+        I = A_coords[:, 0].astype(int)
+        J = A_coords[:, 1].astype(int)
+        initial_A = sparse.csr_matrix((A_coords[:, 2], (I, J))).toarray()
 
         new_A = np.identity(len(self.inputs))
 

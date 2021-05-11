@@ -726,14 +726,16 @@ class BusModel:
             )
 
         self.energy.loc[dict(parameter="power load")] = np.clip(
-            self.energy.loc[dict(parameter="power load")], 0, 1
+            self.energy.loc[dict(parameter="power load")], 0., 1
         )
+
+
 
         self.energy.loc[dict(parameter="transmission efficiency")] = np.clip(
             np.interp(
                 self.energy.loc[dict(parameter="power load")],
                 [0, 0.025, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
-                [0, 0.8, 0.85, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9],
+                [0, 0.8, 0.83, 0.86, 0.89, 0.89, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9],
             ),
             0.2,
             1,
@@ -756,16 +758,16 @@ class BusModel:
                     [
                         0,
                         0.2,
-                        0.26,
+                        0.24,
+                        0.28,
+                        0.32,
+                        0.33,
+                        0.34,
                         0.36,
                         0.37,
+                        0.38,
                         0.39,
-                        0.39,
-                        0.39,
-                        0.39,
-                        0.39,
-                        0.39,
-                        0.39,
+                        0.4,
                     ],
                 ),
                 0.2,
@@ -815,6 +817,33 @@ class BusModel:
             ).expand_dims(
                 dim="x", axis=-1
             )
+
+        self.energy.loc[dict(parameter="motive energy at wheels")] = np.clip(
+            self.energy.loc[dict(parameter="motive energy at wheels")], .4, None
+        )
+
+        cycle_boundaries = {
+            "9m": (7696, 17918),
+            "13m-city": (7753, 17918),
+            "13m-coach": (16134, 17918),
+            "13m-city-double": (7839, 17918),
+            "18m": (7965, 17918),
+        }
+
+        for b in cycle_boundaries:
+            if b in self.array.coords["size"].values:
+                self.energy.loc[
+                    dict(
+                        parameter=[
+                            "power load",
+                            "motive energy at wheels"
+                        ],
+                        size=b,
+                        second=np.arange(cycle_boundaries[b][0],
+                                         cycle_boundaries[b][1]),
+                    )
+                ] = 0
+
 
         self.energy.loc[dict(parameter="motive energy")] = (
                 self.energy.loc[dict(parameter="motive energy at wheels")]
@@ -2013,7 +2042,7 @@ class BusModel:
             secondary = default_fuels[fuel_type]["secondary"]
 
             if primary == "electrolysis":
-                secondary_share = np.zeros_like(self.scope["year"])
+                secondary_share = np.zeros_like(self.array.year.values)
             else:
                 secondary_share = self.get_share_biofuel()
 
