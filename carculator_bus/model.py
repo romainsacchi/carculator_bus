@@ -190,7 +190,7 @@ class BusModel:
         self.set_electricity_consumption()
         self.set_costs()
         # defines hot pollutant emissions
-        # along teh driving cycle
+        # along the driving cycle
         self.set_hot_emissions()
         # defines abrasion emissions
         self.set_particulates_emission()
@@ -1549,7 +1549,6 @@ class BusModel:
             "NMVOC direct emissions, urban",
             "Dinitrogen oxide direct emissions, urban",
             "Ammonia direct emissions, urban",
-            "Lead direct emissions, urban",
             "Benzene direct emissions, urban",
             "Ethane direct emissions, urban",
             "Propane direct emissions, urban",
@@ -1589,7 +1588,6 @@ class BusModel:
             "NMVOC direct emissions, suburban",
             "Dinitrogen oxide direct emissions, suburban",
             "Ammonia direct emissions, suburban",
-            "Lead direct emissions, suburban",
             "Benzene direct emissions, suburban",
             "Ethane direct emissions, suburban",
             "Propane direct emissions, suburban",
@@ -1629,7 +1627,6 @@ class BusModel:
             "NMVOC direct emissions, rural",
             "Dinitrogen oxide direct emissions, rural",
             "Ammonia direct emissions, rural",
-            "Lead direct emissions, rural",
             "Benzene direct emissions, rural",
             "Ethane direct emissions, rural",
             "Propane direct emissions, rural",

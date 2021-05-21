@@ -73,7 +73,6 @@ class HotEmissionsModel:
                 "NMHC",
                 "N2O",
                 "NH3",
-                "Pb",
                 "Benzene",
             ],
         ).transpose("component", "euro_class", "variable")
@@ -92,10 +91,10 @@ class HotEmissionsModel:
 
         # The receiving array should contain 40 substances, not 10
         arr_shape = list(a.shape)
-        arr_shape[0] = 40
+        arr_shape[0] = 39
         em_arr = np.zeros(tuple(arr_shape))
 
-        em_arr[:10] = a
+        em_arr[:9] = a
 
         # Ethane, Propane, Butane, Pentane, Hexane, Cyclohexane, Heptane
         # Ethene, Propene, 1-Pentene, Toluene, m-Xylene, o-Xylene
@@ -127,10 +126,10 @@ class HotEmissionsModel:
         ])
 
 
-        em_arr[10:30] = em_arr[6]*ratios_NMHC[:, None, None, None, None, None]
+        em_arr[9:29] = em_arr[6]*ratios_NMHC[:, None, None, None, None, None]
 
         # remaining NMVOC
-        em_arr[6] *= (1 - np.sum(ratios_NMHC))
+        em_arr[5] *= (1 - np.sum(ratios_NMHC))
 
         if powertrain_type == "diesel":
             # We also add heavy metals if diesel
@@ -149,7 +148,7 @@ class HotEmissionsModel:
                 2.03E-10
             ])
 
-            em_arr[30:] = heavy_metals.reshape(-1, 1, 1, 1, 1, 1) * energy_consumption.values
+            em_arr[29:] = heavy_metals.reshape(-1, 1, 1, 1, 1, 1) * energy_consumption.values
 
         # In case the fit produces negative numbers (it should not, though)
         em_arr[em_arr < 0] = 0
@@ -159,9 +158,9 @@ class HotEmissionsModel:
         # If the driving cycle selected is instead specified by the user (passed directly as an array), we used
         # speed levels to compartmentalize emissions.
 
-        urban = np.zeros((40, self.cycle.shape[-1], em_arr.shape[2], em_arr.shape[3], em_arr.shape[4]))
-        suburban = np.zeros((40, self.cycle.shape[-1], em_arr.shape[2], em_arr.shape[3], em_arr.shape[4]))
-        rural = np.zeros((40, self.cycle.shape[-1], em_arr.shape[2], em_arr.shape[3], em_arr.shape[4]))
+        urban = np.zeros((39, self.cycle.shape[-1], em_arr.shape[2], em_arr.shape[3], em_arr.shape[4]))
+        suburban = np.zeros((39, self.cycle.shape[-1], em_arr.shape[2], em_arr.shape[3], em_arr.shape[4]))
+        rural = np.zeros((39, self.cycle.shape[-1], em_arr.shape[2], em_arr.shape[3], em_arr.shape[4]))
 
         for s, x in enumerate(size):
             if x in ["9m", "13m-city", "13m-city-double"]:
