@@ -263,5 +263,6 @@
   "average speed",
   "HVAC mass",
   "is_too_heavy",
-  "has_schedule_issue"
+  "has_schedule_issue",
+  "battery lifetime kilometers"
 ]

@@ -4376,8 +4376,8 @@ class InventoryCalculation:
         ).transpose([1, 0, 2])
 
         # Emissions of air conditioner refrigerant r134a
-        # Leakage assumed to amount to 53g according to
-        # https://ec.europa.eu/clima/sites/clima/files/eccp/docs/leakage_rates_final_report_en.pdf
+        # Leakage assumed to amount to 16 kg per lifetime according to
+        # https://treeze.ch/fileadmin/user_upload/downloads/Publications/Case_Studies/Mobility/544-LCI-Road-NonRoad-Transport-Services-v2.0.pdf
 
         self.A[
             :,
@@ -4385,7 +4385,7 @@ class InventoryCalculation:
                 ("Ethane, 1,1,1,2-tetrafluoro-, HFC-134a", ("air",), "kilogram")
             ],
             -self.number_of_cars :,
-        ] = (0.053 / self.array.values[self.array_inputs["kilometers per year"]] * -1)
+        ] = (16 / self.array.values[self.array_inputs["lifetime kilometers"]] * -1)
 
         self.A[
             :,
@@ -4393,7 +4393,7 @@ class InventoryCalculation:
                 ("market for refrigerant R134a", "GLO", "kilogram", "refrigerant R134a")
             ],
             -self.number_of_cars :,
-        ] = (0.053 / self.array.values[self.array_inputs["kilometers per year"]] * -1)
+        ] = ((16 + 7.5) / self.array.values[self.array_inputs["lifetime kilometers"]] * -1)
 
 
         # Charging infrastructure
@@ -5775,8 +5775,8 @@ class InventoryCalculation:
         ).transpose([1, 0, 2])
 
         # Emissions of air conditioner refrigerant r134a
-        # Leakage assumed to amount to 53g according to
-        # https://ec.europa.eu/clima/sites/clima/files/eccp/docs/leakage_rates_final_report_en.pdf
+        # Leakage assumed to amount to 16kg per lifetime according to
+        # https://treeze.ch/fileadmin/user_upload/downloads/Publications/Case_Studies/Mobility/544-LCI-Road-NonRoad-Transport-Services-v2.0.pdf
 
         self.A[
             :,
@@ -5785,7 +5785,7 @@ class InventoryCalculation:
             ],
             [self.inputs[i] for i in self.inputs
              if "transport, passenger bus, " in i[0] and "kilometer" in i[2] and "market" not in i[0]]
-        ] = (0.053 / self.array.values[self.array_inputs["kilometers per year"]] * -1)
+        ] = (16 / self.array.values[self.array_inputs["lifetime kilometers"]] * -1)
 
         self.A[
             :,
@@ -5794,7 +5794,7 @@ class InventoryCalculation:
             ],
             [self.inputs[i] for i in self.inputs
              if "transport, passenger bus, " in i[0] and "kilometer" in i[2] and "market" not in i[0]]
-        ] = (0.053 / self.array.values[self.array_inputs["kilometers per year"]] * -1)
+        ] = ((16 + 7.5) / self.array.values[self.array_inputs["lifetime kilometers"]] * -1)
 
         # Charging infrastructure
 
