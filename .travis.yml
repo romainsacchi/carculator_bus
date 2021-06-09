@@ -29,7 +29,8 @@ before_install:
       conda config --append channels mcgibbon;
       conda update conda;
       conda config --set channel_priority strict;
-      conda info -a; echo $(python --version);
+      conda info -a;
+      echo $(python --version);
     fi
 install:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then
@@ -56,4 +57,3 @@ script:
     else
       pytest;
     fi
-
