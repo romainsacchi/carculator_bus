@@ -45,7 +45,8 @@ setup(
         "bw2io",
         "prettytable",
         "wurst",
-        "pycountry"
+        "pycountry",
+        "atmos"
     ],
     url="https://github.com/romainsacchi/carculator_bus",
     description="Prospective environmental and economic life cycle assessment of urban and coach buses",
