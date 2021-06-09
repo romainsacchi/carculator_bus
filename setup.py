@@ -34,7 +34,7 @@ setup(
     package_data={"carculator_bus": package_files(os.path.join("carculator_bus", "data"))},
     install_requires=[
         "pandas",
-        "xarray",
+        "xarray<0.18",
         "numpy",
         "pytest",
         "pytest-cov",
