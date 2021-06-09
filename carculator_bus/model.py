@@ -2044,18 +2044,20 @@ class BusModel:
         This function defines fuel blends from what is passed in `fuel_blend`.
         It populates a dictionary `self.fuel_blends` that contains the respective shares, lower heating values
         and CO2 emission factors of the fuels used.
+
+        Source for LHV: https://www.bafu.admin.ch/bafu/en/home/topics/climate/state/data/climate-reporting/references.html
         :return:
         """
         # MJ/kg
         fuels_lhv = {
-            "diesel": 42.8,
-            "biodiesel - cooking oil": 31.7,
-            "biodiesel - palm oil": 31.7,
-            "biodiesel - rapeseed oil": 31.7,
-            "biodiesel - algae": 31.7,
+            "diesel": 43,
+            "biodiesel - cooking oil": 38,
+            "biodiesel - palm oil": 38,
+            "biodiesel - rapeseed oil": 38,
+            "biodiesel - algae": 38,
             "synthetic diesel - economic allocation": 43.3,
             "synthetic diesel - energy allocation": 43.3,
-            "cng": 50,
+            "cng": 47.5,
             "lpg": 49.3,
             "biogas - sewage sludge": 50,
             "biogas - biowaste": 50,
@@ -2081,18 +2083,18 @@ class BusModel:
         }
 
         fuels_CO2 = {
-            "diesel": 3.14,
+            "diesel": 3.152,
             "biodiesel - cooking oil": 2.85,
             "biodiesel - algae": 2.85,
             "biodiesel - palm oil": 2.85,
             "biodiesel - rapeseed oil": 2.85,
             "synthetic diesel - economic allocation": 3.16,
             "synthetic diesel - energy allocation": 3.16,
-            "cng": 2.65,
+            "cng": 2.115,
             "lpg": 3.01,
-            "biogas - sewage sludge": 2.65,
-            "biogas - biowaste": 2.65,
-            "syngas": 2.65,
+            "biogas - sewage sludge": 2.115,
+            "biogas - biowaste": 2.115,
+            "syngas": 2.115,
             "electrolysis": 0,
             "smr - natural gas": 0,
             "smr - natural gas with CCS": 0,
