@@ -17,8 +17,9 @@ install:
   - python --version
   - conda config --set always_yes yes
   - conda config --append channels pascallesage
+  - conda config --append channels mcgibbon
   - conda update -y conda
-  - conda install -y -c conda-forge -c cmutel xarray pandas xlrd numpy pytest pytest-cov coveralls klausen numexpr bw2io
+  - conda install -y -c conda-forge -c cmutel xarray pandas xlrd numpy pytest pytest-cov coveralls klausen numexpr bw2io atmos
   - pip install -e .
 
 test_script:
