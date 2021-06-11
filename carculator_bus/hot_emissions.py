@@ -96,6 +96,16 @@ class HotEmissionsModel:
 
         em_arr[:9] = a
 
+        # NH3 and N2O emissions seem to vary with teh Euro class
+        # rather than the fuel consumption
+
+        # N2O
+        em_arr[6] /= 15
+        # NH3
+        em_arr[7] /= 12
+        #print(em_arr.shape)
+        #em_arr[6] = np.array([n2o_calib[x] for x in euro_classes])
+
         # Ethane, Propane, Butane, Pentane, Hexane, Cyclohexane, Heptane
         # Ethene, Propene, 1-Pentene, Toluene, m-Xylene, o-Xylene
         # Formaldehyde, Acetaldehyde, Benzaldehyde, Acetone

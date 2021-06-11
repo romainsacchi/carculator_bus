@@ -23,7 +23,7 @@ requirements:
     - xarray
     - numpy
     - python
-    - xarray
+    - xarray<0.18
     - xlrd
     - numexpr
     - bw2io

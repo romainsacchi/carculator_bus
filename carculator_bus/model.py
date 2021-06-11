@@ -1658,9 +1658,9 @@ class BusModel:
                 l_y.append(3)
             if 2005 <= y < 2008:
                 l_y.append(4)
-            if 2008 <= y < 2012:
+            if 2008 <= y < 2013:
                 l_y.append(5)
-            if y >= 2012:
+            if y >= 2013:
                 l_y.append(6)
 
         l_pwt = [
