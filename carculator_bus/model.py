@@ -46,7 +46,11 @@ class BusModel:
         self.country = country or "CH" # <-- defaults to Switzerland if not specified
         self.fuel_blend = self.define_fuel_blends(fuel_blend)
         self.energy_storage = energy_storage or {
-            "electric": {"BEV-opp": "LTO", "BEV-depot": "NMC", "BEV-motion": "LTO"}}
+            "electric": {"BEV-opp": "LTO",
+                         "BEV-depot": "NMC-111",
+                         "BEV-motion": "LTO",
+                         "FCEV": "NMC-111",
+                         "HEV-d": "NMC-111"}}
 
         self.cycle = get_standard_driving_cycle(size=array.coords["size"].values)
 
@@ -887,6 +891,15 @@ class BusModel:
             * self.energy.loc[dict(parameter="engine efficiency")])
         ), axis=-1)
 
+        pwt = [p for p in self.array.powertrain.values
+               if p not in ["BEV-opp", "BEV-depot", "BEV-motion", "FCEV"]]
+
+        self.array.loc[dict(parameter="engine efficiency", powertrain=pwt)] = np.nanmean(np.where(
+            self.energy.loc[dict(parameter="power load", powertrain=pwt)] == 0,
+            np.nan,
+            self.energy.loc[dict(parameter="engine efficiency", powertrain=pwt)]
+        ), axis=-1)
+
     def set_fuel_cell_parameters(self):
         """
         Specific setup for fuel cells, which are mild hybrids.
@@ -1054,7 +1067,7 @@ class BusModel:
         """Set electric and combustion motor powers based on input parameter ``power to mass ratio``."""
         # Convert from W/kg to kW
         self["power"] = np.clip(
-            self["power to mass ratio"] * self["curb mass"] / 1000, 0, 700
+            self["power to mass ratio"] * self["curb mass"] / 1000, 0, 500
         )
         self["combustion power share"] = self["combustion power share"].clip(
             min=0, max=1
@@ -1113,9 +1126,6 @@ class BusModel:
                     / cpm["charging opportunity per trip"]
                 )
 
-        # for plugin-in BEV buses, we need to consider
-        # whether the battery can be swapped during the day
-        # we also add a 25% margin to the battery capacity
         if "BEV-depot" in self.array.powertrain.values:
             with self("BEV-depot") as cpm:
                 cpm["electric energy stored"] = (
@@ -1123,7 +1133,6 @@ class BusModel:
                     * (cpm["TtW energy"] / 1000)
                     / cpm["battery DoD"]
                     / 3.6
-                    * 1.25
                 )
 
             # for trolley BEV buses, it is more complex
@@ -1178,9 +1187,18 @@ class BusModel:
                     None,
                 )
 
+        # Fuel cell buses do also have a battery, which capacity
+        # corresponds roughly to 8% of the capacity contained in the
+        # H2 tank
+        if "FCEV" in self.array.powertrain.values:
+            with self("FCEV") as cpm:
+                cpm["electric energy stored"] = (
+                    cpm["fuel mass"] * 120 / 3.6 * 0.09
+                )
+
         for pt in [
             pwt
-            for pwt in ["BEV-opp", "BEV-depot", "BEV-motion"]
+            for pwt in ["BEV-opp", "BEV-depot", "BEV-motion", "FCEV"]
             if pwt in self.array.coords["powertrain"].values
         ]:
             with self(pt) as cpm:
@@ -1260,10 +1278,8 @@ class BusModel:
                     np.array(secondary_fuel_share) * secondary_fuel_lhv
                 )
 
-                # we add a 25% margin to the fuel tank
                 cpm["fuel mass"] = (
                     (cpm["daily distance"] * (cpm["TtW energy"] / 1000))
-                    * 1.25
                     / blend_lhv.reshape(-1, 1)
                 )
 
