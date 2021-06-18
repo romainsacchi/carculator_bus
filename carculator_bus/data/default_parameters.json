@@ -5364,7 +5364,7 @@
         "maximum": 8750
     },
     "180-2000-battery cycle life, NCA": {
-        "amount": 1000,
+        "amount": 1500,
         "category": "Energy Storage",
         "powertrain": [
             "ICEV-d",
@@ -5392,12 +5392,12 @@
         "status": "",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 1000,
-        "minimum": 750,
-        "maximum": 1250
+        "loc": 1500,
+        "minimum": 1125,
+        "maximum": 1875
     },
     "181-2010-battery cycle life, NCA": {
-        "amount": 1000,
+        "amount": 1500,
         "category": "Energy Storage",
         "powertrain": [
             "ICEV-d",
@@ -5425,12 +5425,12 @@
         "status": "",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 1000,
-        "minimum": 750,
-        "maximum": 1250
+        "loc": 1500,
+        "minimum": 1125,
+        "maximum": 1875
     },
     "182-2020-battery cycle life, NCA": {
-        "amount": 1000,
+        "amount": 1500,
         "category": "Energy Storage",
         "powertrain": [
             "ICEV-d",
@@ -5458,12 +5458,12 @@
         "status": "",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 1000,
-        "minimum": 750,
-        "maximum": 1250
+        "loc": 1500,
+        "minimum": 1125,
+        "maximum": 1875
     },
     "183-2030-battery cycle life, NCA": {
-        "amount": 1000,
+        "amount": 2000,
         "category": "Energy Storage",
         "powertrain": [
             "ICEV-d",
@@ -5491,12 +5491,12 @@
         "status": "",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 1000,
-        "minimum": 750,
-        "maximum": 1250
+        "loc": 2000,
+        "minimum": 1500,
+        "maximum": 2500
     },
     "184-2040-battery cycle life, NCA": {
-        "amount": 1000,
+        "amount": 2000,
         "category": "Energy Storage",
         "powertrain": [
             "ICEV-d",
@@ -5524,12 +5524,12 @@
         "status": "",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 1000,
-        "minimum": 750,
-        "maximum": 1250
+        "loc": 2000,
+        "minimum": 1500,
+        "maximum": 2500
     },
     "185-2050-battery cycle life, NCA": {
-        "amount": 1000,
+        "amount": 2000,
         "category": "Energy Storage",
         "powertrain": [
             "ICEV-d",
@@ -5557,12 +5557,12 @@
         "status": "",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 1000,
-        "minimum": 750,
-        "maximum": 1250
+        "loc": 2000,
+        "minimum": 1500,
+        "maximum": 2500
     },
     "186-2000-battery cycle life, NMC-111": {
-        "amount": 2000,
+        "amount": 3000,
         "category": "Energy Storage",
         "powertrain": [
             "ICEV-d",
@@ -5590,12 +5590,12 @@
         "status": "",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 2000,
-        "minimum": 1500,
-        "maximum": 2500
+        "loc": 3000,
+        "minimum": 2250,
+        "maximum": 3750
     },
     "187-2010-battery cycle life, NMC-111": {
-        "amount": 2000,
+        "amount": 3000,
         "category": "Energy Storage",
         "powertrain": [
             "ICEV-d",
@@ -5623,12 +5623,12 @@
         "status": "",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 2000,
-        "minimum": 1500,
-        "maximum": 2500
+        "loc": 3000,
+        "minimum": 2250,
+        "maximum": 3750
     },
     "188-2020-battery cycle life, NMC-111": {
-        "amount": 2000,
+        "amount": 3000,
         "category": "Energy Storage",
         "powertrain": [
             "ICEV-d",
@@ -5656,12 +5656,12 @@
         "status": "",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 2000,
-        "minimum": 1500,
-        "maximum": 2500
+        "loc": 3000,
+        "minimum": 2250,
+        "maximum": 3750
     },
     "189-2030-battery cycle life, NMC-111": {
-        "amount": 2000,
+        "amount": 4000,
         "category": "Energy Storage",
         "powertrain": [
             "ICEV-d",
@@ -5689,12 +5689,12 @@
         "status": "",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 2000,
-        "minimum": 1500,
-        "maximum": 2500
+        "loc": 4000,
+        "minimum": 3000,
+        "maximum": 5000
     },
     "190-2040-battery cycle life, NMC-111": {
-        "amount": 2000,
+        "amount": 4000,
         "category": "Energy Storage",
         "powertrain": [
             "ICEV-d",
@@ -5722,12 +5722,12 @@
         "status": "",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 2000,
-        "minimum": 1500,
-        "maximum": 2500
+        "loc": 4000,
+        "minimum": 3000,
+        "maximum": 5000
     },
     "191-2050-battery cycle life, NMC-111": {
-        "amount": 2000,
+        "amount": 4000,
         "category": "Energy Storage",
         "powertrain": [
             "ICEV-d",
@@ -5755,9 +5755,9 @@
         "status": "",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 2000,
-        "minimum": 1500,
-        "maximum": 2500
+        "loc": 4000,
+        "minimum": 3000,
+        "maximum": 5000
     },
     "192-2000-battery discharge efficiency": {
         "amount": 0.88,

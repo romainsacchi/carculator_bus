@@ -96,15 +96,14 @@ class HotEmissionsModel:
 
         em_arr[:9] = a
 
-        # NH3 and N2O emissions seem to vary with teh Euro class
+        # NH3 and N2O emissions seem to vary with the Euro class
         # rather than the fuel consumption
+        # we tweak those here manually
 
         # N2O
         em_arr[6] /= 15
         # NH3
         em_arr[7] /= 12
-        #print(em_arr.shape)
-        #em_arr[6] = np.array([n2o_calib[x] for x in euro_classes])
 
         # Ethane, Propane, Butane, Pentane, Hexane, Cyclohexane, Heptane
         # Ethene, Propene, 1-Pentene, Toluene, m-Xylene, o-Xylene
@@ -144,18 +143,19 @@ class HotEmissionsModel:
         if powertrain_type == "diesel":
             # We also add heavy metals if diesel
             # which are initially defined per kg of fuel consumed
-            # here converted to kg emitted/kj
+            # here converted to g emitted/kj
             heavy_metals = np.array([
-                1.83E-09,
-                2.34E-12,
-                2.34E-12,
-                4.07E-08,
-                4.95E-10,
-                2.06E-10,
-                7.01E-10,
+                1.82E-09,
+                2.33E-12,
+                2.33E-12,
+                4.05E-08,
+                4.93E-10,
+                2.05E-10,
+                6.98E-10,
                 1.40E-12,
-                1.24E-10,
-                2.03E-10
+                1.23E-10,
+                2.02E-10
+
             ])
 
             em_arr[29:] = heavy_metals.reshape(-1, 1, 1, 1, 1, 1) * energy_consumption.values

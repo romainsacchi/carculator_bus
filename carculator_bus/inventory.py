@@ -3322,23 +3322,6 @@ class InventoryCalculation:
 
 
         # Powertrain components
-        self.A[
-            :,
-            self.inputs[
-                (
-                    "market for charger, electric passenger car",
-                    "GLO",
-                    "kilogram",
-                    "charger, electric passenger car",
-                )
-            ],
-            -self.number_of_cars :,
-        ] = (
-            array[self.array_inputs["charger mass"]]
-            / array[self.array_inputs["lifetime kilometers"]]
-            / array[self.array_inputs["average passengers"]]
-            * -1
-        )
 
         self.A[
             :,
@@ -3995,11 +3978,13 @@ class InventoryCalculation:
 
                 if self.fuel_blends["cng"]["primary"]["type"] == "cng":
                     share_fossil += self.fuel_blends["cng"]["primary"]["share"][y]
-                    CO2_fossil = self.fuel_blends["cng"]["primary"]["CO2"]
+                    CO2_fossil = (self.fuel_blends["cng"]["primary"]["CO2"] *
+                                  self.fuel_blends["cng"]["primary"]["share"][y])
 
                 if self.fuel_blends["cng"]["secondary"]["type"] == "cng":
                     share_fossil += self.fuel_blends["cng"]["secondary"]["share"][y]
-                    CO2_fossil = self.fuel_blends["cng"]["primary"]["CO2"]
+                    CO2_fossil = (self.fuel_blends["cng"]["primary"]["CO2"] *
+                                  self.fuel_blends["cng"]["secondary"]["share"][y])
 
                 self.A[
                     :,
@@ -4008,7 +3993,6 @@ class InventoryCalculation:
                 ] = (
                     (
                         array[self.array_inputs["fuel mass"], :, ind_array]
-                        * share_fossil
                         * CO2_fossil
                     )
                     / array[self.array_inputs["daily distance"], :, ind_array]
@@ -4026,14 +4010,14 @@ class InventoryCalculation:
 
                 if self.fuel_blends["cng"]["primary"]["type"] != "cng":
                     share_non_fossil += self.fuel_blends["cng"]["primary"]["share"][y]
-                    CO2_non_fossil = share_non_fossil * self.fuel_blends["cng"]["primary"]["CO2"]
+                    CO2_non_fossil = (share_non_fossil * self.fuel_blends["cng"]["primary"]["CO2"])
 
                 if self.fuel_blends["cng"]["secondary"]["type"] != "cng":
                     share_non_fossil += self.fuel_blends["cng"]["secondary"][
                         "share"
                     ][y]
-                    CO2_non_fossil += self.fuel_blends["cng"]["secondary"][
-                                          "share"][y] * self.fuel_blends["cng"]["secondary"]["CO2"]
+                    CO2_non_fossil += (self.fuel_blends["cng"]["secondary"][
+                                          "share"][y] * self.fuel_blends["cng"]["secondary"]["CO2"])
 
                 self.A[
                     :,
@@ -4049,7 +4033,6 @@ class InventoryCalculation:
                     (
                         (
                             array[self.array_inputs["fuel mass"], :, ind_array]
-                            * share_non_fossil
                             * CO2_non_fossil
                         )
                     )
@@ -4124,11 +4107,13 @@ class InventoryCalculation:
                 CO2_fossil = 0
                 if self.fuel_blends["diesel"]["primary"]["type"] == "diesel":
                     share_fossil = self.fuel_blends["diesel"]["primary"]["share"][y]
-                    CO2_fossil = self.fuel_blends["diesel"]["primary"]["CO2"]
+                    CO2_fossil = (self.fuel_blends["diesel"]["primary"]["CO2"]
+                                  * self.fuel_blends["diesel"]["primary"]["share"][y])
 
                 if self.fuel_blends["diesel"]["secondary"]["type"] == "diesel":
                     share_fossil += self.fuel_blends["diesel"]["secondary"]["share"][y]
-                    CO2_fossil = self.fuel_blends["diesel"]["secondary"]["CO2"]
+                    CO2_fossil = (self.fuel_blends["diesel"]["secondary"]["CO2"] *
+                                  self.fuel_blends["diesel"]["secondary"]["share"][y])
 
                 self.A[
                     :,
@@ -4137,7 +4122,6 @@ class InventoryCalculation:
                 ] = (
                     (
                         array[self.array_inputs["fuel mass"], :, ind_array]
-                        * share_fossil
                         * CO2_fossil
                     )
                     / array[self.array_inputs["daily distance"], :, ind_array]
@@ -4174,14 +4158,14 @@ class InventoryCalculation:
                 # As well as the CO2 emission factor of the fuel
                 if self.fuel_blends["diesel"]["primary"]["type"] != "diesel":
                     share_non_fossil += self.fuel_blends["diesel"]["primary"]["share"][y]
-                    CO2_non_fossil = share_non_fossil * self.fuel_blends["diesel"]["primary"]["CO2"]
+                    CO2_non_fossil = (share_non_fossil * self.fuel_blends["diesel"]["primary"]["CO2"])
 
                 if self.fuel_blends["diesel"]["secondary"]["type"] != "diesel":
                     share_non_fossil += self.fuel_blends["diesel"]["secondary"][
                         "share"
                     ][y]
-                    CO2_non_fossil += self.fuel_blends["diesel"]["secondary"][
-                        "share"][y] * self.fuel_blends["diesel"]["secondary"]["CO2"]
+                    CO2_non_fossil += (self.fuel_blends["diesel"]["secondary"][
+                        "share"][y] * self.fuel_blends["diesel"]["secondary"]["CO2"])
 
                 self.A[
                     :,
@@ -4197,7 +4181,6 @@ class InventoryCalculation:
                     (
                         (
                             array[self.array_inputs["fuel mass"], :, ind_array]
-                            * share_non_fossil
                             * CO2_non_fossil
                         )
                     )
@@ -4671,19 +4654,6 @@ class InventoryCalculation:
         ] = -1 * (array[self.array_inputs["gross mass"]] / 19000)
 
         # Powertrain components
-        self.A[
-            :,
-            self.inputs[
-                (
-                    "market for charger, electric passenger car",
-                    "GLO",
-                    "kilogram",
-                    "charger, electric passenger car",
-                )
-            ],
-            [self.inputs[i] for i in self.inputs if "Passenger bus" in i[0] and i[2] == "unit"]
-        ] = array[self.array_inputs["charger mass"], :] * -1
-
 
         self.A[
             :,
@@ -5338,11 +5308,11 @@ class InventoryCalculation:
 
                 if self.fuel_blends["cng"]["primary"]["type"] == "cng":
                     share_fossil += self.fuel_blends["cng"]["primary"]["share"][y]
-                    CO2_fossil = self.fuel_blends["cng"]["primary"]["CO2"]
+                    CO2_fossil = self.fuel_blends["cng"]["primary"]["CO2"] * self.fuel_blends["cng"]["primary"]["share"][y]
 
                 if self.fuel_blends["cng"]["secondary"]["type"] == "cng":
                     share_fossil += self.fuel_blends["cng"]["secondary"]["share"][y]
-                    CO2_fossil = self.fuel_blends["cng"]["primary"]["CO2"]
+                    CO2_fossil = self.fuel_blends["cng"]["primary"]["CO2"] * self.fuel_blends["cng"]["secondary"]["share"][y]
 
                 self.A[
                     :,
@@ -5351,7 +5321,6 @@ class InventoryCalculation:
                 ] = (
                     (
                         array[self.array_inputs["fuel mass"], :, ind_array]
-                        * share_fossil
                         * CO2_fossil
                     )
                     / array[self.array_inputs["daily distance"], :, ind_array]
@@ -5371,14 +5340,15 @@ class InventoryCalculation:
 
                 if self.fuel_blends["cng"]["primary"]["type"] != "cng":
                     share_non_fossil += self.fuel_blends["cng"]["primary"]["share"][y]
-                    CO2_non_fossil = share_non_fossil * self.fuel_blends["cng"]["primary"]["CO2"]
+                    CO2_non_fossil = (share_non_fossil * self.fuel_blends["cng"]["primary"]["CO2"]
+                                      * self.fuel_blends["cng"]["primary"]["share"][y])
 
                 if self.fuel_blends["cng"]["secondary"]["type"] != "cng":
                     share_non_fossil += self.fuel_blends["cng"]["secondary"][
                         "share"
                     ][y]
-                    CO2_non_fossil += self.fuel_blends["cng"]["secondary"][
-                                          "share"][y] * self.fuel_blends["cng"]["secondary"]["CO2"]
+                    CO2_non_fossil += (self.fuel_blends["cng"]["secondary"][
+                                          "share"][y] * self.fuel_blends["cng"]["secondary"]["CO2"])
 
                 self.A[
                     :,
@@ -5394,7 +5364,6 @@ class InventoryCalculation:
                     (
                         (
                             array[self.array_inputs["fuel mass"], :, ind_array]
-                            * share_non_fossil
                             * CO2_non_fossil
                         )
                     )
@@ -5471,11 +5440,13 @@ class InventoryCalculation:
                 CO2_fossil = 0
                 if self.fuel_blends["diesel"]["primary"]["type"] == "diesel":
                     share_fossil = self.fuel_blends["diesel"]["primary"]["share"][y]
-                    CO2_fossil = self.fuel_blends["diesel"]["primary"]["CO2"]
+                    CO2_fossil = (self.fuel_blends["diesel"]["primary"]["CO2"]
+                        * self.fuel_blends["diesel"]["primary"]["share"][y])
 
                 if self.fuel_blends["diesel"]["secondary"]["type"] == "diesel":
                     share_fossil += self.fuel_blends["diesel"]["secondary"]["share"][y]
-                    CO2_fossil = self.fuel_blends["diesel"]["secondary"]["CO2"]
+                    CO2_fossil += (self.fuel_blends["diesel"]["secondary"]["CO2"]
+                                   * self.fuel_blends["diesel"]["secondary"]["share"][y])
 
                 self.A[
                     :,
@@ -5484,7 +5455,6 @@ class InventoryCalculation:
                 ] = (
                     (
                         array[self.array_inputs["fuel mass"], :, ind_array]
-                        * share_fossil
                         * CO2_fossil
                     )
                     / array[self.array_inputs["daily distance"], :, ind_array]
@@ -5524,14 +5494,14 @@ class InventoryCalculation:
                 # As well as the CO2 emission factor of the fuel
                 if self.fuel_blends["diesel"]["primary"]["type"] != "diesel":
                     share_non_fossil += self.fuel_blends["diesel"]["primary"]["share"][y]
-                    CO2_non_fossil = share_non_fossil * self.fuel_blends["diesel"]["primary"]["CO2"]
+                    CO2_non_fossil = (share_non_fossil * self.fuel_blends["diesel"]["primary"]["CO2"])
 
                 if self.fuel_blends["diesel"]["secondary"]["type"] != "diesel":
                     share_non_fossil += self.fuel_blends["diesel"]["secondary"][
                         "share"
                     ][y]
-                    CO2_non_fossil += self.fuel_blends["diesel"]["secondary"][
-                        "share"][y] * self.fuel_blends["diesel"]["secondary"]["CO2"]
+                    CO2_non_fossil += (self.fuel_blends["diesel"]["secondary"][
+                        "share"][y] * self.fuel_blends["diesel"]["secondary"]["CO2"])
 
                 self.A[
                     :,
@@ -5547,7 +5517,6 @@ class InventoryCalculation:
                     (
                         (
                             array[self.array_inputs["fuel mass"], :, ind_array]
-                            * share_non_fossil
                             * CO2_non_fossil
                         )
                     )
