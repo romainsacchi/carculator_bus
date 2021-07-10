@@ -225,15 +225,18 @@ class EnergyConsumptionModel:
 
         # Resistance from the tire rolling: rolling resistance coefficient * driving mass * 9.81
         rolling_resistance = (driving_mass * rr_coef * 9.81).T.values * ones
-        # Resistance from the drag: frontal area * drag coefficient * air density * 1/2 * velocity^2
 
+        # Resistance from the drag: frontal area * drag coefficient * air density * 1/2 * velocity^2
         air_resistance = (
             frontal_area * drag_coef * self.rho_air / 2
         ).T.values * np.power(self.velocity, 2)
+
         # Resistance from road gradient: driving mass * 9.81 * sin(gradient)
         gradient_resistance = (driving_mass * 9.81).T.values * np.sin(self.gradient)
+
         # Inertia: driving mass * acceleration
         inertia = self.acceleration * driving_mass.values.T
+
         # Braking loss: when inertia is negative
         braking_loss = np.where(inertia < 0, inertia * -1, 0)
 
