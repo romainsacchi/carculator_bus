@@ -1,5 +1,5 @@
-import numpy as np
 import numexpr as ne
+import numpy as np
 
 
 def pn(cycle, powertrain_type, category):
@@ -189,24 +189,27 @@ class NoiseEmissionsModel:
         :rtype: numpy.array
         """
 
-
         if powertrain_type not in ("combustion", "electric", "hybrid"):
             raise TypeError("The powertrain type is not valid.")
 
         # rolling noise, in dB, for each second of the driving cycle
         if category == "medium":
-            rolling = self.rolling_noise(category, cycle).reshape(8, cycle.shape[-1], -1)
-            # propulsion noise, in dB, for each second of the driving cycle
-            propulsion = self.propulsion_noise(powertrain_type, category, cycle).reshape(
+            rolling = self.rolling_noise(category, cycle).reshape(
                 8, cycle.shape[-1], -1
             )
+            # propulsion noise, in dB, for each second of the driving cycle
+            propulsion = self.propulsion_noise(
+                powertrain_type, category, cycle
+            ).reshape(8, cycle.shape[-1], -1)
             c = cycle.T
         elif category == "heavy":
-            rolling = self.rolling_noise(category, cycle).reshape(8, cycle.shape[-1], -1)
-            # propulsion noise, in dB, for each second of the driving cycle
-            propulsion = self.propulsion_noise(powertrain_type, category, cycle).reshape(
+            rolling = self.rolling_noise(category, cycle).reshape(
                 8, cycle.shape[-1], -1
             )
+            # propulsion noise, in dB, for each second of the driving cycle
+            propulsion = self.propulsion_noise(
+                powertrain_type, category, cycle
+            ).reshape(8, cycle.shape[-1], -1)
             c = cycle.T
         else:
             raise TypeError("The category type is not valid.")
@@ -237,10 +240,15 @@ class NoiseEmissionsModel:
 
             else:
 
-                suburban[:, s] = (np.sum(sound_power[:, :, 4000:12500], axis=2) / distance)[:, s]
-                rural[:, s] = (np.sum(sound_power[:, :, 2000:4000], axis=2) / distance)[:, s]
-                rural[:, s] += (np.sum(sound_power[:, :, 12500:], axis=2) / distance)[:, s]
-
+                suburban[:, s] = (
+                    np.sum(sound_power[:, :, 4000:12500], axis=2) / distance
+                )[:, s]
+                rural[:, s] = (np.sum(sound_power[:, :, 2000:4000], axis=2) / distance)[
+                    :, s
+                ]
+                rural[:, s] += (np.sum(sound_power[:, :, 12500:], axis=2) / distance)[
+                    :, s
+                ]
 
         res = np.vstack([urban, suburban, rural]).T
         return res.reshape(-1, 1, 24, 1, 1)

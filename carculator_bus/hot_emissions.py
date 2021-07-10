@@ -1,7 +1,9 @@
+import pickle
+
 import numpy as np
 import xarray
+
 from . import DATA_DIR
-import pickle
 
 
 def _(o):
@@ -13,12 +15,12 @@ def _(o):
 
 
 def get_emission_factors():
-    """ Emissions factors extracted for trucks from HBEFA 4.1
-        deatiled by size, powertrain and EURO class for each substance.
+    """Emissions factors extracted for trucks from HBEFA 4.1
+    deatiled by size, powertrain and EURO class for each substance.
     """
     fp = DATA_DIR / "hot_buses.pickle"
 
-    with open(fp, 'rb') as f:
+    with open(fp, "rb") as f:
         hot = pickle.load(f)
 
     return hot
@@ -87,7 +89,10 @@ class HotEmissionsModel:
         # with a being a coefficient  given by fitting HBEFA 4.1 data
         # the fitting of emissions function of energy consumption is described in the notebook
         # `HBEFA buses.ipynb` in the folder `dev`.
-        a = arr.sel(variable="a").values[:, None, None, :, None, None] * energy_consumption.values
+        a = (
+            arr.sel(variable="a").values[:, None, None, :, None, None]
+            * energy_consumption.values
+        )
 
         # The receiving array should contain 40 substances, not 10
         arr_shape = list(a.shape)
@@ -111,54 +116,58 @@ class HotEmissionsModel:
         # Methyl ethyl ketone, Acrolein, Styrene
         # which are calculated as fractions of NMVOC emissions
 
-        ratios_NMHC = np.array([
-            3.00E-04,
-            1.00E-03,
-            1.50E-03,
-            6.00E-04,
-            0.00E+00,
-            0.00E+00,
-            3.00E-03,
-            0.00E+00,
-            0.00E+00,
-            0.00E+00,
-            1.00E-04,
-            9.80E-03,
-            4.00E-03,
-            8.40E-02,
-            4.57E-02,
-            1.37E-02,
-            0.00E+00,
-            0.00E+00,
-            1.77E-02,
-            5.60E-03
-        ])
+        ratios_NMHC = np.array(
+            [
+                3.00e-04,
+                1.00e-03,
+                1.50e-03,
+                6.00e-04,
+                0.00e00,
+                0.00e00,
+                3.00e-03,
+                0.00e00,
+                0.00e00,
+                0.00e00,
+                1.00e-04,
+                9.80e-03,
+                4.00e-03,
+                8.40e-02,
+                4.57e-02,
+                1.37e-02,
+                0.00e00,
+                0.00e00,
+                1.77e-02,
+                5.60e-03,
+            ]
+        )
 
-
-        em_arr[9:29] = em_arr[6]*ratios_NMHC[:, None, None, None, None, None]
+        em_arr[9:29] = em_arr[6] * ratios_NMHC[:, None, None, None, None, None]
 
         # remaining NMVOC
-        em_arr[5] *= (1 - np.sum(ratios_NMHC))
+        em_arr[5] *= 1 - np.sum(ratios_NMHC)
 
         if powertrain_type == "diesel":
             # We also add heavy metals if diesel
             # which are initially defined per kg of fuel consumed
             # here converted to g emitted/kj
-            heavy_metals = np.array([
-                1.82E-09,
-                2.33E-12,
-                2.33E-12,
-                4.05E-08,
-                4.93E-10,
-                2.05E-10,
-                6.98E-10,
-                1.40E-12,
-                1.23E-10,
-                2.02E-10
+            heavy_metals = np.array(
+                [
+                    1.82e-09,
+                    2.33e-12,
+                    2.33e-12,
+                    4.05e-08,
+                    4.93e-10,
+                    2.05e-10,
+                    6.98e-10,
+                    1.40e-12,
+                    1.23e-10,
+                    2.02e-10,
+                ]
+            )
 
-            ])
-
-            em_arr[29:] = heavy_metals.reshape(-1, 1, 1, 1, 1, 1) * energy_consumption.values
+            em_arr[29:] = (
+                heavy_metals.reshape(-1, 1, 1, 1, 1, 1) * energy_consumption.values
+            )
 
         # In case the fit produces negative numbers (it should not, though)
         em_arr[em_arr < 0] = 0
@@ -168,20 +177,58 @@ class HotEmissionsModel:
         # If the driving cycle selected is instead specified by the user (passed directly as an array), we used
         # speed levels to compartmentalize emissions.
 
-        urban = np.zeros((39, self.cycle.shape[-1], em_arr.shape[2], em_arr.shape[3], em_arr.shape[4]))
-        suburban = np.zeros((39, self.cycle.shape[-1], em_arr.shape[2], em_arr.shape[3], em_arr.shape[4]))
-        rural = np.zeros((39, self.cycle.shape[-1], em_arr.shape[2], em_arr.shape[3], em_arr.shape[4]))
+        urban = np.zeros(
+            (
+                39,
+                self.cycle.shape[-1],
+                em_arr.shape[2],
+                em_arr.shape[3],
+                em_arr.shape[4],
+            )
+        )
+        suburban = np.zeros(
+            (
+                39,
+                self.cycle.shape[-1],
+                em_arr.shape[2],
+                em_arr.shape[3],
+                em_arr.shape[4],
+            )
+        )
+        rural = np.zeros(
+            (
+                39,
+                self.cycle.shape[-1],
+                em_arr.shape[2],
+                em_arr.shape[3],
+                em_arr.shape[4],
+            )
+        )
 
         for s, x in enumerate(size):
             if x in ["9m", "13m-city", "13m-city-double"]:
 
-                urban[:, s] = (np.sum(em_arr, axis=-1) / 1000 / distance[:, None, None, None])[:, s]
+                urban[:, s] = (
+                    np.sum(em_arr, axis=-1) / 1000 / distance[:, None, None, None]
+                )[:, s]
 
             else:
 
-                suburban[:, s] = (np.sum(em_arr[..., 4000:12500], axis=-1) / 1000 / distance[:, None, None, None])[:, s]
-                rural[:, s] = (np.sum(em_arr[..., 2000:4000], axis=-1) / 1000 / distance[:, None, None, None])[:, s]
-                rural[:, s] += (np.sum(em_arr[..., 12500:], axis=-1) / 1000 / distance[:, None, None, None])[:, s]
+                suburban[:, s] = (
+                    np.sum(em_arr[..., 4000:12500], axis=-1)
+                    / 1000
+                    / distance[:, None, None, None]
+                )[:, s]
+                rural[:, s] = (
+                    np.sum(em_arr[..., 2000:4000], axis=-1)
+                    / 1000
+                    / distance[:, None, None, None]
+                )[:, s]
+                rural[:, s] += (
+                    np.sum(em_arr[..., 12500:], axis=-1)
+                    / 1000
+                    / distance[:, None, None, None]
+                )[:, s]
 
         res = np.vstack((urban, suburban, rural))
 

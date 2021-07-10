@@ -1,9 +1,11 @@
-from .bus_input_parameters import BusInputParameters as b_i_p
+import itertools
+
 import numpy as np
 import pandas as pd
 import stats_arrays as sa
 import xarray as xr
-import itertools
+
+from .bus_input_parameters import BusInputParameters as b_i_p
 
 
 def fill_xarray_from_input_parameters(bip, sensitivity=False, scope=None):
@@ -38,11 +40,7 @@ def fill_xarray_from_input_parameters(bip, sensitivity=False, scope=None):
         )
 
     if scope is None:
-        scope = {
-            "size": bip.sizes,
-            "powertrain": bip.powertrains,
-            "year": bip.years
-        }
+        scope = {"size": bip.sizes, "powertrain": bip.powertrains, "year": bip.years}
     else:
         if "size" not in scope:
             scope["size"] = bip.sizes
@@ -51,34 +49,27 @@ def fill_xarray_from_input_parameters(bip, sensitivity=False, scope=None):
         if "year" not in scope:
             scope["year"] = bip.years
 
-
-
     if any(s for s in scope["size"] if s not in bip.sizes):
-        raise ValueError(
-            "One of the size types is not valid."
-        )
+        raise ValueError("One of the size types is not valid.")
 
     if any(y for y in scope["year"] if y not in bip.years):
-        raise ValueError(
-            "One of the years defined is not valid."
-        )
+        raise ValueError("One of the years defined is not valid.")
 
     if any(pt for pt in scope["powertrain"] if pt not in bip.powertrains):
-        raise ValueError(
-            "One of the powertrain types is not valid."
-        )
+        raise ValueError("One of the powertrain types is not valid.")
 
     # if the purpose is not to do a sensitivity analysis
     # the dimension `value` of the array is as large as the number of iterations to perform
     # that is, 1 in `static` mode, or several in `stochastic` mode.
 
-    d = {"9m": 1,
-         "13m-city": 2,
-         "13m-coach": 3,
-         "13m-city-double": 4,
-         "13m-coach-double": 5,
-         "18m": 6,
-         }
+    d = {
+        "9m": 1,
+        "13m-city": 2,
+        "13m-coach": 3,
+        "13m-city-double": 4,
+        "13m-coach-double": 5,
+        "18m": 6,
+    }
 
     if not sensitivity:
         array = xr.DataArray(
@@ -116,7 +107,13 @@ def fill_xarray_from_input_parameters(bip, sensitivity=False, scope=None):
                     len(params),
                 )
             ),
-            coords=[scope["size"], scope["powertrain"], bip.parameters, scope["year"], params],
+            coords=[
+                scope["size"],
+                scope["powertrain"],
+                bip.parameters,
+                scope["year"],
+                params,
+            ],
             dims=["size", "powertrain", "parameter", "year", "value"],
         ).astype("float32")
 
@@ -129,26 +126,34 @@ def fill_xarray_from_input_parameters(bip, sensitivity=False, scope=None):
 
         for param in bip:
 
-            pwt = set(bip.metadata[param]["powertrain"]) if isinstance(bip.metadata[param]["powertrain"], list) \
+            pwt = (
+                set(bip.metadata[param]["powertrain"])
+                if isinstance(bip.metadata[param]["powertrain"], list)
                 else set([bip.metadata[param]["powertrain"]])
+            )
 
-            size = set(bip.metadata[param]["sizes"]) if isinstance(bip.metadata[param]["sizes"], list) \
+            size = (
+                set(bip.metadata[param]["sizes"])
+                if isinstance(bip.metadata[param]["sizes"], list)
                 else set([bip.metadata[param]["sizes"]])
+            )
 
-            year = set(bip.metadata[param]["year"]) if isinstance(bip.metadata[param]["year"], list) \
+            year = (
+                set(bip.metadata[param]["year"])
+                if isinstance(bip.metadata[param]["year"], list)
                 else set([bip.metadata[param]["year"]])
+            )
 
-            if pwt.intersection(scope["powertrain"]) \
-                    and size.intersection(scope["size"]) \
-                    and year.intersection(scope["year"]):
+            if (
+                pwt.intersection(scope["powertrain"])
+                and size.intersection(scope["size"])
+                and year.intersection(scope["year"])
+            ):
                 array.loc[
                     dict(
-                        powertrain=[p for p in pwt
-                                    if p in scope["powertrain"]],
-                        size=[s for s in size
-                              if s in scope["size"]],
-                        year=[y for y in year
-                              if y in scope["year"]],
+                        powertrain=[p for p in pwt if p in scope["powertrain"]],
+                        size=[s for s in size if s in scope["size"]],
+                        year=[y for y in year if y in scope["year"]],
                         parameter=bip.metadata[param]["name"],
                     )
                 ] = bip.values[param]
@@ -157,11 +162,23 @@ def fill_xarray_from_input_parameters(bip, sensitivity=False, scope=None):
         # if `sensitivity` == True, the values of each parameter is
         # incremented by 10% when `value` == `parameter`
         for x, param in enumerate(bip.input_parameters):
-            names = [n for n in bip.metadata if bip.metadata[n]['name'] == param]
+            names = [n for n in bip.metadata if bip.metadata[n]["name"] == param]
 
-            pwt = list(set(itertools.chain.from_iterable([bip.metadata[name]["powertrain"] for name in names])))
+            pwt = list(
+                set(
+                    itertools.chain.from_iterable(
+                        [bip.metadata[name]["powertrain"] for name in names]
+                    )
+                )
+            )
 
-            size = list(set(itertools.chain.from_iterable([bip.metadata[name]["sizes"] for name in names])))
+            size = list(
+                set(
+                    itertools.chain.from_iterable(
+                        [bip.metadata[name]["sizes"] for name in names]
+                    )
+                )
+            )
 
             year = [str(bip.metadata[name]["year"]) for name in names]
             year = list(set(year))
@@ -169,21 +186,23 @@ def fill_xarray_from_input_parameters(bip, sensitivity=False, scope=None):
 
             for name in names:
 
-                if any(p for p in pwt if p in scope["powertrain"]) \
-                    and any(s for s in size if s in scope["size"]) \
-                    and any(y for y in year if y in scope["year"]):
+                if (
+                    any(p for p in pwt if p in scope["powertrain"])
+                    and any(s for s in size if s in scope["size"])
+                    and any(y for y in year if y in scope["year"])
+                ):
 
-                    vals = [bip.values[name] for _ in range(0, len(bip.input_parameters) + 1)]
+                    vals = [
+                        bip.values[name]
+                        for _ in range(0, len(bip.input_parameters) + 1)
+                    ]
                     vals[x + 1] *= 1.1
 
                     array.loc[
                         dict(
-                            powertrain=[p for p in pwt
-                                        if p in scope["powertrain"]],
-                            size=[s for s in size
-                                  if s in scope["size"]],
-                            year=[y for y in year
-                                  if y in scope["year"]],
+                            powertrain=[p for p in pwt if p in scope["powertrain"]],
+                            size=[s for s in size if s in scope["size"]],
+                            year=[y for y in year if y in scope["year"]],
                             parameter=bip.metadata[name]["name"],
                         )
                     ] = vals
@@ -372,9 +391,9 @@ def modify_xarray_from_custom_parameters(fp, array):
 
                         if distr == 5:
                             if (
-                                    np.isnan(val[(y, "loc")])
-                                    or np.isnan(val[(y, "minimum")])
-                                    or np.isnan(val[(y, "maximum")])
+                                np.isnan(val[(y, "loc")])
+                                or np.isnan(val[(y, "minimum")])
+                                or np.isnan(val[(y, "maximum")])
                             ):
                                 print(
                                     "One or more parameters for the triangular distribution is/are missing for {} in {}.\n The parameter is skipped and default value applies".format(
@@ -406,7 +425,7 @@ def modify_xarray_from_custom_parameters(fp, array):
                         # Uniform
                         if distr == 4:
                             if np.isnan(val[(y, "minimum")]) or np.isnan(
-                                    val[(y, "maximum")]
+                                val[(y, "maximum")]
                             ):
                                 print(
                                     "One or more parameters for the uniform distribution is/are missing for {} in {}.\n The parameter is skipped and default value applies".format(
@@ -472,9 +491,9 @@ def modify_xarray_from_custom_parameters(fp, array):
 
                         if distr == 5:
                             if (
-                                    np.isnan(val[(y, "loc")])
-                                    or np.isnan(val[(y, "minimum")])
-                                    or np.isnan(val[(y, "maximum")])
+                                np.isnan(val[(y, "loc")])
+                                or np.isnan(val[(y, "minimum")])
+                                or np.isnan(val[(y, "maximum")])
                             ):
                                 print(
                                     "One or more parameters for the triangular distribution is/are missing for {} in {}.\n The parameter is skipped and default value applies".format(
@@ -506,7 +525,7 @@ def modify_xarray_from_custom_parameters(fp, array):
                         # Uniform
                         if distr == 4:
                             if np.isnan(val[(y, "minimum")]) or np.isnan(
-                                    val[(y, "maximum")]
+                                val[(y, "maximum")]
                             ):
                                 print(
                                     "One or more parameters for the uniform distribution is/are missing for {} in {}.\n The parameter is skipped and default value applies".format(
