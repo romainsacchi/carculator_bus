@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class ParticulatesEmissionsModel:
     """
     Calculate particulates emissions based on the method described in
@@ -35,35 +36,46 @@ class ParticulatesEmissionsModel:
 
     def __init__(self, cycle, number_axles, load_factor):
 
-        self.cycle = np.resize(cycle, (cycle.shape[0], number_axles.shape[-1],
-                                            number_axles.shape[2],
-                                            number_axles.shape[1],
-                                            cycle.shape[-1]))
+        self.cycle = np.resize(
+            cycle,
+            (
+                cycle.shape[0],
+                number_axles.shape[-1],
+                number_axles.shape[2],
+                number_axles.shape[1],
+                cycle.shape[-1],
+            ),
+        )
 
         # We determine which sections of the driving cycle correspond to an urban, suburban and rural environment
         # This is to compartmentalize emissions
 
-        self.velocity = self.cycle / 3600 # m/s per second
+        self.velocity = self.cycle / 3600  # m/s per second
 
         self.number_axles = number_axles.values
         self.load_factor = load_factor.values
 
     def get_abrasion_emissions(self):
 
-        tire_wear = self.get_tire_wear_emissions(self.number_axles, self.load_factor) / 1000
+        tire_wear = (
+            self.get_tire_wear_emissions(self.number_axles, self.load_factor) / 1000
+        )
 
         brake_wear = self.get_brake_wear_emissions(self.load_factor) / 1000
 
         road_wear = self.get_road_wear_emissions() / 1000
 
-        res = np.vstack((tire_wear.sum(axis=0)[None, ...],
-                         brake_wear.sum(axis=0)[None, ...],
-                         road_wear.sum(axis=0)[None, ...]
-                         ))
+        res = np.vstack(
+            (
+                tire_wear.sum(axis=0)[None, ...],
+                brake_wear.sum(axis=0)[None, ...],
+                road_wear.sum(axis=0)[None, ...],
+            )
+        )
 
         distance = self.cycle.sum(axis=0) / 3600
 
-        return res / distance # total emission per duty cycle to total emissions per km
+        return res / distance  # total emission per duty cycle to total emissions per km
 
     def get_tire_wear_emissions(self, number_axles, load_factor):
         """
@@ -77,7 +89,9 @@ class ParticulatesEmissionsModel:
 
         PM_total = PM_total.T * self.velocity
         PM_total[self.cycle <= 40] *= 1.39
-        PM_total[(self.cycle > 40) & (self.cycle < 90)] *= -0.00974 * self.cycle[(self.cycle > 40) & (self.cycle < 90)] + 1.78
+        PM_total[(self.cycle > 40) & (self.cycle < 90)] *= (
+            -0.00974 * self.cycle[(self.cycle > 40) & (self.cycle < 90)] + 1.78
+        )
         PM_total[self.cycle > 90] *= 0.902
 
         return PM_total
@@ -94,7 +108,9 @@ class ParticulatesEmissionsModel:
 
         PM_total = PM_total.T * self.velocity
         PM_total[self.cycle <= 40] *= 1.67
-        PM_total[(self.cycle > 40) & (self.cycle < 90)] *= -0.027 * self.cycle[(self.cycle > 40) & (self.cycle < 90)] + 2.75
+        PM_total[(self.cycle > 40) & (self.cycle < 90)] *= (
+            -0.027 * self.cycle[(self.cycle > 40) & (self.cycle < 90)] + 2.75
+        )
         PM_total[self.cycle > 90] *= 0.185
 
         return PM_total
@@ -111,4 +127,3 @@ class ParticulatesEmissionsModel:
         PM_total = PM_total.T * self.velocity
 
         return PM_total
-

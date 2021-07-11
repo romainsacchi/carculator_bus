@@ -1,5 +1,6 @@
-from setuptools import setup
 import os
+
+from setuptools import setup
 
 packages = []
 root_dir = os.path.dirname(__file__)
@@ -31,7 +32,9 @@ setup(
     packages=packages,
     author="Romain Sacchi <romain.sacchi@psi.ch>",
     license=open("LICENSE").read(),
-    package_data={"carculator_bus": package_files(os.path.join("carculator_bus", "data"))},
+    package_data={
+        "carculator_bus": package_files(os.path.join("carculator_bus", "data"))
+    },
     install_requires=[
         "pandas",
         "xarray<0.18",
@@ -46,7 +49,7 @@ setup(
         "prettytable",
         "wurst",
         "pycountry",
-        "atmos"
+        "atmos",
     ],
     url="https://github.com/romainsacchi/carculator_bus",
     description="Prospective environmental and economic life cycle assessment of urban and coach buses",

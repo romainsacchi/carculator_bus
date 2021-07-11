@@ -1,6 +1,8 @@
-from . import DATA_DIR
-import numpy as np
 import sys
+
+import numpy as np
+
+from . import DATA_DIR
 
 
 def get_gradients(size=["3.5t", "7.5t", "18t", "26t", "32t", "40t", "60t"]):
@@ -31,10 +33,8 @@ def get_gradients(size=["3.5t", "7.5t", "18t", "26t", "32t", "40t", "60t"]):
         "13m-coach": 3,
         "13m-city-double": 4,
         "13m-coach-double": 5,
-        "18m": 6
+        "18m": 6,
     }
-
-
 
     try:
         list_col = [dict_dc_sizes[s] for s in size]

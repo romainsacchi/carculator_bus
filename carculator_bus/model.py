@@ -1,13 +1,14 @@
-from .energy_consumption import EnergyConsumptionModel
-from .hot_emissions import HotEmissionsModel
-from .noise_emissions import NoiseEmissionsModel
-from .background_systems import BackgroundSystemModel
-from .particulates_emissions import ParticulatesEmissionsModel
-from .driving_cycles import get_standard_driving_cycle
 import numexpr as ne
 import numpy as np
 import xarray as xr
 from prettytable import PrettyTable
+
+from .background_systems import BackgroundSystemModel
+from .driving_cycles import get_standard_driving_cycle
+from .energy_consumption import EnergyConsumptionModel
+from .hot_emissions import HotEmissionsModel
+from .noise_emissions import NoiseEmissionsModel
+from .particulates_emissions import ParticulatesEmissionsModel
 
 
 def finite(array, mask_value=0):
@@ -390,13 +391,16 @@ class BusModel:
                 )
 
                 if arr.sum() > 0:
-                    new_shares = self.array.loc[
-                        dict(
-                            powertrain=l_pwt,
-                            parameter="combustion power share",
-                            year=actual_years,
-                        )
-                    ] - (arr * 0.04)
+                    new_shares = (
+                        self.array.loc[
+                            dict(
+                                powertrain=l_pwt,
+                                parameter="combustion power share",
+                                year=actual_years,
+                            )
+                        ]
+                        - (arr * 0.04)
+                    )
 
                     self.array.loc[
                         dict(
@@ -466,7 +470,11 @@ class BusModel:
 
         if len(l_size) > 0:
             self.array.loc[
-                dict(powertrain="BEV-motion", parameter="is_available", size=l_size,)
+                dict(
+                    powertrain="BEV-motion",
+                    parameter="is_available",
+                    size=l_size,
+                )
             ] = 0
 
         # if the mass allowance left
@@ -568,7 +576,11 @@ class BusModel:
         # Correction of combustion powertrain cost for ICEV-g
         if "ICEV-g" in self.array.powertrain.values:
             self.array.loc[
-                :, ["ICEV-g"], "combustion powertrain cost per kW", :, :,
+                :,
+                ["ICEV-g"],
+                "combustion powertrain cost per kW",
+                :,
+                :,
             ] = np.reshape(
                 (5.92e160 * np.exp(-0.1819 * self.array.year.values) + 26.76)
                 * cost_factor,
@@ -744,11 +756,10 @@ class BusModel:
         if len(l_pwt) > 0:
 
             self.energy.loc[dict(parameter="power load", powertrain=l_pwt)] = (
-                (motive_power.T[:, idx, ...] + recuperated_power.T[:, idx, ...])
-                / self.array.sel(parameter="electric power", powertrain=l_pwt).values[
-                    ..., None
-                ]
-            )
+                motive_power.T[:, idx, ...] + recuperated_power.T[:, idx, ...]
+            ) / self.array.sel(parameter="electric power", powertrain=l_pwt).values[
+                ..., None
+            ]
 
         self.energy.loc[dict(parameter="power load")] = np.clip(
             self.energy.loc[dict(parameter="power load")], 0.0, 1
@@ -773,7 +784,10 @@ class BusModel:
         if len(l_pwt) > 0:
 
             self.energy.loc[
-                dict(parameter="engine efficiency", powertrain=l_pwt,)
+                dict(
+                    parameter="engine efficiency",
+                    powertrain=l_pwt,
+                )
             ] = np.clip(
                 np.interp(
                     self.energy.loc[dict(parameter="power load", powertrain=l_pwt)],
@@ -801,12 +815,9 @@ class BusModel:
         if "ICEV-g" in self.array.powertrain.values:
             self.energy.loc[
                 dict(parameter="engine efficiency", powertrain="ICEV-g")
-            ] *= (
-                1
-                - self.array.sel(
-                    parameter="CNG engine efficiency correction factor",
-                    powertrain="ICEV-g",
-                )
+            ] *= 1 - self.array.sel(
+                parameter="CNG engine efficiency correction factor",
+                powertrain="ICEV-g",
             )
 
         # Correction for electric motors
@@ -1458,7 +1469,11 @@ class BusModel:
         # For battery, need to divide cost of electricity in battery by efficiency of charging
         for pt in [
             pwt
-            for pwt in ["BEV-opp", "BEV-depot", "BEV-motion",]
+            for pwt in [
+                "BEV-opp",
+                "BEV-depot",
+                "BEV-motion",
+            ]
             if pwt in self.array.coords["powertrain"].values
         ]:
             with self(pt) as cpm:
@@ -1725,7 +1740,10 @@ class BusModel:
 
         if len(l_pwt) > 0:
             self.array.loc[
-                dict(powertrain=l_pwt, parameter=list_direct_emissions,)
+                dict(
+                    powertrain=l_pwt,
+                    parameter=list_direct_emissions,
+                )
             ] = hem.get_emissions_per_powertrain(
                 powertrain_type="diesel",
                 euro_classes=l_y,
@@ -1802,13 +1820,25 @@ class BusModel:
         ]
 
         l_pwt_combustion = [
-            p for p in self.array.powertrain.values if p in ["ICEV-g", "ICEV-d",]
+            p
+            for p in self.array.powertrain.values
+            if p
+            in [
+                "ICEV-g",
+                "ICEV-d",
+            ]
         ]
 
         l_pwt_electric = [
             p
             for p in self.array.powertrain.values
-            if p in ["BEV-opp", "BEV-depot", "BEV-motion", "FCEV",]
+            if p
+            in [
+                "BEV-opp",
+                "BEV-depot",
+                "BEV-motion",
+                "FCEV",
+            ]
         ]
 
         l_size_medium = [
@@ -2011,7 +2041,10 @@ class BusModel:
 
         share_biofuel = (
             self.bs.biofuel.sel(
-                region=region, value=0, fuel_type="Biomass fuel", scenario=scenario,
+                region=region,
+                value=0,
+                fuel_type="Biomass fuel",
+                scenario=scenario,
             )
             .interp(
                 year=self.array.coords["year"].values,

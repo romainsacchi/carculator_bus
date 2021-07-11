@@ -1,14 +1,18 @@
+import numpy as np
+
 from .driving_cycles import get_standard_driving_cycle
 from .gradients import get_gradients
-import numpy as np
-np.seterr(divide='ignore', invalid='ignore')
-import xarray as xr
-from . import DATA_DIR
-import csv
-import atmos
 
+np.seterr(divide="ignore", invalid="ignore")
+import csv
+
+import atmos
+import xarray as xr
+
+from . import DATA_DIR
 
 MONTHLY_AVG_TEMP = "monthly_avg_temp.csv"
+
 
 def _(o):
     """Add a trailing dimension to make input arrays broadcast correctly"""
@@ -16,6 +20,7 @@ def _(o):
         return np.expand_dims(o, -1)
     else:
         return o
+
 
 def get_country_temperature(country):
     """
@@ -32,7 +37,9 @@ def get_country_temperature(country):
                 if row[2] == country:
                     return np.array([float(i) for i in row[3:]])
 
-        print(f"Could not find monthly average temperature series for {country}. Uses those for CH instead.")
+        print(
+            f"Could not find monthly average temperature series for {country}. Uses those for CH instead."
+        )
 
         with open(DATA_DIR / MONTHLY_AVG_TEMP) as f:
             reader = csv.reader(f, delimiter=";")
@@ -47,7 +54,8 @@ def get_air_density(t):
     :param t:
     :return:
     """
-    return atmos.calculate('rho', Tv=t + 273.15, p=101325)
+    return atmos.calculate("rho", Tv=t + 273.15, p=101325)
+
 
 class EnergyConsumptionModel:
     """
@@ -82,12 +90,13 @@ class EnergyConsumptionModel:
 
     """
 
-    def __init__(self,
-                 cycle,
-                 size,
-                 country="CH",
-                 ambient_temp=None,
-                 ):
+    def __init__(
+        self,
+        cycle,
+        size,
+        country="CH",
+        ambient_temp=None,
+    ):
         # If a string is passed, the corresponding driving cycle is retrieved
         if isinstance(cycle, str):
             try:
@@ -128,42 +137,54 @@ class EnergyConsumptionModel:
         self.acceleration = np.zeros_like(self.velocity)
         self.acceleration[1:-1] = (self.velocity[2:] - self.velocity[:-2]) / 2
 
-    def aux_energy_per_km(self,
-                          hvac_power,
-                          battery_cooling_unit,
-                          battery_heating_unit,
-                          indoor_temp=20,
-                          ):
+    def aux_energy_per_km(
+        self,
+        hvac_power,
+        battery_cooling_unit,
+        battery_heating_unit,
+        indoor_temp=20,
+    ):
 
         # use ambient temperature if provided, otherwise
         # monthly temperature average (12 values)
-
 
         # relation between ambient temperature
         # and HVAC power required
         # from https://doi.org/10.1016/j.energy.2018.12.064
         amb_temp = np.array([-30, -20, -10, 0, 10, 20, 30, 40])
-        pct_power_HVAC = np.array([.95, .54, .29, .13, .04, .08, .45, .7])
+        pct_power_HVAC = np.array([0.95, 0.54, 0.29, 0.13, 0.04, 0.08, 0.45, 0.7])
 
         # Heating power as long as ambient temperature, in W
         # is below the comfort indoor temperature
-        p_heating = (np.where(self.t < indoor_temp, np.interp(self.t, amb_temp, pct_power_HVAC), 0).mean() * hvac_power).values
+        p_heating = (
+            np.where(
+                self.t < indoor_temp, np.interp(self.t, amb_temp, pct_power_HVAC), 0
+            ).mean()
+            * hvac_power
+        ).values
 
         # Cooling power as long as ambient temperature, in W
         # is above the comfort indoor temperature
-        p_cooling = (np.where(self.t >= indoor_temp, np.interp(self.t, amb_temp, pct_power_HVAC), 0).mean() * hvac_power).values
-
+        p_cooling = (
+            np.where(
+                self.t >= indoor_temp, np.interp(self.t, amb_temp, pct_power_HVAC), 0
+            ).mean()
+            * hvac_power
+        ).values
 
         # We want to add power draw for battery cooling
         # and battery heating
 
         # battery cooling occurring above 20C, in W
-        p_battery_cooling = np.where(self.t[:, None, None, None, None] > 20, battery_cooling_unit, 0).mean(axis=-1)
+        p_battery_cooling = np.where(
+            self.t[:, None, None, None, None] > 20, battery_cooling_unit, 0
+        ).mean(axis=-1)
 
         # battery heating occurring below 5C, in W
-        p_battery_heating = np.where(self.t[:, None, None, None, None] < 5, battery_heating_unit, 0).mean(axis=-1)
+        p_battery_heating = np.where(
+            self.t[:, None, None, None, None] < 5, battery_heating_unit, 0
+        ).mean(axis=-1)
         return p_cooling, p_heating, p_battery_cooling, p_battery_heating
-
 
     def motive_energy_per_km(
         self,
@@ -252,7 +273,11 @@ class EnergyConsumptionModel:
             # Recuperation of the braking power within the limit of the electric engine power
             recuperated_power = braking_loss * self.velocity / 1000
 
-            return total_power.astype("float32"), recuperated_power.astype("float32"), distance
+            return (
+                total_power.astype("float32"),
+                recuperated_power.astype("float32"),
+                distance,
+            )
 
         # if `debug_mode` == True, returns instead
         # the power to overcome rolling resistance, air resistance, gradient resistance,
@@ -271,12 +296,8 @@ class EnergyConsumptionModel:
                 + braking_loss
             )
 
-            recuperated_power = (
-                                        braking_loss * recuperation_efficiency.values.T
-                                )
-            recuperated_power = np.clip(
-                recuperated_power, 0, motor_power.values.T
-            )
+            recuperated_power = braking_loss * recuperation_efficiency.values.T
+            recuperated_power = np.clip(recuperated_power, 0, motor_power.values.T)
 
             return (
                 xr.DataArray(
@@ -284,20 +305,26 @@ class EnergyConsumptionModel:
                     dims=["values", "year", "powertrain", "size"],
                 ),
                 xr.DataArray(
-                    np.squeeze(air_resistance), dims=["values", "year", "powertrain", "size"]
+                    np.squeeze(air_resistance),
+                    dims=["values", "year", "powertrain", "size"],
                 ),
                 xr.DataArray(
                     np.squeeze(gradient_resistance),
                     dims=["values", "year", "powertrain", "size"],
                 ),
-                xr.DataArray(np.squeeze(inertia), dims=["values", "year", "powertrain", "size"]),
                 xr.DataArray(
-                    np.squeeze(braking_loss), dims=["values", "year", "powertrain", "size"]
+                    np.squeeze(inertia), dims=["values", "year", "powertrain", "size"]
                 ),
                 xr.DataArray(
-                    np.squeeze(recuperated_power), dims=["values", "year", "powertrain", "size"]
+                    np.squeeze(braking_loss),
+                    dims=["values", "year", "powertrain", "size"],
                 ),
                 xr.DataArray(
-                    np.squeeze(total_resistance), dims=["values", "year", "powertrain", "size"]
-                )
+                    np.squeeze(recuperated_power),
+                    dims=["values", "year", "powertrain", "size"],
+                ),
+                xr.DataArray(
+                    np.squeeze(total_resistance),
+                    dims=["values", "year", "powertrain", "size"],
+                ),
             )

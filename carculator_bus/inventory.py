@@ -1,18 +1,20 @@
-from . import DATA_DIR
+import csv
 import glob
-from .background_systems import BackgroundSystemModel
-from .export import ExportInventory
+import itertools
 from inspect import currentframe, getframeinfo
 from pathlib import Path
-from scipy import sparse
-import csv
-from .utils import build_fleet_array
-import itertools
+
 import numpy as np
 import xarray as xr
-from .geomap import Geomap
+from scipy import sparse
 
-np.warnings.filterwarnings('ignore', category=np.VisibleDeprecationWarning)
+from . import DATA_DIR
+from .background_systems import BackgroundSystemModel
+from .export import ExportInventory
+from .geomap import Geomap
+from .utils import build_fleet_array
+
+np.warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning)
 
 REMIND_FILES_DIR = DATA_DIR / "IAM"
 
@@ -302,17 +304,13 @@ class InventoryCalculation:
             ]
         )
 
-
-
         self.compliant_vehicles = (
             array.sel(parameter="is_available")
-            #* array.sel(parameter="is_compliant")
+            # * array.sel(parameter="is_compliant")
             * np.where(array.sel(parameter="has_schedule_issue") == 0, 1, 0)
             * np.where(array.sel(parameter="is_too_heavy") == 0, 1, 0)
-            *1
+            * 1
         )
-
-
 
         self.array = array.stack(desired=["size", "powertrain", "year"])
 
@@ -344,11 +342,11 @@ class InventoryCalculation:
             if "electric" not in self.background_configuration["energy storage"]:
                 self.background_configuration["energy storage"]["electric"] = {
                     "origin": "CN",
-                    'BEV-opp': 'LTO',
-                    'BEV-depot': 'NMC-111',
-                    'BEV-motion': 'LTO',
+                    "BEV-opp": "LTO",
+                    "BEV-depot": "NMC-111",
+                    "BEV-motion": "LTO",
                     "FCEV": "NMC-111",
-                    "HEV-d": "NMC-111"
+                    "HEV-d": "NMC-111",
                 }
             else:
                 if (
@@ -359,10 +357,13 @@ class InventoryCalculation:
                         "origin"
                     ] = "CN"
 
-
         self.inputs = get_dict_input()
         self.bs = BackgroundSystemModel()
-        self.country = self.background_configuration["country"] if "country" in self.background_configuration else bm.country
+        self.country = (
+            self.background_configuration["country"]
+            if "country" in self.background_configuration
+            else bm.country
+        )
         self.add_additional_activities()
         self.rev_inputs = self.get_rev_dict_input()
         self.A = self.get_A_matrix()
@@ -385,7 +386,7 @@ class InventoryCalculation:
         self.index_combustion_wo_cng = [
             self.inputs[i]
             for i in self.inputs
-            if any(ele in i[0] for ele in ["ICEV-d",  "HEV-d"])
+            if any(ele in i[0] for ele in ["ICEV-d", "HEV-d"])
         ]
         self.index_diesel = [self.inputs[i] for i in self.inputs if "ICEV-d" in i[0]]
         self.index_all_diesel = [
@@ -403,130 +404,596 @@ class InventoryCalculation:
         self.index_fuel_cell = [self.inputs[i] for i in self.inputs if "FCEV" in i[0]]
 
         self.map_non_fuel_emissions = {
-            ('1-Pentene', ('air','low population density, long-term'), 'kilogram'): "1-Pentene direct emissions, rural",
-            ('1-Pentene', ('air','non-urban air or from high stacks'), 'kilogram'): "1-Pentene direct emissions, suburban",
-            ('1-Pentene', ('air','urban air close to ground'), 'kilogram'): "1-Pentene direct emissions, urban",
-            ('Acetaldehyde', ('air','low population density, long-term'), 'kilogram'): "Acetaldehyde direct emissions, rural",
-            ('Acetaldehyde', ('air','non-urban air or from high stacks'), 'kilogram'): "Acetaldehyde direct emissions, suburban",
-            ('Acetaldehyde', ('air','urban air close to ground'), 'kilogram'): "Acetaldehyde direct emissions, urban",
-            ('Acetone', ('air','low population density, long-term'), 'kilogram'): "Acetone direct emissions, rural",
-            ('Acetone', ('air','non-urban air or from high stacks'), 'kilogram'): "Acetone direct emissions, suburban",
-            ('Acetone', ('air','urban air close to ground'), 'kilogram'): "Acetone direct emissions, urban",
-            ('Acrolein', ('air','low population density, long-term'), 'kilogram'): "Acrolein direct emissions, rural",
-            ('Acrolein', ('air','non-urban air or from high stacks'), 'kilogram'): "Acrolein direct emissions, suburban",
-            ('Acrolein', ('air','urban air close to ground'), 'kilogram'): "Acrolein direct emissions, urban",
-            ("Ammonia", ('air','low population density, long-term'), 'kilogram'): "Ammonia direct emissions, rural",
-            ("Ammonia", ('air','non-urban air or from high stacks'), 'kilogram'): "Ammonia direct emissions, suburban",
-            ("Ammonia", ('air','urban air close to ground'), 'kilogram'): "Ammonia direct emissions, urban",
-            ('Arsenic', ('air','low population density, long-term'), 'kilogram'): "Arsenic direct emissions, rural",
-            ('Arsenic', ('air','non-urban air or from high stacks'), 'kilogram'): "Arsenic direct emissions, suburban",
-            ('Arsenic', ('air','urban air close to ground'), 'kilogram'): "Arsenic direct emissions, urban",
-            ('Benzaldehyde', ('air','low population density, long-term'), 'kilogram'): "Benzaldehyde direct emissions, rural",
-            ('Benzaldehyde', ('air','non-urban air or from high stacks'), 'kilogram'): "Benzaldehyde direct emissions, suburban",
-            ('Benzaldehyde', ('air','urban air close to ground'), 'kilogram'): "Benzaldehyde direct emissions, urban",
-            ("Benzene", ('air','low population density, long-term'), 'kilogram'): "Benzene direct emissions, rural",
-            ("Benzene", ('air','non-urban air or from high stacks'), 'kilogram'): "Benzene direct emissions, suburban",
-            ("Benzene", ('air','urban air close to ground'), 'kilogram'): "Benzene direct emissions, urban",
-            ('Butane', ('air','low population density, long-term'), 'kilogram'): "Butane direct emissions, rural",
-            ('Butane', ('air','non-urban air or from high stacks'), 'kilogram'): "Butane direct emissions, suburban",
-            ('Butane', ('air','urban air close to ground'), 'kilogram'): "Butane direct emissions, urban",
-            ('Cadmium', ('air','low population density, long-term'), 'kilogram'): "Cadmium direct emissions, rural",
-            ('Cadmium', ('air','non-urban air or from high stacks'), 'kilogram'): "Cadmium direct emissions, suburban",
-            ('Cadmium', ('air','urban air close to ground'), 'kilogram'): "Cadmium direct emissions, urban",
-            ("Carbon monoxide, fossil", ('air','low population density, long-term'), 'kilogram'): "Carbon monoxide direct emissions, rural",
-            ("Carbon monoxide, fossil", ('air','non-urban air or from high stacks'), 'kilogram'): "Carbon monoxide direct emissions, suburban",
-            ("Carbon monoxide, fossil", ('air','urban air close to ground'), 'kilogram'): "Carbon monoxide direct emissions, urban",
-            ('Chromium', ('air','low population density, long-term'), 'kilogram'): "Chromium direct emissions, rural",
-            ('Chromium', ('air','non-urban air or from high stacks'), 'kilogram'): "Chromium direct emissions, suburban",
-            ('Chromium', ('air','urban air close to ground'), 'kilogram'): "Chromium direct emissions, urban",
-            ('Chromium VI', ('air','low population density, long-term'), 'kilogram'): "Chromium VI direct emissions, rural",
-            ('Chromium VI', ('air','non-urban air or from high stacks'), 'kilogram'): "Chromium VI direct emissions, suburban",
-            ('Chromium VI', ('air','urban air close to ground'), 'kilogram'): "Chromium VI direct emissions, urban",
-            ('Copper', ('air','low population density, long-term'), 'kilogram'): "Copper direct emissions, rural",
-            ('Copper', ('air','non-urban air or from high stacks'), 'kilogram'): "Copper direct emissions, suburban",
-            ('Copper', ('air','urban air close to ground'), 'kilogram'): "Copper direct emissions, urban",
-            ('Cyclohexane', ('air','low population density, long-term'), 'kilogram'): "Cyclohexane direct emissions, rural",
-            ('Cyclohexane', ('air','non-urban air or from high stacks'), 'kilogram'): "Cyclohexane direct emissions, suburban",
-            ('Cyclohexane', ('air','urban air close to ground'), 'kilogram'): "Cyclohexane direct emissions, urban",
-            ("Dinitrogen monoxide", ('air','low population density, long-term'), 'kilogram'): "Dinitrogen oxide direct emissions, rural",
-            ("Dinitrogen monoxide", ('air','non-urban air or from high stacks'), 'kilogram'): "Dinitrogen oxide direct emissions, suburban",
-            ("Dinitrogen monoxide", ('air','urban air close to ground'), 'kilogram'): "Dinitrogen oxide direct emissions, urban",
-            ('Ethane', ('air','low population density, long-term'), 'kilogram'): "Ethane direct emissions, rural",
-            ('Ethane', ('air','non-urban air or from high stacks'), 'kilogram'): "Ethane direct emissions, suburban",
-            ('Ethane', ('air','urban air close to ground'), 'kilogram'): "Ethane direct emissions, urban",
-            ('Ethene', ('air','low population density, long-term'), 'kilogram'): "Ethene direct emissions, rural",
-            ('Ethene', ('air','non-urban air or from high stacks'), 'kilogram'): "Ethene direct emissions, suburban",
-            ('Ethene', ('air','urban air close to ground'), 'kilogram'): "Ethene direct emissions, urban",
-            ('Formaldehyde', ('air','low population density, long-term'), 'kilogram'): "Formaldehyde direct emissions, rural",
-            ('Formaldehyde', ('air','non-urban air or from high stacks'), 'kilogram'): "Formaldehyde direct emissions, suburban",
-            ('Formaldehyde', ('air','urban air close to ground'), 'kilogram'): "Formaldehyde direct emissions, urban",
-            ('Heptane', ('air','low population density, long-term'), 'kilogram'): "Heptane direct emissions, rural",
-            ('Heptane', ('air','non-urban air or from high stacks'), 'kilogram'): "Heptane direct emissions, suburban",
-            ('Heptane', ('air','urban air close to ground'), 'kilogram'): "Heptane direct emissions, urban",
-            ('Hexane', ('air','low population density, long-term'), 'kilogram'): "Hexane direct emissions, rural",
-            ('Hexane', ('air','non-urban air or from high stacks'), 'kilogram'): "Hexane direct emissions, suburban",
-            ('Hexane', ('air','urban air close to ground'), 'kilogram'): "Hexane direct emissions, urban",
-            ('Hydrocarbons, chlorinated', ('air','low population density, long-term'), 'kilogram'): "Hydrocarbons direct emissions, rural",
-            ('Hydrocarbons, chlorinated', ('air','non-urban air or from high stacks'), 'kilogram'): "Hydrocarbons direct emissions, suburban",
-            ('Hydrocarbons, chlorinated', ('air','urban air close to ground'), 'kilogram'): "Hydrocarbons direct emissions, urban",
-            ('Mercury', ('air','low population density, long-term'), 'kilogram'): "Mercury direct emissions, rural",
-            ('Mercury', ('air','non-urban air or from high stacks'), 'kilogram'): "Mercury direct emissions, suburban",
-            ('Mercury', ('air','urban air close to ground'), 'kilogram'): "Mercury direct emissions, urban",
-            ("Methane, fossil", ('air','low population density, long-term'), 'kilogram'): "Methane direct emissions, rural",
-            ("Methane, fossil", ('air','non-urban air or from high stacks'), 'kilogram'): "Methane direct emissions, suburban",
-            ("Methane, fossil", ('air','urban air close to ground'), 'kilogram'): "Methane direct emissions, urban",
-            ('Methyl ethyl ketone', ('air','low population density, long-term'), 'kilogram'): "Methyl ethyl ketone direct emissions, rural",
-            ('Methyl ethyl ketone', ('air','non-urban air or from high stacks'), 'kilogram'): "Methyl ethyl ketone direct emissions, suburban",
-            ('Methyl ethyl ketone', ('air','urban air close to ground'), 'kilogram'): "Methyl ethyl ketone direct emissions, urban",
-            ('m-Xylene', ('air','low population density, long-term'), 'kilogram'): "m-Xylene direct emissions, rural",
-            ('m-Xylene', ('air','non-urban air or from high stacks'), 'kilogram'): "m-Xylene direct emissions, suburban",
-            ('m-Xylene', ('air','urban air close to ground'), 'kilogram'): "m-Xylene direct emissions, urban",
-            ('Nickel', ('air','low population density, long-term'), 'kilogram'): "Nickel direct emissions, rural",
-            ('Nickel', ('air','non-urban air or from high stacks'), 'kilogram'): "Nickel direct emissions, suburban",
-            ('Nickel', ('air','urban air close to ground'), 'kilogram'): "Nickel direct emissions, urban",
-            ("Nitrogen oxides", ('air','low population density, long-term'), 'kilogram'): "Nitrogen oxides direct emissions, rural",
-            ("Nitrogen oxides", ('air','non-urban air or from high stacks'), 'kilogram'): "Nitrogen oxides direct emissions, suburban",
-            ("Nitrogen oxides", ('air','urban air close to ground'), 'kilogram'): "Nitrogen oxides direct emissions, urban",
-            ("NMVOC, non-methane volatile organic compounds, unspecified origin", ('air','low population density, long-term'), 'kilogram'): "NMVOC direct emissions, rural",
-            ("NMVOC, non-methane volatile organic compounds, unspecified origin", ('air','non-urban air or from high stacks'), 'kilogram'): "NMVOC direct emissions, suburban",
-            ("NMVOC, non-methane volatile organic compounds, unspecified origin", ('air','urban air close to ground'), 'kilogram'): "NMVOC direct emissions, urban",
-            ('o-Xylene', ('air','low population density, long-term'), 'kilogram'): "o-Xylene direct emissions, rural",
-            ('o-Xylene', ('air','non-urban air or from high stacks'), 'kilogram'): "o-Xylene direct emissions, suburban",
-            ('o-Xylene', ('air','urban air close to ground'), 'kilogram'): "o-Xylene direct emissions, urban",
-            ('PAH, polycyclic aromatic hydrocarbons', ('air','low population density, long-term'), 'kilogram'): "PAH, polycyclic aromatic hydrocarbons direct emissions, rural",
-            ('PAH, polycyclic aromatic hydrocarbons', ('air','non-urban air or from high stacks'), 'kilogram'): "PAH, polycyclic aromatic hydrocarbons direct emissions, suburban",
-            ('PAH, polycyclic aromatic hydrocarbons', ('air','urban air close to ground'), 'kilogram'): "PAH, polycyclic aromatic hydrocarbons direct emissions, urban",
-            ("Particulates, < 2.5 um", ('air','low population density, long-term'), 'kilogram'): "Particulate matters direct emissions, rural",
-            ("Particulates, < 2.5 um", ('air','non-urban air or from high stacks'), 'kilogram'): "Particulate matters direct emissions, suburban",
-            ("Particulates, < 2.5 um", ('air','urban air close to ground'), 'kilogram'): "Particulate matters direct emissions, urban",
-            ('Pentane', ('air','low population density, long-term'), 'kilogram'): "Pentane direct emissions, rural",
-            ('Pentane', ('air','non-urban air or from high stacks'), 'kilogram'): "Pentane direct emissions, suburban",
-            ('Pentane', ('air','urban air close to ground'), 'kilogram'): "Pentane direct emissions, urban",
-            ('Propane', ('air','low population density, long-term'), 'kilogram'): "Propane direct emissions, rural",
-            ('Propane', ('air','non-urban air or from high stacks'), 'kilogram'): "Propane direct emissions, suburban",
-            ('Propane', ('air','urban air close to ground'), 'kilogram'): "Propane direct emissions, urban",
-            ('Propene', ('air','low population density, long-term'), 'kilogram'): "Propene direct emissions, rural",
-            ('Propene', ('air','non-urban air or from high stacks'), 'kilogram'): "Propene direct emissions, suburban",
-            ('Propene', ('air','urban air close to ground'), 'kilogram'): "Propene direct emissions, urban",
-            ('Selenium', ('air','low population density, long-term'), 'kilogram'): "Selenium direct emissions, rural",
-            ('Selenium', ('air','non-urban air or from high stacks'), 'kilogram'): "Selenium direct emissions, suburban",
-            ('Selenium', ('air','urban air close to ground'), 'kilogram'): "Selenium direct emissions, urban",
-            ('Styrene', ('air','low population density, long-term'), 'kilogram'): "Styrene direct emissions, rural",
-            ('Styrene', ('air','non-urban air or from high stacks'), 'kilogram'): "Styrene direct emissions, suburban",
-            ('Styrene', ('air','urban air close to ground'), 'kilogram'): "Styrene direct emissions, urban",
-            ('Toluene', ('air','low population density, long-term'), 'kilogram'): "Toluene direct emissions, rural",
-            ('Toluene', ('air','non-urban air or from high stacks'), 'kilogram'): "Toluene direct emissions, suburban",
-            ('Toluene', ('air','urban air close to ground'), 'kilogram'): "Toluene direct emissions, urban",
-            ('Zinc', ('air','low population density, long-term'), 'kilogram'): "Zinc direct emissions, rural",
-            ('Zinc', ('air','non-urban air or from high stacks'), 'kilogram'): "Zinc direct emissions, suburban",
-            ('Zinc', ('air','urban air close to ground'), 'kilogram'): "Zinc direct emissions, urban",
+            (
+                "1-Pentene",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "1-Pentene direct emissions, rural",
+            (
+                "1-Pentene",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "1-Pentene direct emissions, suburban",
+            (
+                "1-Pentene",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "1-Pentene direct emissions, urban",
+            (
+                "Acetaldehyde",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Acetaldehyde direct emissions, rural",
+            (
+                "Acetaldehyde",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Acetaldehyde direct emissions, suburban",
+            (
+                "Acetaldehyde",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Acetaldehyde direct emissions, urban",
+            (
+                "Acetone",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Acetone direct emissions, rural",
+            (
+                "Acetone",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Acetone direct emissions, suburban",
+            (
+                "Acetone",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Acetone direct emissions, urban",
+            (
+                "Acrolein",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Acrolein direct emissions, rural",
+            (
+                "Acrolein",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Acrolein direct emissions, suburban",
+            (
+                "Acrolein",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Acrolein direct emissions, urban",
+            (
+                "Ammonia",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Ammonia direct emissions, rural",
+            (
+                "Ammonia",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Ammonia direct emissions, suburban",
+            (
+                "Ammonia",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Ammonia direct emissions, urban",
+            (
+                "Arsenic",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Arsenic direct emissions, rural",
+            (
+                "Arsenic",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Arsenic direct emissions, suburban",
+            (
+                "Arsenic",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Arsenic direct emissions, urban",
+            (
+                "Benzaldehyde",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Benzaldehyde direct emissions, rural",
+            (
+                "Benzaldehyde",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Benzaldehyde direct emissions, suburban",
+            (
+                "Benzaldehyde",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Benzaldehyde direct emissions, urban",
+            (
+                "Benzene",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Benzene direct emissions, rural",
+            (
+                "Benzene",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Benzene direct emissions, suburban",
+            (
+                "Benzene",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Benzene direct emissions, urban",
+            (
+                "Butane",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Butane direct emissions, rural",
+            (
+                "Butane",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Butane direct emissions, suburban",
+            (
+                "Butane",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Butane direct emissions, urban",
+            (
+                "Cadmium",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Cadmium direct emissions, rural",
+            (
+                "Cadmium",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Cadmium direct emissions, suburban",
+            (
+                "Cadmium",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Cadmium direct emissions, urban",
+            (
+                "Carbon monoxide, fossil",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Carbon monoxide direct emissions, rural",
+            (
+                "Carbon monoxide, fossil",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Carbon monoxide direct emissions, suburban",
+            (
+                "Carbon monoxide, fossil",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Carbon monoxide direct emissions, urban",
+            (
+                "Chromium",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Chromium direct emissions, rural",
+            (
+                "Chromium",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Chromium direct emissions, suburban",
+            (
+                "Chromium",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Chromium direct emissions, urban",
+            (
+                "Chromium VI",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Chromium VI direct emissions, rural",
+            (
+                "Chromium VI",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Chromium VI direct emissions, suburban",
+            (
+                "Chromium VI",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Chromium VI direct emissions, urban",
+            (
+                "Copper",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Copper direct emissions, rural",
+            (
+                "Copper",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Copper direct emissions, suburban",
+            (
+                "Copper",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Copper direct emissions, urban",
+            (
+                "Cyclohexane",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Cyclohexane direct emissions, rural",
+            (
+                "Cyclohexane",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Cyclohexane direct emissions, suburban",
+            (
+                "Cyclohexane",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Cyclohexane direct emissions, urban",
+            (
+                "Dinitrogen monoxide",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Dinitrogen oxide direct emissions, rural",
+            (
+                "Dinitrogen monoxide",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Dinitrogen oxide direct emissions, suburban",
+            (
+                "Dinitrogen monoxide",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Dinitrogen oxide direct emissions, urban",
+            (
+                "Ethane",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Ethane direct emissions, rural",
+            (
+                "Ethane",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Ethane direct emissions, suburban",
+            (
+                "Ethane",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Ethane direct emissions, urban",
+            (
+                "Ethene",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Ethene direct emissions, rural",
+            (
+                "Ethene",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Ethene direct emissions, suburban",
+            (
+                "Ethene",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Ethene direct emissions, urban",
+            (
+                "Formaldehyde",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Formaldehyde direct emissions, rural",
+            (
+                "Formaldehyde",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Formaldehyde direct emissions, suburban",
+            (
+                "Formaldehyde",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Formaldehyde direct emissions, urban",
+            (
+                "Heptane",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Heptane direct emissions, rural",
+            (
+                "Heptane",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Heptane direct emissions, suburban",
+            (
+                "Heptane",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Heptane direct emissions, urban",
+            (
+                "Hexane",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Hexane direct emissions, rural",
+            (
+                "Hexane",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Hexane direct emissions, suburban",
+            (
+                "Hexane",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Hexane direct emissions, urban",
+            (
+                "Hydrocarbons, chlorinated",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Hydrocarbons direct emissions, rural",
+            (
+                "Hydrocarbons, chlorinated",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Hydrocarbons direct emissions, suburban",
+            (
+                "Hydrocarbons, chlorinated",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Hydrocarbons direct emissions, urban",
+            (
+                "Mercury",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Mercury direct emissions, rural",
+            (
+                "Mercury",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Mercury direct emissions, suburban",
+            (
+                "Mercury",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Mercury direct emissions, urban",
+            (
+                "Methane, fossil",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Methane direct emissions, rural",
+            (
+                "Methane, fossil",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Methane direct emissions, suburban",
+            (
+                "Methane, fossil",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Methane direct emissions, urban",
+            (
+                "Methyl ethyl ketone",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Methyl ethyl ketone direct emissions, rural",
+            (
+                "Methyl ethyl ketone",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Methyl ethyl ketone direct emissions, suburban",
+            (
+                "Methyl ethyl ketone",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Methyl ethyl ketone direct emissions, urban",
+            (
+                "m-Xylene",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "m-Xylene direct emissions, rural",
+            (
+                "m-Xylene",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "m-Xylene direct emissions, suburban",
+            (
+                "m-Xylene",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "m-Xylene direct emissions, urban",
+            (
+                "Nickel",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Nickel direct emissions, rural",
+            (
+                "Nickel",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Nickel direct emissions, suburban",
+            (
+                "Nickel",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Nickel direct emissions, urban",
+            (
+                "Nitrogen oxides",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Nitrogen oxides direct emissions, rural",
+            (
+                "Nitrogen oxides",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Nitrogen oxides direct emissions, suburban",
+            (
+                "Nitrogen oxides",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Nitrogen oxides direct emissions, urban",
+            (
+                "NMVOC, non-methane volatile organic compounds, unspecified origin",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "NMVOC direct emissions, rural",
+            (
+                "NMVOC, non-methane volatile organic compounds, unspecified origin",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "NMVOC direct emissions, suburban",
+            (
+                "NMVOC, non-methane volatile organic compounds, unspecified origin",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "NMVOC direct emissions, urban",
+            (
+                "o-Xylene",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "o-Xylene direct emissions, rural",
+            (
+                "o-Xylene",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "o-Xylene direct emissions, suburban",
+            (
+                "o-Xylene",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "o-Xylene direct emissions, urban",
+            (
+                "PAH, polycyclic aromatic hydrocarbons",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "PAH, polycyclic aromatic hydrocarbons direct emissions, rural",
+            (
+                "PAH, polycyclic aromatic hydrocarbons",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "PAH, polycyclic aromatic hydrocarbons direct emissions, suburban",
+            (
+                "PAH, polycyclic aromatic hydrocarbons",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "PAH, polycyclic aromatic hydrocarbons direct emissions, urban",
+            (
+                "Particulates, < 2.5 um",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Particulate matters direct emissions, rural",
+            (
+                "Particulates, < 2.5 um",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Particulate matters direct emissions, suburban",
+            (
+                "Particulates, < 2.5 um",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Particulate matters direct emissions, urban",
+            (
+                "Pentane",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Pentane direct emissions, rural",
+            (
+                "Pentane",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Pentane direct emissions, suburban",
+            (
+                "Pentane",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Pentane direct emissions, urban",
+            (
+                "Propane",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Propane direct emissions, rural",
+            (
+                "Propane",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Propane direct emissions, suburban",
+            (
+                "Propane",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Propane direct emissions, urban",
+            (
+                "Propene",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Propene direct emissions, rural",
+            (
+                "Propene",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Propene direct emissions, suburban",
+            (
+                "Propene",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Propene direct emissions, urban",
+            (
+                "Selenium",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Selenium direct emissions, rural",
+            (
+                "Selenium",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Selenium direct emissions, suburban",
+            (
+                "Selenium",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Selenium direct emissions, urban",
+            (
+                "Styrene",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Styrene direct emissions, rural",
+            (
+                "Styrene",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Styrene direct emissions, suburban",
+            (
+                "Styrene",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Styrene direct emissions, urban",
+            (
+                "Toluene",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Toluene direct emissions, rural",
+            (
+                "Toluene",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Toluene direct emissions, suburban",
+            (
+                "Toluene",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Toluene direct emissions, urban",
+            (
+                "Zinc",
+                ("air", "low population density, long-term"),
+                "kilogram",
+            ): "Zinc direct emissions, rural",
+            (
+                "Zinc",
+                ("air", "non-urban air or from high stacks"),
+                "kilogram",
+            ): "Zinc direct emissions, suburban",
+            (
+                "Zinc",
+                ("air", "urban air close to ground"),
+                "kilogram",
+            ): "Zinc direct emissions, urban",
         }
-
 
         self.index_emissions = [
             self.inputs[i] for i in self.map_non_fuel_emissions.keys()
         ]
-
 
         self.map_noise_emissions = {
             (
@@ -858,11 +1325,7 @@ class InventoryCalculation:
 
         if location in self.bs.sulfur.country.values:
             sulfur_concentration = (
-                self.bs.sulfur.sel(
-                    country=location, year=year, fuel=fuel
-                )
-                    .sum()
-                    .values
+                self.bs.sulfur.sel(country=location, year=year, fuel=fuel).sum().values
             )
         else:
             # If the geography is in fact a region,
@@ -870,8 +1333,9 @@ class InventoryCalculation:
             # across the region
 
             list_countries = self.geo.iam_to_ecoinvent_location(location)
-            list_countries = [c for c in list_countries
-                              if c in self.bs.sulfur.country.values]
+            list_countries = [
+                c for c in list_countries if c in self.bs.sulfur.country.values
+            ]
 
             if len(list_countries) > 0:
 
@@ -881,8 +1345,8 @@ class InventoryCalculation:
                         year=year,
                         fuel=fuel,
                     )
-                        .mean()
-                        .values
+                    .mean()
+                    .values
                 )
             else:
 
@@ -893,9 +1357,7 @@ class InventoryCalculation:
                     )
                 )
                 sulfur_concentration = (
-                    self.bs.sulfur.sel(country="RER", year=year, fuel=fuel)
-                        .sum()
-                        .values
+                    self.bs.sulfur.sel(country="RER", year=year, fuel=fuel).sum().values
                 )
         return sulfur_concentration
 
@@ -954,10 +1416,12 @@ class InventoryCalculation:
         # emissions from the diesel generator of the trolleybus
         d["direct - exhaust"].append(
             self.inputs[
-                ('diesel, burned in diesel-electric generating set, 18.5kW',
-                 'GLO',
-                 'megajoule',
-                 'diesel, burned in diesel-electric generating set, 18.5kW')
+                (
+                    "diesel, burned in diesel-electric generating set, 18.5kW",
+                    "GLO",
+                    "megajoule",
+                    "diesel, burned in diesel-electric generating set, 18.5kW",
+                )
             ]
         )
 
@@ -1019,11 +1483,13 @@ class InventoryCalculation:
         f = np.zeros((np.shape(self.A)[1]))
 
         # Collect indices of activities contributing to the first level for year `y`
-        ind_trucks = [self.inputs[i] for i in self.inputs if "transport, passenger bus, " in i[0]
-                      and "market" not in i[0]]
+        ind_trucks = [
+            self.inputs[i]
+            for i in self.inputs
+            if "transport, passenger bus, " in i[0] and "market" not in i[0]
+        ]
         arr = self.A[0, : -self.number_of_cars, ind_trucks].sum(axis=0)
         ind = np.nonzero(arr)[0]
-
 
         if self.scenario != "static":
             B = self.B.interp(
@@ -1051,7 +1517,7 @@ class InventoryCalculation:
         )
 
         arr = (
-            self.A[:, :, -self.number_of_cars:].transpose(0, 2, 1).reshape(shape)
+            self.A[:, :, -self.number_of_cars :].transpose(0, 2, 1).reshape(shape)
             * new_arr.transpose(1, 2, 0)[:, None, None, None, ...]
             * -1
         )
@@ -1061,7 +1527,6 @@ class InventoryCalculation:
 
             results[...] = arr.transpose(0, 2, 3, 4, 5, 1).sum(axis=-2)
             results /= results.sel(parameter="reference")
-
 
         else:
             results[...] = arr.transpose(0, 2, 3, 4, 5, 1)
@@ -1083,7 +1548,11 @@ class InventoryCalculation:
             )
 
         if sensitivity:
-            return results.astype("float32") * load_factor * self.compliant_vehicles.values[None, ...]
+            return (
+                results.astype("float32")
+                * load_factor
+                * self.compliant_vehicles.values[None, ...]
+            )
         else:
             return results.astype("float32") * load_factor * self.compliant_vehicles
 
@@ -1131,7 +1600,9 @@ class InventoryCalculation:
                     )
                 ] = maximum
 
-            if {"BEV-opp", "BEV-depot", "BEV-motion", "PHEV-d"}.intersection(set(self.scope["powertrain"])):
+            if {"BEV-opp", "BEV-depot", "BEV-motion", "PHEV-d"}.intersection(
+                set(self.scope["powertrain"])
+            ):
                 maximum += 1
                 self.inputs[
                     (
@@ -1185,12 +1656,12 @@ class InventoryCalculation:
                         euro_class = "EURO-VI"
 
                     d_map_size = {
-                        '9m': '9m midibus',
-                        '13m-city': '13m single deck urban bus',
-                        '13m-coach': '13m single deck coach bus',
-                        '13m-city-double': '13m double deck urban bus',
-                        '13m-coach-double': '13m double deck coach bus',
-                        '18m': '18m articulated urban bus'
+                        "9m": "9m midibus",
+                        "13m-city": "13m single deck urban bus",
+                        "13m-coach": "13m single deck coach bus",
+                        "13m-city-double": "13m double deck urban bus",
+                        "13m-coach-double": "13m double deck coach bus",
+                        "18m": "18m articulated urban bus",
                     }
 
                     name = (
@@ -1202,7 +1673,6 @@ class InventoryCalculation:
                         + str(y)
                         + ", "
                         + euro_class
-
                     )
 
                     if self.scope["fu"]["unit"] == "pkm":
@@ -1211,7 +1681,12 @@ class InventoryCalculation:
                         unit = "kilometer"
 
                     self.inputs[
-                        (name, self.country, unit, "transport, passenger bus, " + euro_class,)
+                        (
+                            name,
+                            self.country,
+                            unit,
+                            "transport, passenger bus, " + euro_class,
+                        )
                     ] = maximum
 
     def add_additional_activities_for_export(self):
@@ -1242,28 +1717,25 @@ class InventoryCalculation:
                         euro_class = "EURO-VI"
 
                     d_map_size = {
-                        '9m': '9m midibus',
-                        '13m-city': '13m single deck urban bus',
-                        '13m-coach': '13m single deck coach bus',
-                        '13m-city-double': '13m double deck urban bus',
-                        '13m-coach-double': '13m double deck coach bus',
-                        '18m': '18m articulated urban bus'
+                        "9m": "9m midibus",
+                        "13m-city": "13m single deck urban bus",
+                        "13m-coach": "13m single deck coach bus",
+                        "13m-city-double": "13m double deck urban bus",
+                        "13m-coach-double": "13m double deck coach bus",
+                        "18m": "18m articulated urban bus",
                     }
 
                     name = (
-                            "Passenger bus, "
-                            + pt
-                            + ", "
-                            + d_map_size[s]
-                            + ", "
-                            + str(y)
-                            + ", "
-                            + euro_class
-
+                        "Passenger bus, "
+                        + pt
+                        + ", "
+                        + d_map_size[s]
+                        + ", "
+                        + str(y)
+                        + ", "
+                        + euro_class
                     )
                     ref = "Passenger bus, "
-
-
 
                     self.inputs[
                         (
@@ -1308,10 +1780,11 @@ class InventoryCalculation:
     def build_fleet_vehicles(self):
 
         # additional cars
-        n_cars = (len(self.scope["year"]) * len(self.scope["powertrain"])
-                  + (len(self.scope["year"]) * len(self.scope["size"]))
-                  + len(self.scope["year"])
-                  )
+        n_cars = (
+            len(self.scope["year"]) * len(self.scope["powertrain"])
+            + (len(self.scope["year"]) * len(self.scope["size"]))
+            + len(self.scope["year"])
+        )
         self.A = np.pad(self.A, ((0, 0), (0, n_cars), (0, n_cars)))
 
         maximum = max(self.inputs.values())
@@ -1323,9 +1796,7 @@ class InventoryCalculation:
                 # share of the powertrain that year, all sizes
                 share_pt = self.fleet.sel(powertrain=pt, variable=y).sum().values
 
-                name = (
-                    "transport, passenger bus, fleet average, " + pt + ", " + str(y)
-                )
+                name = "transport, passenger bus, fleet average, " + pt + ", " + str(y)
 
                 maximum += 1
 
@@ -1369,12 +1840,18 @@ class InventoryCalculation:
                                         if all(
                                             [
                                                 item in i[0]
-                                                for item in [pt, str(vin_year), s, "transport, "]
+                                                for item in [
+                                                    pt,
+                                                    str(vin_year),
+                                                    s,
+                                                    "transport, ",
+                                                ]
                                             ]
                                         )
                                     ][0]
                                     car_inputs = (
-                                        self.A[:, : car_index - 1, car_index] * fleet_share
+                                        self.A[:, : car_index - 1, car_index]
+                                        * fleet_share
                                     )
 
                                     self.A[:, : car_index - 1, maximum] += car_inputs
@@ -1407,7 +1884,7 @@ class InventoryCalculation:
                         self.inputs[i]
                         for i in self.inputs
                         if "supply for " + d_map_fuel[pt] + " vehicles, " + str(y)
-                           in i[0]
+                        in i[0]
                     ]
                     self.A[:, current_provider, maximum] = amount_fuel
 
@@ -1440,15 +1917,20 @@ class InventoryCalculation:
                 share_pt = self.fleet.sel(variable=y, size=s).sum().values
 
                 d_map_size = {
-                    '9m': '9m midibus',
-                    '13m-city': '13m single deck urban bus',
-                    '13m-coach': '13m single deck coach bus',
-                    '13m-city-double': '13m double deck urban bus',
-                    '13m-coach-double': '13m double deck coach bus',
-                    '18m': '18m articulated urban bus'
+                    "9m": "9m midibus",
+                    "13m-city": "13m single deck urban bus",
+                    "13m-coach": "13m single deck coach bus",
+                    "13m-city-double": "13m double deck urban bus",
+                    "13m-coach-double": "13m double deck coach bus",
+                    "18m": "18m articulated urban bus",
                 }
 
-                name = "transport, passenger bus, fleet average, " + d_map_size[s] + ", " + str(y)
+                name = (
+                    "transport, passenger bus, fleet average, "
+                    + d_map_size[s]
+                    + ", "
+                    + str(y)
+                )
                 ref = "transport, passenger bus, fleet average"
 
                 maximum += 1
@@ -1475,15 +1957,15 @@ class InventoryCalculation:
                             if vin_year in self.fleet.vintage_year:
 
                                 fleet_share = (
-                                        self.fleet.sel(
-                                            powertrain=pt,
-                                            vintage_year=vin_year,
-                                            size=s,
-                                            variable=y,
-                                        )
-                                        .sum()
-                                        .values /
-                                        share_pt
+                                    self.fleet.sel(
+                                        powertrain=pt,
+                                        vintage_year=vin_year,
+                                        size=s,
+                                        variable=y,
+                                    )
+                                    .sum()
+                                    .values
+                                    / share_pt
                                 )
 
                                 if fleet_share > 0:
@@ -1493,11 +1975,20 @@ class InventoryCalculation:
                                         if all(
                                             [
                                                 item in i[0]
-                                                for item in [pt, str(vin_year), s, "transport"]
-                                            ])
+                                                for item in [
+                                                    pt,
+                                                    str(vin_year),
+                                                    s,
+                                                    "transport",
+                                                ]
+                                            ]
+                                        )
                                     ][0]
 
-                                    car_inputs = (self.A[:, : car_index - 1, car_index] * fleet_share)
+                                    car_inputs = (
+                                        self.A[:, : car_index - 1, car_index]
+                                        * fleet_share
+                                    )
 
                                     self.A[:, : car_index - 1, maximum] += car_inputs
 
@@ -1532,7 +2023,7 @@ class InventoryCalculation:
                             self.inputs[i]
                             for i in self.inputs
                             if "supply for " + fuel_type + " vehicles, " + str(y)
-                               in i[0]
+                            in i[0]
                         ]
 
                         self.A[:, current_provider, maximum] = amount_fuel
@@ -1569,15 +2060,15 @@ class InventoryCalculation:
                         if vin_year in self.fleet.vintage_year:
 
                             fleet_share = (
-                                    self.fleet.sel(
-                                        powertrain=pt,
-                                        vintage_year=vin_year,
-                                        size=s,
-                                        variable=y,
-                                    )
-                                    .sum()
-                                    .values /
-                                    share_pt
+                                self.fleet.sel(
+                                    powertrain=pt,
+                                    vintage_year=vin_year,
+                                    size=s,
+                                    variable=y,
+                                )
+                                .sum()
+                                .values
+                                / share_pt
                             )
 
                             if fleet_share > 0:
@@ -1587,11 +2078,19 @@ class InventoryCalculation:
                                     if all(
                                         [
                                             item in i[0]
-                                            for item in [pt, str(vin_year), s, "transport"]
-                                        ])
+                                            for item in [
+                                                pt,
+                                                str(vin_year),
+                                                s,
+                                                "transport",
+                                            ]
+                                        ]
+                                    )
                                 ][0]
 
-                                car_inputs = (self.A[:, : car_index - 1, car_index] * fleet_share)
+                                car_inputs = (
+                                    self.A[:, : car_index - 1, car_index] * fleet_share
+                                )
 
                                 self.A[:, : car_index - 1, maximum] += car_inputs
 
@@ -1625,12 +2124,10 @@ class InventoryCalculation:
                 current_provider = [
                     self.inputs[i]
                     for i in self.inputs
-                    if "supply for " + fuel_type + " vehicles, " + str(y)
-                       in i[0]
+                    if "supply for " + fuel_type + " vehicles, " + str(y) in i[0]
                 ]
 
                 self.A[:, current_provider, maximum] = amount_fuel
-
 
     def get_B_matrix(self):
         """
@@ -1672,9 +2169,14 @@ class InventoryCalculation:
         for f, fp in enumerate(list_file_names):
             initial_B = np.genfromtxt(fp, delimiter=";")
 
-            new_B = np.zeros((np.shape(initial_B)[0], len(self.inputs),))
+            new_B = np.zeros(
+                (
+                    np.shape(initial_B)[0],
+                    len(self.inputs),
+                )
+            )
 
-            new_B[0: np.shape(initial_B)[0], 0: np.shape(initial_B)[1]] = initial_B
+            new_B[0 : np.shape(initial_B)[0], 0 : np.shape(initial_B)[1]] = initial_B
 
             B[f] = new_B
 
@@ -1827,35 +2329,51 @@ class InventoryCalculation:
         indices_to_remove = []
 
         d_map_size = {
-            '9m midibus': '9m',
-            '13m single deck urban bus': '13m-city',
-            '13m single deck coach bus': '13m-coach',
-            '13m double deck urban bus': '13m-city-double',
-            '13m double deck coach bus': '13m-coach-double',
-            '18m articulated urban bus': '18m'
+            "9m midibus": "9m",
+            "13m single deck urban bus": "13m-city",
+            "13m single deck coach bus": "13m-coach",
+            "13m double deck urban bus": "13m-city-double",
+            "13m double deck coach bus": "13m-coach-double",
+            "18m articulated urban bus": "18m",
         }
 
         for i in self.inputs:
-            if "transport, passenger bus, " in i[0] and "fleet average" not in i[0]\
-                    and "market" not in i[0]:
-
+            if (
+                "transport, passenger bus, " in i[0]
+                and "fleet average" not in i[0]
+                and "market" not in i[0]
+            ):
 
                 if "transport" in i[0]:
-                    _, _, pt, size, year, _, = [x.strip() for x in i[0].split(", ")]
+                    (
+                        _,
+                        _,
+                        pt,
+                        size,
+                        year,
+                        _,
+                    ) = [x.strip() for x in i[0].split(", ")]
                     size = d_map_size[size]
                 else:
                     _, pt, size, year, _, _ = i[0].split(", ")
                     size = d_map_size[size]
 
-                if self.compliant_vehicles.sel(powertrain=pt, size=size, year=int(year)) == 0:
+                if (
+                    self.compliant_vehicles.sel(
+                        powertrain=pt, size=size, year=int(year)
+                    )
+                    == 0
+                ):
                     indices_to_remove.append(self.inputs[i])
                     self.rev_inputs.pop(self.inputs[i])
 
-        indices_to_preserve = [i for i in range(self.A.shape[1]) if i not in indices_to_remove]
+        indices_to_preserve = [
+            i for i in range(self.A.shape[1]) if i not in indices_to_remove
+        ]
 
-        self.A = self.A[np.ix_(range(self.A.shape[0]),
-                               indices_to_preserve,
-                               indices_to_preserve)]
+        self.A = self.A[
+            np.ix_(range(self.A.shape[0]), indices_to_preserve, indices_to_preserve)
+        ]
 
         self.rev_inputs = {v: k for v, k in enumerate(self.rev_inputs.values())}
         self.inputs = {v: k for k, v in self.rev_inputs.items()}
@@ -1938,28 +2456,33 @@ class InventoryCalculation:
         # we need to remove the additional electricity input
         # in the fuel market datasets
         if not ecoinvent_compatibility:
-            fuel_markets = [self.inputs[a] for a in self.inputs if "fuel market for" in a[0]]
-            electricity_inputs = [self.inputs[a] for a in self.inputs if "electricity market for" in a[0]]
+            fuel_markets = [
+                self.inputs[a] for a in self.inputs if "fuel market for" in a[0]
+            ]
+            electricity_inputs = [
+                self.inputs[a] for a in self.inputs if "electricity market for" in a[0]
+            ]
             self.A[np.ix_(range(self.A.shape[0]), electricity_inputs, fuel_markets)] = 0
 
         # Remove vehicles not compliant or available
         self.resize_A_matrix_for_export()
 
-
         if presamples:
             lci, array = ExportInventory(
                 self.A, self.rev_inputs, db_name=db_name
-            ).write_lci(presamples=presamples,
-                        ecoinvent_compatibility=ecoinvent_compatibility,
-                        ecoinvent_version=ecoinvent_version,
-                        vehicle_specs=self.specs)
+            ).write_lci(
+                presamples=presamples,
+                ecoinvent_compatibility=ecoinvent_compatibility,
+                ecoinvent_version=ecoinvent_version,
+                vehicle_specs=self.specs,
+            )
             return lci, array
         else:
             lci = ExportInventory(self.A, self.rev_inputs, db_name=db_name).write_lci(
                 presamples=presamples,
                 ecoinvent_compatibility=ecoinvent_compatibility,
                 ecoinvent_version=ecoinvent_version,
-                vehicle_specs=self.specs
+                vehicle_specs=self.specs,
             )
             return lci
 
@@ -2060,8 +2583,12 @@ class InventoryCalculation:
         # we need to remove the additional electricity input
         # in the fuel market datasets
         if not ecoinvent_compatibility:
-            fuel_markets = [self.inputs[a] for a in self.inputs if "fuel market for" in a[0]]
-            electricity_inputs = [self.inputs[a] for a in self.inputs if "electricity market for" in a[0]]
+            fuel_markets = [
+                self.inputs[a] for a in self.inputs if "fuel market for" in a[0]
+            ]
+            electricity_inputs = [
+                self.inputs[a] for a in self.inputs if "electricity market for" in a[0]
+            ]
             self.A[np.ix_(range(self.A.shape[0]), electricity_inputs, fuel_markets)] = 0
 
         # Remove vehicles not compliant or available
@@ -2072,22 +2599,22 @@ class InventoryCalculation:
                 self.A, self.rev_inputs, db_name=db_name
             ).write_lci_to_bw(
                 presamples=presamples,
-              ecoinvent_compatibility=ecoinvent_compatibility,
-              ecoinvent_version=ecoinvent_version,
-              forbidden_activities=forbidden_activities,
-              vehicle_specs=self.specs
-                              )
+                ecoinvent_compatibility=ecoinvent_compatibility,
+                ecoinvent_version=ecoinvent_version,
+                forbidden_activities=forbidden_activities,
+                vehicle_specs=self.specs,
+            )
             return lci, array
         else:
             lci = ExportInventory(
                 self.A, self.rev_inputs, db_name=db_name
             ).write_lci_to_bw(
                 presamples=presamples,
-              ecoinvent_compatibility=ecoinvent_compatibility,
-              ecoinvent_version=ecoinvent_version,
-              forbidden_activities=forbidden_activities,
-              vehicle_specs=self.specs
-                                )
+                ecoinvent_compatibility=ecoinvent_compatibility,
+                ecoinvent_version=ecoinvent_version,
+                forbidden_activities=forbidden_activities,
+                vehicle_specs=self.specs,
+            )
             return lci
 
     def export_lci_to_excel(
@@ -2099,7 +2626,7 @@ class InventoryCalculation:
         filename=None,
         create_vehicle_datasets=True,
         forbidden_activities=None,
-        export_format="file"
+        export_format="file",
     ):
         """
         Export the inventory as an Excel file (if the destination software is Brightway2) or a CSV file (if the destination software is Simapro) file.
@@ -2189,8 +2716,12 @@ class InventoryCalculation:
         # we need to remove the additional electricity input
         # in the fuel market datasets
         if not ecoinvent_compatibility:
-            fuel_markets = [self.inputs[a] for a in self.inputs if "fuel market for" in a[0]]
-            electricity_inputs = [self.inputs[a] for a in self.inputs if "electricity market for" in a[0]]
+            fuel_markets = [
+                self.inputs[a] for a in self.inputs if "fuel market for" in a[0]
+            ]
+            electricity_inputs = [
+                self.inputs[a] for a in self.inputs if "electricity market for" in a[0]
+            ]
             self.A[np.ix_(range(self.A.shape[0]), electricity_inputs, fuel_markets)] = 0
 
         # Remove vehicles not compliant or available
@@ -2206,7 +2737,7 @@ class InventoryCalculation:
             filename=filename,
             forbidden_activities=forbidden_activities,
             export_format=export_format,
-            vehicle_specs=self.specs
+            vehicle_specs=self.specs,
         )
         return fp
 
@@ -2225,15 +2756,15 @@ class InventoryCalculation:
             ):
                 raise ValueError("The custom electricity mixes are not valid")
 
-
-
             mix = self.background_configuration["custom electricity mix"]
 
             if np.shape(mix)[0] != len(self.scope["year"]):
-                raise ValueError("The number of electricity mixes ({}) must match with the "
-                                 "number of years ({}).".format(
-                    np.shape(mix)[0], len(self.scope["year"])
-                ))
+                raise ValueError(
+                    "The number of electricity mixes ({}) must match with the "
+                    "number of years ({}).".format(
+                        np.shape(mix)[0], len(self.scope["year"])
+                    )
+                )
 
         else:
             use_year = [
@@ -2249,7 +2780,6 @@ class InventoryCalculation:
                                 "BEV-opp",
                                 "FCEV",
                                 "PHEV-p",
-                                
                                 "ICEV-p",
                                 "ICEV-d",
                                 "HEV-p",
@@ -2268,7 +2798,6 @@ class InventoryCalculation:
                                 "BEV-opp",
                                 "FCEV",
                                 "PHEV-p",
-                                
                                 "ICEV-p",
                                 "ICEV-d",
                                 "HEV-p",
@@ -2370,7 +2899,8 @@ class InventoryCalculation:
                 year = self.scope["year"]
                 co2_intensity_tech = (
                     self.B.sel(
-                        category=category_name, activity=list(self.elec_map.values()),
+                        category=category_name,
+                        activity=list(self.elec_map.values()),
                     )
                     .interp(year=year, kwargs={"fill_value": "extrapolate"})
                     .values
@@ -2401,7 +2931,7 @@ class InventoryCalculation:
         return sum_renew, co2_intensity_tech
 
     def create_electricity_market_for_fuel_prep(self):
-        """ This function fills the electricity market that supplies battery charging operations
+        """This function fills the electricity market that supplies battery charging operations
         and hydrogen production through electrolysis.
         """
 
@@ -2427,7 +2957,9 @@ class InventoryCalculation:
                     [self.inputs[self.elec_map[t]] for t in self.elec_map],
                     col_num,
                 )
-            ] = (m * -1 * losses_to_low)
+            ] = (
+                m * -1 * losses_to_low
+            )
 
             # Add transmission network for high and medium voltage
             self.A[
@@ -2441,7 +2973,9 @@ class InventoryCalculation:
                     )
                 ],
                 col_num,
-            ] = (6.58e-9 * -1 * losses_to_low)
+            ] = (
+                6.58e-9 * -1 * losses_to_low
+            )
 
             self.A[
                 :,
@@ -2454,7 +2988,9 @@ class InventoryCalculation:
                     )
                 ],
                 col_num,
-            ] = (1.86e-8 * -1 * losses_to_low)
+            ] = (
+                1.86e-8 * -1 * losses_to_low
+            )
 
             self.A[
                 :,
@@ -2467,7 +3003,9 @@ class InventoryCalculation:
                     )
                 ],
                 col_num,
-            ] = (3.17e-10 * -1 * losses_to_low)
+            ] = (
+                3.17e-10 * -1 * losses_to_low
+            )
 
             # Add distribution network, low voltage
             self.A[
@@ -2481,7 +3019,9 @@ class InventoryCalculation:
                     )
                 ],
                 col_num,
-            ] = (8.74e-8 * -1 * losses_to_low)
+            ] = (
+                8.74e-8 * -1 * losses_to_low
+            )
 
             # Add supply of sulfur hexafluoride for transformers
             self.A[
@@ -2495,7 +3035,9 @@ class InventoryCalculation:
                     )
                 ],
                 col_num,
-            ] = ((5.4e-8 + 2.99e-9) * -1 * losses_to_low)
+            ] = (
+                (5.4e-8 + 2.99e-9) * -1 * losses_to_low
+            )
 
             # Add SF_6 leakage
 
@@ -2574,7 +3116,9 @@ class InventoryCalculation:
                     [self.inputs[self.elec_map[t]] for t in self.elec_map],
                     col_num,
                 )
-            ] = (m * losses_to_low * -1)
+            ] = (
+                m * losses_to_low * -1
+            )
 
             # Add transmission network for high and medium voltage
             self.A[
@@ -2588,7 +3132,9 @@ class InventoryCalculation:
                     )
                 ],
                 col_num,
-            ] = (6.58e-9 * -1 * losses_to_low)
+            ] = (
+                6.58e-9 * -1 * losses_to_low
+            )
 
             self.A[
                 :,
@@ -2601,7 +3147,9 @@ class InventoryCalculation:
                     )
                 ],
                 col_num,
-            ] = (1.86e-8 * -1 * losses_to_low)
+            ] = (
+                1.86e-8 * -1 * losses_to_low
+            )
 
             self.A[
                 :,
@@ -2614,7 +3162,9 @@ class InventoryCalculation:
                     )
                 ],
                 col_num,
-            ] = (3.17e-10 * -1 * losses_to_low)
+            ] = (
+                3.17e-10 * -1 * losses_to_low
+            )
 
             # Add distribution network, low voltage
             self.A[
@@ -2628,7 +3178,9 @@ class InventoryCalculation:
                     )
                 ],
                 col_num,
-            ] = (8.74e-8 * -1 * losses_to_low)
+            ] = (
+                8.74e-8 * -1 * losses_to_low
+            )
 
             # Add supply of sulfur hexafluoride for transformers
             self.A[
@@ -2642,7 +3194,9 @@ class InventoryCalculation:
                     )
                 ],
                 col_num,
-            ] = ((5.4e-8 + 2.99e-9) * -1 * losses_to_low)
+            ] = (
+                (5.4e-8 + 2.99e-9) * -1 * losses_to_low
+            )
 
             # Add SF_6 leakage
 
@@ -2655,8 +3209,6 @@ class InventoryCalculation:
         This function creates markets for fuel, considering a given blend, a given fuel type and a given year
         :return:
         """
-
-
 
         d_dataset_name = {
             "diesel": "fuel supply for diesel vehicles, ",
@@ -2683,7 +3235,6 @@ class InventoryCalculation:
                 primary_share = self.fuel_blends[fuel_type]["primary"]["share"]
                 secondary_share = self.fuel_blends[fuel_type]["secondary"]["share"]
 
-
                 for y, year in enumerate(self.scope["year"]):
 
                     dataset_name = d_dataset_name[fuel_type] + str(year)
@@ -2706,7 +3257,9 @@ class InventoryCalculation:
 
                     if ~np.isclose(primary_share[y] + secondary_share[y], 1, rtol=1e-3):
                         sum_blend = primary_share[y] + secondary_share[y]
-                        raise ValueError(f"The fuel blend for {fuel_type} in {year} is not equal to 1, but {sum_blend}.")
+                        raise ValueError(
+                            f"The fuel blend for {fuel_type} in {year} is not equal to 1, but {sum_blend}."
+                        )
 
                     self.A[:, primary_fuel_activity_index, fuel_market_index] = (
                         -1 * primary_share[y]
@@ -2718,40 +3271,46 @@ class InventoryCalculation:
                     def learning_rate_fuel(fuel, year, share, val):
                         if fuel == "electrolysis":
                             # apply some learning rate for electrolysis
-                            electrolysis = -.3538 * (float(year) - 2010) + 58.589
+                            electrolysis = -0.3538 * (float(year) - 2010) + 58.589
                             electricity = (val - 58 + electrolysis) * share
 
                         elif fuel == "synthetic diesel - energy allocation":
                             # apply some learning rate for electrolysis
-                            h2 = .42
-                            electrolysis = -.3538 * (float(year) - 2010) + 58.589
+                            h2 = 0.42
+                            electrolysis = -0.3538 * (float(year) - 2010) + 58.589
                             electricity = val - (h2 * 58)
-                            electricity += (electrolysis * h2)
+                            electricity += electrolysis * h2
                             electricity *= share
 
                         elif fuel == "synthetic diesel - economic allocation":
                             # apply some learning rate for electrolysis
-                            h2 = .183
-                            electrolysis = -.3538 * (float(year) - 2010) + 58.589
+                            h2 = 0.183
+                            electrolysis = -0.3538 * (float(year) - 2010) + 58.589
                             electricity = val - (h2 * 58)
-                            electricity += (electrolysis * h2)
+                            electricity += electrolysis * h2
                             electricity *= share
 
                         else:
                             electricity = val * share
                         return electricity
 
-                    additional_electricity_primary = learning_rate_fuel(primary, year, primary_share[y],
-                                                                        self.fuel_dictionary[primary][
-                                                                            "additional electricity"])
+                    additional_electricity_primary = learning_rate_fuel(
+                        primary,
+                        year,
+                        primary_share[y],
+                        self.fuel_dictionary[primary]["additional electricity"],
+                    )
 
-                    additional_electricity_secondary = learning_rate_fuel(secondary, year, secondary_share[y],
-                                                                          self.fuel_dictionary[secondary][
-                                                                              "additional electricity"])
+                    additional_electricity_secondary = learning_rate_fuel(
+                        secondary,
+                        year,
+                        secondary_share[y],
+                        self.fuel_dictionary[secondary]["additional electricity"],
+                    )
 
                     additional_electricity = (
-                            additional_electricity_primary
-                            + additional_electricity_secondary
+                        additional_electricity_primary
+                        + additional_electricity_secondary
                     )
 
                     if additional_electricity > 0:
@@ -2765,7 +3324,10 @@ class InventoryCalculation:
                             -1 * additional_electricity
                         )
 
-        if any(pt in self.scope["powertrain"] for pt in ["BEV-depot", "BEV-opp", "BEV-motion", "PHEV-d"]):
+        if any(
+            pt in self.scope["powertrain"]
+            for pt in ["BEV-depot", "BEV-opp", "BEV-motion", "PHEV-d"]
+        ):
             for year in self.scope["year"]:
                 fuel_type = "electricity"
                 dataset_name = d_dataset_name[fuel_type] + str(year)
@@ -2775,12 +3337,13 @@ class InventoryCalculation:
                 electricity_mix_index = [
                     self.inputs[i]
                     for i in self.inputs
-                    if i[0]
-                    == "electricity market for fuel preparation, " + str(year)
+                    if i[0] == "electricity market for fuel preparation, " + str(year)
                 ][0]
                 self.A[:, electricity_mix_index, electricity_market_index] = -1
 
-    def find_inputs(self, value_in, value_out, find_input_by="name", zero_out_input=False):
+    def find_inputs(
+        self, value_in, value_out, find_input_by="name", zero_out_input=False
+    ):
         """
         Finds the exchange inputs to a specified functional unit
         :param find_input_by: can be 'name' or 'unit'
@@ -2793,8 +3356,12 @@ class InventoryCalculation:
         if isinstance(value_out, str):
             value_out = [value_out]
 
-        index_output = [self.inputs[i] for val in value_out for i in self.inputs
-                        if val.lower() in i[0].lower()]
+        index_output = [
+            self.inputs[i]
+            for val in value_out
+            for i in self.inputs
+            if val.lower() in i[0].lower()
+        ]
 
         f = np.zeros((np.shape(self.A)[1]))
 
@@ -2805,15 +3372,20 @@ class InventoryCalculation:
         ind_inputs = np.nonzero(X)[0]
 
         if find_input_by == "name":
-            ins = [i for i in ind_inputs
-                    if value_in.lower() in self.rev_inputs[i][0].lower()]
+            ins = [
+                i
+                for i in ind_inputs
+                if value_in.lower() in self.rev_inputs[i][0].lower()
+            ]
 
         if find_input_by == "unit":
-            ins = [i for i in ind_inputs
-                    if value_in.lower() in self.rev_inputs[i][2].lower()]
+            ins = [
+                i
+                for i in ind_inputs
+                if value_in.lower() in self.rev_inputs[i][2].lower()
+            ]
 
-        outs = [i for i in ind_inputs
-                if i not in ins]
+        outs = [i for i in ind_inputs if i not in ins]
 
         sum_supplied = X[ins].sum()
 
@@ -3058,28 +3630,27 @@ class InventoryCalculation:
                     "diesel, synthetic, vehicle grade",
                 )
             },
-
         }
 
         for d in d_fuels:
-            if any(i in d_fuels[d]["name"][0].lower() for i in ("synthetic", "hydrogen", "ethanol",
-                                                                "biodiesel")):
+            if any(
+                i in d_fuels[d]["name"][0].lower()
+                for i in ("synthetic", "hydrogen", "ethanol", "biodiesel")
+            ):
                 d_fuels[d]["additional electricity"] = self.find_inputs(
-                    "kilowatt hour",
-                    d_fuels[d]["name"][0],
-                    "unit"
+                    "kilowatt hour", d_fuels[d]["name"][0], "unit"
                 )
             else:
                 d_fuels[d]["additional electricity"] = 0
 
         for d in d_fuels:
-            if any(i in d_fuels[d]["name"][0].lower() for i in ("synthetic", "hydrogen", "bio")):
+            if any(
+                i in d_fuels[d]["name"][0].lower()
+                for i in ("synthetic", "hydrogen", "bio")
+            ):
                 self.find_inputs(
-                    "kilowatt hour",
-                    d_fuels[d]["name"][0],
-                    "unit", zero_out_input=True
+                    "kilowatt hour", d_fuels[d]["name"][0], "unit", zero_out_input=True
                 )
-
 
         return d_fuels
 
@@ -3150,7 +3721,6 @@ class InventoryCalculation:
             / array[self.array_inputs["average passengers"]]
             * -1
         )
-
 
         # Exhaust
         self.A[
@@ -3234,14 +3804,12 @@ class InventoryCalculation:
         )
 
         # Other components, for non-electric and hybrid trucks
-        index = self.get_index_vehicle_from_array(
-            ["ICEV-d",  "HEV-d", "ICEV-g"]
-        )
+        index = self.get_index_vehicle_from_array(["ICEV-d", "HEV-d", "ICEV-g"])
         ind_A = [
             self.inputs[i]
             for i in self.inputs
             if "transport, passenger bus, " in i[0]
-            and any(x in i[0] for x in ["ICEV-d",  "HEV-d", "ICEV-g"])
+            and any(x in i[0] for x in ["ICEV-d", "HEV-d", "ICEV-g"])
         ]
         self.A[
             :,
@@ -3262,11 +3830,25 @@ class InventoryCalculation:
         ).T
 
         # Other components, for electric trucks
-        index = self.get_index_vehicle_from_array(["BEV-opp", "BEV-depot", "BEV-motion", "FCEV", ])
+        index = self.get_index_vehicle_from_array(
+            [
+                "BEV-opp",
+                "BEV-depot",
+                "BEV-motion",
+                "FCEV",
+            ]
+        )
         ind_A = [
             self.inputs[i]
             for i in self.inputs
-            if "transport, passenger bus, " in i[0] and any(x in i[0] for x in ["BEV", "FCEV",])
+            if "transport, passenger bus, " in i[0]
+            and any(
+                x in i[0]
+                for x in [
+                    "BEV",
+                    "FCEV",
+                ]
+            )
         ]
 
         self.A[
@@ -3313,13 +3895,16 @@ class InventoryCalculation:
                     "maintenance, bus",
                 )
             ],
-            -self.number_of_cars:,
+            -self.number_of_cars :,
         ] = (
+            (
                 1
                 / array[self.array_inputs["lifetime kilometers"]]
                 / array[self.array_inputs["average passengers"]]
-            )* (array[self.array_inputs["gross mass"]] / 19000) * -1
-
+            )
+            * (array[self.array_inputs["gross mass"]] / 19000)
+            * -1
+        )
 
         # Powertrain components
 
@@ -3409,7 +3994,8 @@ class InventoryCalculation:
         ] = (
             (
                 array[
-                    [self.array_inputs[l] for l in ["combustion engine mass"]], :,
+                    [self.array_inputs[l] for l in ["combustion engine mass"]],
+                    :,
                 ].sum(axis=0)
             )
             / array[self.array_inputs["lifetime kilometers"], :]
@@ -3420,12 +4006,10 @@ class InventoryCalculation:
         self.A[
             :,
             self.inputs[("Ancillary BoP", "GLO", "kilogram", "Ancillary BoP")],
-            -self.number_of_cars:,
+            -self.number_of_cars :,
         ] = (
             array[self.array_inputs["fuel cell ancillary BoP mass"], :]
-            * (1 + array[
-                        self.array_inputs["fuel cell lifetime replacements"]]
-               )
+            * (1 + array[self.array_inputs["fuel cell lifetime replacements"]])
             / array[self.array_inputs["lifetime kilometers"], :]
             / array[self.array_inputs["average passengers"], :]
             * -1
@@ -3437,9 +4021,7 @@ class InventoryCalculation:
             -self.number_of_cars :,
         ] = (
             array[self.array_inputs["fuel cell essential BoP mass"], :]
-            * (1 + array[
-                self.array_inputs["fuel cell lifetime replacements"]]
-            )
+            * (1 + array[self.array_inputs["fuel cell lifetime replacements"]])
             / array[self.array_inputs["lifetime kilometers"], :]
             / array[self.array_inputs["average passengers"], :]
             * -1
@@ -3451,9 +4033,7 @@ class InventoryCalculation:
             -self.number_of_cars :,
         ] = (
             array[self.array_inputs["fuel cell stack mass"], :]
-            * (1 + array[
-                        self.array_inputs["fuel cell lifetime replacements"]]
-               )
+            * (1 + array[self.array_inputs["fuel cell lifetime replacements"]])
             / 0.51
             / array[self.array_inputs["lifetime kilometers"], :]
             / array[self.array_inputs["average passengers"], :]
@@ -3470,19 +4050,23 @@ class InventoryCalculation:
         # Energy storage for electric buses
 
         print(
-            "The country of use is " + self.country, end="\n * ",
+            "The country of use is " + self.country,
+            end="\n * ",
         )
-
-
 
         # Battery BoP for all electric and hybrid buses
 
-        index = self.get_index_vehicle_from_array(["BEV-depot", "BEV-opp", "BEV-motion", "FCEV",  "HEV-d"])
+        index = self.get_index_vehicle_from_array(
+            ["BEV-depot", "BEV-opp", "BEV-motion", "FCEV", "HEV-d"]
+        )
         ind_A = [
             self.inputs[i]
             for i in self.inputs
             if "transport, passenger bus, " in i[0]
-            and any(x in i[0] for x in ["BEV-depot", "BEV-opp", "BEV-motion", "FCEV",  "HEV-d"])
+            and any(
+                x in i[0]
+                for x in ["BEV-depot", "BEV-opp", "BEV-motion", "FCEV", "HEV-d"]
+            )
         ]
 
         self.A[
@@ -3495,7 +4079,6 @@ class InventoryCalculation:
                     + array[
                         self.array_inputs["battery lifetime replacements"], :, index
                     ]
-
                 )
             )
             / array[self.array_inputs["lifetime kilometers"], :, index]
@@ -3504,9 +4087,7 @@ class InventoryCalculation:
         ).T
 
         # Zero out electricity requirement for battery cell manufacture
-        for battery_tech in [
-            "NMC-111", "NCA", "LFP", "LTO"
-        ]:
+        for battery_tech in ["NMC-111", "NCA", "LFP", "LTO"]:
             battery_cell_label = (
                 "Battery cell, " + battery_tech,
                 "GLO",
@@ -3516,23 +4097,25 @@ class InventoryCalculation:
 
             # Set an input of electricity, given the country of manufacture
             self.A[
-            :,
-            self.inputs[
-                (
-                    "market group for electricity, medium voltage",
-                    "World",
-                    "kilowatt hour",
-                    "electricity, medium voltage",
-                )
-            ],
-            self.inputs[battery_cell_label],
+                :,
+                self.inputs[
+                    (
+                        "market group for electricity, medium voltage",
+                        "World",
+                        "kilowatt hour",
+                        "electricity, medium voltage",
+                    )
+                ],
+                self.inputs[battery_cell_label],
             ] = 0
 
         # We look into `background_configuration` to see what battery chemistry to
         # use for each bus
         for veh in self.background_configuration["energy storage"]["electric"]:
             if veh != "origin" and veh in self.scope["powertrain"]:
-                battery_tech = self.background_configuration["energy storage"]["electric"][veh]
+                battery_tech = self.background_configuration["energy storage"][
+                    "electric"
+                ][veh]
                 battery_cell_label = (
                     "Battery cell, " + battery_tech,
                     "GLO",
@@ -3546,7 +4129,7 @@ class InventoryCalculation:
                     self.inputs[i]
                     for i in self.inputs
                     if "transport, passenger bus, " in i[0]
-                       and any(x in i[0] for x in [veh])
+                    and any(x in i[0] for x in [veh])
                 ]
 
                 self.A[:, self.inputs[battery_cell_label], ind_A] = (
@@ -3555,9 +4138,10 @@ class InventoryCalculation:
                         * (
                             1
                             + array[
-                                self.array_inputs["battery lifetime replacements"], :, idx
+                                self.array_inputs["battery lifetime replacements"],
+                                :,
+                                idx,
                             ]
-
                         )
                     )
                     / array[self.array_inputs["lifetime kilometers"], :, idx]
@@ -3575,40 +4159,45 @@ class InventoryCalculation:
                                 self.inputs[i]
                                 for i in self.inputs
                                 if str(y) in i[0]
-                                   and "electricity market for energy storage production" in i[0]
+                                and "electricity market for energy storage production"
+                                in i[0]
                             ],
                             [
                                 self.inputs[i]
                                 for i in self.inputs
-                                if str(y) in i[0] and "transport, passenger bus, " in i[0]
-                                   and veh in i[0]
+                                if str(y) in i[0]
+                                and "transport, passenger bus, " in i[0]
+                                and veh in i[0]
                             ],
                         )
                     ] = (
-                            array[
-                            self.array_inputs["battery cell production electricity"], :, idx
-                            ].T
-                            * self.A[
-                              :,
-                              self.inputs[battery_cell_label],
-                              [
-                                  self.inputs[i]
-                                  for i in self.inputs
-                                  if str(y) in i[0] and "transport, passenger bus, " in i[0]
-                                     and veh in i[0]
-                              ],
-                              ]
+                        array[
+                            self.array_inputs["battery cell production electricity"],
+                            :,
+                            idx,
+                        ].T
+                        * self.A[
+                            :,
+                            self.inputs[battery_cell_label],
+                            [
+                                self.inputs[i]
+                                for i in self.inputs
+                                if str(y) in i[0]
+                                and "transport, passenger bus, " in i[0]
+                                and veh in i[0]
+                            ],
+                        ]
                     ).reshape(
                         self.iterations, 1, -1
                     )
-
 
         # Use the inventory of Wolff et al. 2020 for lead acid battery for non-electric and non-hybrid trucks
 
         ind_A = [
             self.inputs[i]
             for i in self.inputs
-            if "transport, passenger bus, " in i[0] and any(x in i[0] for x in ["ICEV-d", "ICEV-g"])
+            if "transport, passenger bus, " in i[0]
+            and any(x in i[0] for x in ["ICEV-d", "ICEV-g"])
         ]
         index = self.get_index_vehicle_from_array(["ICEV-d", "ICEV-g"])
 
@@ -3657,7 +4246,6 @@ class InventoryCalculation:
                     + array[
                         self.array_inputs["battery lifetime replacements"], :, index
                     ]
-
                 )
             )
             / array[self.array_inputs["lifetime kilometers"], :, index]
@@ -3669,9 +4257,9 @@ class InventoryCalculation:
         index_A = [
             self.inputs[c]
             for c in self.inputs
-            if any(ele in c[0] for ele in ["ICEV-d",  "HEV-d"])
+            if any(ele in c[0] for ele in ["ICEV-d", "HEV-d"])
         ]
-        index = self.get_index_vehicle_from_array(["ICEV-d",  "HEV-d"])
+        index = self.get_index_vehicle_from_array(["ICEV-d", "HEV-d"])
 
         self.A[
             :,
@@ -3736,7 +4324,9 @@ class InventoryCalculation:
 
         index = self.get_index_vehicle_from_array("FCEV")
         self.A[
-            :, self.inputs[dict_tank_map[hydro_tank_technology]], self.index_fuel_cell,
+            :,
+            self.inputs[dict_tank_map[hydro_tank_technology]],
+            self.index_fuel_cell,
         ] = (
             array[self.array_inputs["fuel tank mass"], :, index]
             / array[self.array_inputs["lifetime kilometers"], :, index]
@@ -3769,7 +4359,11 @@ class InventoryCalculation:
                 end=end_str,
             )
 
-            if any(True for x in ["BEV-opp", "BEV-depot", "BEV-motion", "PHEV-d"] if x in self.scope["powertrain"]):
+            if any(
+                True
+                for x in ["BEV-opp", "BEV-depot", "BEV-motion", "PHEV-d"]
+                if x in self.scope["powertrain"]
+            ):
 
                 index = self.get_index_vehicle_from_array(
                     ["BEV-opp", "BEV-depot", "BEV-motion"], year, method="and"
@@ -3789,7 +4383,15 @@ class InventoryCalculation:
                             for i in self.inputs
                             if str(year) in i[0]
                             and "transport, passenger bus, " in i[0]
-                            and any(True for x in ["BEV-opp", "BEV-depot", "BEV-motion", ] if x in i[0])
+                            and any(
+                                True
+                                for x in [
+                                    "BEV-opp",
+                                    "BEV-depot",
+                                    "BEV-motion",
+                                ]
+                                if x in i[0]
+                            )
                         ],
                     )
                 ] = (
@@ -3808,33 +4410,32 @@ class InventoryCalculation:
                 ["BEV-motion"], [2000, 2010], method="and"
             )
 
-
             self.A[
                 np.ix_(
                     np.arange(self.iterations),
                     [
                         self.inputs[i]
                         for i in self.inputs
-                        if "diesel, burned in diesel-electric generating set, 18.5kW" in i[0]
+                        if "diesel, burned in diesel-electric generating set, 18.5kW"
+                        in i[0]
                     ],
                     [
                         self.inputs[i]
                         for i in self.inputs
                         if "transport, passenger bus, " in i[0]
-                           and any(True for x in ["BEV-motion"] if x in i[0])
-                           and any(True for x in [2000, 2010] if str(x) in i[0])
+                        and any(True for x in ["BEV-motion"] if x in i[0])
+                        and any(True for x in [2000, 2010] if str(x) in i[0])
                     ],
                 )
             ] = (
-                    array[self.array_inputs["oxidation energy stored"], :, index] # kWh
-                    / array[self.array_inputs["daily distance"], :, index] # km
-                    / array[self.array_inputs["average passengers"], :, index] # passengers
-                    * 3.6 # MJ/kWh
-                    * -1
+                array[self.array_inputs["oxidation energy stored"], :, index]  # kWh
+                / array[self.array_inputs["daily distance"], :, index]  # km
+                / array[self.array_inputs["average passengers"], :, index]  # passengers
+                * 3.6  # MJ/kWh
+                * -1
             ).T.reshape(
                 self.iterations, 1, -1
             )
-
 
         if "FCEV" in self.scope["powertrain"]:
 
@@ -3871,7 +4472,9 @@ class InventoryCalculation:
                 ind_A = [
                     self.inputs[i]
                     for i in self.inputs
-                    if str(year) in i[0] and "transport, passenger bus, " in i[0] and "FCEV" in i[0]
+                    if str(year) in i[0]
+                    and "transport, passenger bus, " in i[0]
+                    and "FCEV" in i[0]
                 ]
                 ind_array = [
                     x for x in self.get_index_vehicle_from_array(year) if x in index
@@ -3889,9 +4492,7 @@ class InventoryCalculation:
                 ] = (
                     array[self.array_inputs["fuel mass"], :, ind_array]
                     / array[self.array_inputs["daily distance"], :, ind_array]
-                    / (
-                        array[self.array_inputs["average passengers"], :, ind_array]
-                    )
+                    / (array[self.array_inputs["average passengers"], :, ind_array])
                     * -1
                 ).T
 
@@ -3917,7 +4518,8 @@ class InventoryCalculation:
                     + " _________________________________________ "
                     + str(
                         np.round(
-                            self.fuel_blends["cng"]["secondary"]["share"][y] * 100, 0,
+                            self.fuel_blends["cng"]["secondary"]["share"][y] * 100,
+                            0,
                         )
                     )
                     + "%",
@@ -3929,7 +4531,9 @@ class InventoryCalculation:
                 ind_A = [
                     self.inputs[i]
                     for i in self.inputs
-                    if str(year) in i[0] and "transport, passenger bus, " in i[0] and "ICEV-g" in i[0]
+                    if str(year) in i[0]
+                    and "transport, passenger bus, " in i[0]
+                    and "ICEV-g" in i[0]
                 ]
                 ind_array = [
                     x for x in self.get_index_vehicle_from_array(year) if x in index
@@ -3947,8 +4551,7 @@ class InventoryCalculation:
                 ] = (
                     (array[self.array_inputs["fuel mass"], :, ind_array])
                     / array[self.array_inputs["daily distance"], :, ind_array]
-                    /
-                        array[self.array_inputs["average passengers"], :, ind_array]
+                    / array[self.array_inputs["average passengers"], :, ind_array]
                     * (
                         1
                         + array[
@@ -3960,12 +4563,19 @@ class InventoryCalculation:
 
                 # Gas leakage emission as methane
                 self.A[
-                    :, self.inputs[("Methane, fossil", ("air",), "kilogram",)], ind_A,
+                    :,
+                    self.inputs[
+                        (
+                            "Methane, fossil",
+                            ("air",),
+                            "kilogram",
+                        )
+                    ],
+                    ind_A,
                 ] = (
                     (array[self.array_inputs["fuel mass"], :, ind_array])
                     / array[self.array_inputs["daily distance"], :, ind_array]
-                    /
-                    array[self.array_inputs["average passengers"], :, ind_array]
+                    / array[self.array_inputs["average passengers"], :, ind_array]
                     * array[self.array_inputs["CNG pump-to-tank leakage"], :, ind_array]
                     * -1
                 ).T
@@ -3978,26 +4588,26 @@ class InventoryCalculation:
 
                 if self.fuel_blends["cng"]["primary"]["type"] == "cng":
                     share_fossil += self.fuel_blends["cng"]["primary"]["share"][y]
-                    CO2_fossil = (self.fuel_blends["cng"]["primary"]["CO2"] *
-                                  self.fuel_blends["cng"]["primary"]["share"][y])
+                    CO2_fossil = (
+                        self.fuel_blends["cng"]["primary"]["CO2"]
+                        * self.fuel_blends["cng"]["primary"]["share"][y]
+                    )
 
                 if self.fuel_blends["cng"]["secondary"]["type"] == "cng":
                     share_fossil += self.fuel_blends["cng"]["secondary"]["share"][y]
-                    CO2_fossil = (self.fuel_blends["cng"]["primary"]["CO2"] *
-                                  self.fuel_blends["cng"]["secondary"]["share"][y])
+                    CO2_fossil = (
+                        self.fuel_blends["cng"]["primary"]["CO2"]
+                        * self.fuel_blends["cng"]["secondary"]["share"][y]
+                    )
 
                 self.A[
                     :,
                     self.inputs[("Carbon dioxide, fossil", ("air",), "kilogram")],
                     ind_A,
                 ] = (
-                    (
-                        array[self.array_inputs["fuel mass"], :, ind_array]
-                        * CO2_fossil
-                    )
+                    (array[self.array_inputs["fuel mass"], :, ind_array] * CO2_fossil)
                     / array[self.array_inputs["daily distance"], :, ind_array]
-                    /
-                        array[self.array_inputs["average passengers"], :, ind_array]
+                    / array[self.array_inputs["average passengers"], :, ind_array]
                     * -1
                 ).T
 
@@ -4010,14 +4620,16 @@ class InventoryCalculation:
 
                 if self.fuel_blends["cng"]["primary"]["type"] != "cng":
                     share_non_fossil += self.fuel_blends["cng"]["primary"]["share"][y]
-                    CO2_non_fossil = (share_non_fossil * self.fuel_blends["cng"]["primary"]["CO2"])
+                    CO2_non_fossil = (
+                        share_non_fossil * self.fuel_blends["cng"]["primary"]["CO2"]
+                    )
 
                 if self.fuel_blends["cng"]["secondary"]["type"] != "cng":
-                    share_non_fossil += self.fuel_blends["cng"]["secondary"][
-                        "share"
-                    ][y]
-                    CO2_non_fossil += (self.fuel_blends["cng"]["secondary"][
-                                          "share"][y] * self.fuel_blends["cng"]["secondary"]["CO2"])
+                    share_non_fossil += self.fuel_blends["cng"]["secondary"]["share"][y]
+                    CO2_non_fossil += (
+                        self.fuel_blends["cng"]["secondary"]["share"][y]
+                        * self.fuel_blends["cng"]["secondary"]["CO2"]
+                    )
 
                 self.A[
                     :,
@@ -4037,14 +4649,12 @@ class InventoryCalculation:
                         )
                     )
                     / array[self.array_inputs["daily distance"], :, ind_array]
-                    /
-                        array[self.array_inputs["average passengers"], :, ind_array]
-
+                    / array[self.array_inputs["average passengers"], :, ind_array]
                     * -1
                 ).T
 
-        if [i for i in self.scope["powertrain"] if i in ["ICEV-d",  "HEV-d"]]:
-            index = self.get_index_vehicle_from_array(["ICEV-d",  "HEV-d"])
+        if [i for i in self.scope["powertrain"] if i in ["ICEV-d", "HEV-d"]]:
+            index = self.get_index_vehicle_from_array(["ICEV-d", "HEV-d"])
 
             print(
                 "{} is completed by {}.".format(
@@ -4078,7 +4688,7 @@ class InventoryCalculation:
                     for i in self.inputs
                     if str(year) in i[0]
                     and "transport, passenger bus, " in i[0]
-                    and any(x in i[0] for x in ["ICEV-d",  "HEV-d"])
+                    and any(x in i[0] for x in ["ICEV-d", "HEV-d"])
                 ]
 
                 ind_array = [
@@ -4107,23 +4717,24 @@ class InventoryCalculation:
                 CO2_fossil = 0
                 if self.fuel_blends["diesel"]["primary"]["type"] == "diesel":
                     share_fossil = self.fuel_blends["diesel"]["primary"]["share"][y]
-                    CO2_fossil = (self.fuel_blends["diesel"]["primary"]["CO2"]
-                                  * self.fuel_blends["diesel"]["primary"]["share"][y])
+                    CO2_fossil = (
+                        self.fuel_blends["diesel"]["primary"]["CO2"]
+                        * self.fuel_blends["diesel"]["primary"]["share"][y]
+                    )
 
                 if self.fuel_blends["diesel"]["secondary"]["type"] == "diesel":
                     share_fossil += self.fuel_blends["diesel"]["secondary"]["share"][y]
-                    CO2_fossil = (self.fuel_blends["diesel"]["secondary"]["CO2"] *
-                                  self.fuel_blends["diesel"]["secondary"]["share"][y])
+                    CO2_fossil = (
+                        self.fuel_blends["diesel"]["secondary"]["CO2"]
+                        * self.fuel_blends["diesel"]["secondary"]["share"][y]
+                    )
 
                 self.A[
                     :,
                     self.inputs[("Carbon dioxide, fossil", ("air",), "kilogram")],
                     ind_A,
                 ] = (
-                    (
-                        array[self.array_inputs["fuel mass"], :, ind_array]
-                        * CO2_fossil
-                    )
+                    (array[self.array_inputs["fuel mass"], :, ind_array] * CO2_fossil)
                     / array[self.array_inputs["daily distance"], :, ind_array]
                     / array[self.array_inputs["average passengers"], :, ind_array]
                     * -1
@@ -4132,10 +4743,14 @@ class InventoryCalculation:
                 # Fuel-based SO2 emissions
                 # Sulfur concentration value for a given country, a given year, as concentration ratio
 
-                sulfur_concentration = self.get_sulfur_content(self.country, "diesel", year)
+                sulfur_concentration = self.get_sulfur_content(
+                    self.country, "diesel", year
+                )
 
                 self.A[
-                    :, self.inputs[("Sulfur dioxide", ("air",), "kilogram")], ind_A,
+                    :,
+                    self.inputs[("Sulfur dioxide", ("air",), "kilogram")],
+                    ind_A,
                 ] = (
                     (
                         (
@@ -4157,15 +4772,21 @@ class InventoryCalculation:
                 # The share of non-fossil fuel in the blend is retrieved
                 # As well as the CO2 emission factor of the fuel
                 if self.fuel_blends["diesel"]["primary"]["type"] != "diesel":
-                    share_non_fossil += self.fuel_blends["diesel"]["primary"]["share"][y]
-                    CO2_non_fossil = (share_non_fossil * self.fuel_blends["diesel"]["primary"]["CO2"])
+                    share_non_fossil += self.fuel_blends["diesel"]["primary"]["share"][
+                        y
+                    ]
+                    CO2_non_fossil = (
+                        share_non_fossil * self.fuel_blends["diesel"]["primary"]["CO2"]
+                    )
 
                 if self.fuel_blends["diesel"]["secondary"]["type"] != "diesel":
                     share_non_fossil += self.fuel_blends["diesel"]["secondary"][
                         "share"
                     ][y]
-                    CO2_non_fossil += (self.fuel_blends["diesel"]["secondary"][
-                        "share"][y] * self.fuel_blends["diesel"]["secondary"]["CO2"])
+                    CO2_non_fossil += (
+                        self.fuel_blends["diesel"]["secondary"]["share"][y]
+                        * self.fuel_blends["diesel"]["secondary"]["CO2"]
+                    )
 
                 self.A[
                     :,
@@ -4201,9 +4822,8 @@ class InventoryCalculation:
                 )
             ],
             -self.number_of_cars :,
-        ] = (
-            array[self.array_inputs["tire wear emissions"], :]
-            / (array[self.array_inputs["average passengers"], :] )
+        ] = array[self.array_inputs["tire wear emissions"], :] / (
+            array[self.array_inputs["average passengers"], :]
         )
         self.A[
             :,
@@ -4216,9 +4836,8 @@ class InventoryCalculation:
                 )
             ],
             -self.number_of_cars :,
-        ] = (
-            array[self.array_inputs["tire wear emissions"], :]
-            / (array[self.array_inputs["average passengers"], :] )
+        ] = array[self.array_inputs["tire wear emissions"], :] / (
+            array[self.array_inputs["average passengers"], :]
         )
 
         # Brake wear emissions
@@ -4236,30 +4855,38 @@ class InventoryCalculation:
                 )
             ],
             -self.number_of_cars :,
-        ] = (
-            array[self.array_inputs["brake wear emissions"], :]
-            / (array[self.array_inputs["average passengers"], :] )
+        ] = array[self.array_inputs["brake wear emissions"], :] / (
+            array[self.array_inputs["average passengers"], :]
         )
 
         ind_A = [
             self.inputs[i]
             for i in self.inputs
             if "transport, passenger bus, " in i[0]
-               and any(x in i[0] for x in ["BEV-opp", "BEV-depot", "BEV-motion", "FCEV", "HEV-d",  ])
+            and any(
+                x in i[0]
+                for x in [
+                    "BEV-opp",
+                    "BEV-depot",
+                    "BEV-motion",
+                    "FCEV",
+                    "HEV-d",
+                ]
+            )
         ]
 
         self.A[
-        :,
-        self.inputs[
-            (
-                "treatment of brake wear emissions, lorry",
-                "RER",
-                "kilogram",
-                "brake wear emissions, lorry",
-            )
-        ],
-        ind_A
-        ] *= .1
+            :,
+            self.inputs[
+                (
+                    "treatment of brake wear emissions, lorry",
+                    "RER",
+                    "kilogram",
+                    "brake wear emissions, lorry",
+                )
+            ],
+            ind_A,
+        ] *= 0.1
 
         # Infrastructure: 5.37e-4 per gross tkm
         self.A[
@@ -4267,13 +4894,10 @@ class InventoryCalculation:
             self.inputs[("market for road", "GLO", "meter-year", "road")],
             -self.number_of_cars :,
         ] = (
-            (
-                (array[self.array_inputs["driving mass"], :] / 1000)
-                * 5.37e-4
-                / (array[self.array_inputs["average passengers"], :])
-            )
-            * -1
-        )
+            (array[self.array_inputs["driving mass"], :] / 1000)
+            * 5.37e-4
+            / (array[self.array_inputs["average passengers"], :])
+        ) * -1
 
         # Infrastructure maintenance
         self.A[
@@ -4282,12 +4906,14 @@ class InventoryCalculation:
                 ("market for road maintenance", "RER", "meter-year", "road maintenance")
             ],
             -self.number_of_cars :,
-        ] = (1.29e-3 / (array[self.array_inputs["average passengers"], :] ) * -1)
+        ] = (
+            1.29e-3 / (array[self.array_inputs["average passengers"], :]) * -1
+        )
 
         # Exhaust emissions
         # Non-fuel based emissions
 
-        self.A[:, self.index_emissions, -self.number_of_cars:] = (
+        self.A[:, self.index_emissions, -self.number_of_cars :] = (
             array[
                 [
                     self.array_inputs[self.map_non_fuel_emissions[self.rev_inputs[x]]]
@@ -4309,30 +4935,34 @@ class InventoryCalculation:
                     "used bus",
                 )
             ],
-            -self.number_of_cars:,
+            -self.number_of_cars :,
         ] = (
             1
             / array[self.array_inputs["lifetime kilometers"]]
             / array[self.array_inputs["average passengers"]]
-        ) * (array[self.array_inputs["gross mass"]] / 19000)
+        ) * (
+            array[self.array_inputs["gross mass"]] / 19000
+        )
 
         # Battery EoL
         self.A[
-        :,
-        self.inputs[
-            ("market for used Li-ion battery", "GLO", "kilogram", "used Li-ion battery")
-        ],
-        -self.number_of_cars:,
-        ] = (
-                (array[self.array_inputs["energy battery mass"]]
-              * (
-                  1
-                  + array[self.array_inputs["battery lifetime replacements"]]
-
+            :,
+            self.inputs[
+                (
+                    "market for used Li-ion battery",
+                    "GLO",
+                    "kilogram",
+                    "used Li-ion battery",
                 )
-              )
+            ],
+            -self.number_of_cars :,
+        ] = (
+            (
+                array[self.array_inputs["energy battery mass"]]
+                * (1 + array[self.array_inputs["battery lifetime replacements"]])
+            )
             / array[self.array_inputs["lifetime kilometers"]]
-             / array[self.array_inputs["average passengers"]]
+            / array[self.array_inputs["average passengers"]]
         )
 
         # Noise emissions
@@ -4357,7 +4987,9 @@ class InventoryCalculation:
                 ("Ethane, 1,1,1,2-tetrafluoro-, HFC-134a", ("air",), "kilogram")
             ],
             -self.number_of_cars :,
-        ] = (16 / self.array.values[self.array_inputs["lifetime kilometers"]] * -1)
+        ] = (
+            16 / self.array.values[self.array_inputs["lifetime kilometers"]] * -1
+        )
 
         self.A[
             :,
@@ -4365,8 +4997,11 @@ class InventoryCalculation:
                 ("market for refrigerant R134a", "GLO", "kilogram", "refrigerant R134a")
             ],
             -self.number_of_cars :,
-        ] = ((16 + 7.5) / self.array.values[self.array_inputs["lifetime kilometers"]] * -1)
-
+        ] = (
+            (16 + 7.5)
+            / self.array.values[self.array_inputs["lifetime kilometers"]]
+            * -1
+        )
 
         # Charging infrastructure
 
@@ -4391,13 +5026,20 @@ class InventoryCalculation:
                     self.inputs[i]
                     for i in self.inputs
                     if "transport, passenger bus, " in i[0]
-                       and any(True for x in ["BEV-depot", "PHEV-d"] if x in i[0])
+                    and any(True for x in ["BEV-depot", "PHEV-d"] if x in i[0])
                 ],
             )
-        ] = (-1 / (array[self.array_inputs["kilometers per year"], :, index]
-                   * array[self.array_inputs["average passengers"], :, index]
-                   * 2
-                   * 24)).T.reshape(self.iterations, 1, -1)
+        ] = (
+            -1
+            / (
+                array[self.array_inputs["kilometers per year"], :, index]
+                * array[self.array_inputs["average passengers"], :, index]
+                * 2
+                * 24
+            )
+        ).T.reshape(
+            self.iterations, 1, -1
+        )
 
         # Opportunity charging BEV buses
         # The charging station has a lifetime of 24 years
@@ -4420,15 +5062,18 @@ class InventoryCalculation:
                     self.inputs[i]
                     for i in self.inputs
                     if "transport, passenger bus, " in i[0]
-                       and any(True for x in ["BEV-opp"] if x in i[0])
+                    and any(True for x in ["BEV-opp"] if x in i[0])
                 ],
             )
-        ] = (-1 / (array[self.array_inputs["kilometers per year"], :, index]
-             * array[self.array_inputs["average passengers"], :, index]
-             * 10
-             * 24
-                   )
-             ).T.reshape(
+        ] = (
+            -1
+            / (
+                array[self.array_inputs["kilometers per year"], :, index]
+                * array[self.array_inputs["average passengers"], :, index]
+                * 10
+                * 24
+            )
+        ).T.reshape(
             self.iterations, 1, -1
         )
 
@@ -4444,26 +5089,25 @@ class InventoryCalculation:
         self.A[
             np.ix_(
                 np.arange(self.iterations),
-                [
-                    self.inputs[i]
-                    for i in self.inputs
-                    if "Overhead lines" in i[0]
-                ],
+                [self.inputs[i] for i in self.inputs if "Overhead lines" in i[0]],
                 [
                     self.inputs[i]
                     for i in self.inputs
                     if "transport, passenger bus, " in i[0]
-                       and any(True for x in ["BEV-motion"] if x in i[0])
+                    and any(True for x in ["BEV-motion"] if x in i[0])
                 ],
             )
-        ] = (-1 / (array[self.array_inputs["lifetime kilometers"], :, index]
-             * array[self.array_inputs["average passengers"], :, index]
-             * 60
-             * 40)).T.reshape(
+        ] = (
+            -1
+            / (
+                array[self.array_inputs["lifetime kilometers"], :, index]
+                * array[self.array_inputs["average passengers"], :, index]
+                * 60
+                * 40
+            )
+        ).T.reshape(
             self.iterations, 1, -1
         )
-
-
 
         print("*********************************************************************")
 
@@ -4486,9 +5130,14 @@ class InventoryCalculation:
                     "frame, blanks and saddle, for lorry",
                 )
             ],
-            [self.inputs[i] for i in self.inputs if "Passenger bus" in i[0] and i[2] == "unit" and "market" not in i[0]]
-        ] = (array[self.array_inputs["glider base mass"]] * -1)
-
+            [
+                self.inputs[i]
+                for i in self.inputs
+                if "Passenger bus" in i[0] and i[2] == "unit" and "market" not in i[0]
+            ],
+        ] = (
+            array[self.array_inputs["glider base mass"]] * -1
+        )
 
         # Suspension + Brakes
         self.A[
@@ -4496,14 +5145,21 @@ class InventoryCalculation:
             self.inputs[
                 ("suspension, for lorry", "RER", "kilogram", "suspension, for lorry")
             ],
-            [self.inputs[i] for i in self.inputs if "Passenger bus" in i[0] and i[2] == "unit" and "market" not in i[0]]
-        ] = array[
-                    [
-                        self.array_inputs["suspension mass"],
-                        self.array_inputs["braking system mass"],
-                    ],
-                    :,
-                ].sum(axis=0) * -1
+            [
+                self.inputs[i]
+                for i in self.inputs
+                if "Passenger bus" in i[0] and i[2] == "unit" and "market" not in i[0]
+            ],
+        ] = (
+            array[
+                [
+                    self.array_inputs["suspension mass"],
+                    self.array_inputs["braking system mass"],
+                ],
+                :,
+            ].sum(axis=0)
+            * -1
+        )
 
         # Wheels and tires
         self.A[
@@ -4516,8 +5172,14 @@ class InventoryCalculation:
                     "tires and wheels, for lorry",
                 )
             ],
-            [self.inputs[i] for i in self.inputs if "Passenger bus" in i[0] and i[2] == "unit"]
-        ] = array[self.array_inputs["wheels and tires mass"], :] * -1
+            [
+                self.inputs[i]
+                for i in self.inputs
+                if "Passenger bus" in i[0] and i[2] == "unit"
+            ],
+        ] = (
+            array[self.array_inputs["wheels and tires mass"], :] * -1
+        )
 
         # Exhaust
         self.A[
@@ -4530,9 +5192,14 @@ class InventoryCalculation:
                     "exhaust system, for lorry",
                 )
             ],
-            [self.inputs[i] for i in self.inputs if "Passenger bus" in i[0] and i[2] == "unit"]
-        ] = array[self.array_inputs["exhaust system mass"], :] * -1
-
+            [
+                self.inputs[i]
+                for i in self.inputs
+                if "Passenger bus" in i[0] and i[2] == "unit"
+            ],
+        ] = (
+            array[self.array_inputs["exhaust system mass"], :] * -1
+        )
 
         # Electrical system
         self.A[
@@ -4545,9 +5212,14 @@ class InventoryCalculation:
                     "power electronics, for lorry",
                 )
             ],
-            [self.inputs[i] for i in self.inputs if "Passenger bus" in i[0] and i[2] == "unit"]
-        ] = array[self.array_inputs["electrical system mass"], :] * -1
-
+            [
+                self.inputs[i]
+                for i in self.inputs
+                if "Passenger bus" in i[0] and i[2] == "unit"
+            ],
+        ] = (
+            array[self.array_inputs["electrical system mass"], :] * -1
+        )
 
         # Transmission (52% transmission shaft, 36% gearbox + 12% retarder)
         self.A[
@@ -4560,30 +5232,45 @@ class InventoryCalculation:
                     "transmission, for lorry",
                 )
             ],
-            [self.inputs[i] for i in self.inputs if "Passenger bus" in i[0] and i[2] == "unit"]
-        ] = array[self.array_inputs["transmission mass"], :] * 0.52 * -1
+            [
+                self.inputs[i]
+                for i in self.inputs
+                if "Passenger bus" in i[0] and i[2] == "unit"
+            ],
+        ] = (
+            array[self.array_inputs["transmission mass"], :] * 0.52 * -1
+        )
 
         self.A[
             :,
             self.inputs[
                 ("gearbox, for lorry", "RER", "kilogram", "gearbox, for lorry")
             ],
-            [self.inputs[i] for i in self.inputs if "Passenger bus" in i[0] and i[2] == "unit"]
-        ] = array[self.array_inputs["transmission mass"], :] * 0.36 * -1
+            [
+                self.inputs[i]
+                for i in self.inputs
+                if "Passenger bus" in i[0] and i[2] == "unit"
+            ],
+        ] = (
+            array[self.array_inputs["transmission mass"], :] * 0.36 * -1
+        )
 
         self.A[
             :,
             self.inputs[
                 ("retarder, for lorry", "RER", "kilogram", "retarder, for lorry")
             ],
-            [self.inputs[i] for i in self.inputs if "Passenger bus" in i[0] and i[2] == "unit"]
-        ] = array[self.array_inputs["transmission mass"], :] * 0.12 * -1
-
+            [
+                self.inputs[i]
+                for i in self.inputs
+                if "Passenger bus" in i[0] and i[2] == "unit"
+            ],
+        ] = (
+            array[self.array_inputs["transmission mass"], :] * 0.12 * -1
+        )
 
         # Other components, for non-electric and hybrid trucks
-        index = self.get_index_vehicle_from_array(
-            ["ICEV-d", "HEV-d", "ICEV-g"]
-        )
+        index = self.get_index_vehicle_from_array(["ICEV-d", "HEV-d", "ICEV-g"])
         ind_A = [
             self.inputs[i]
             for i in self.inputs
@@ -4605,12 +5292,15 @@ class InventoryCalculation:
         ] = (array[self.array_inputs["other components mass"], :, index] * -1).T
 
         # Other components, for electric trucks
-        index = self.get_index_vehicle_from_array(["BEV-opp", "BEV-depot", "BEV-motion", "FCEV"])
+        index = self.get_index_vehicle_from_array(
+            ["BEV-opp", "BEV-depot", "BEV-motion", "FCEV"]
+        )
         ind_A = [
             self.inputs[i]
             for i in self.inputs
-            if "Passenger bus" in i[0] and any(x in i[0] for x in ["BEV-opp", "BEV-depot", "BEV-motion", "FCEV"])
-               and i[2] == "unit"
+            if "Passenger bus" in i[0]
+            and any(x in i[0] for x in ["BEV-opp", "BEV-depot", "BEV-motion", "FCEV"])
+            and i[2] == "unit"
         ]
         self.A[
             :,
@@ -4630,14 +5320,21 @@ class InventoryCalculation:
             self.inputs[
                 ("Glider lightweighting", "GLO", "kilogram", "Glider lightweighting")
             ],
-            [self.inputs[i] for i in self.inputs if "Passenger bus" in i[0] and i[2] == "unit"]
-        ] = (array[self.array_inputs["lightweighting"], :] * array[self.array_inputs["glider base mass"], :] * -1)
+            [
+                self.inputs[i]
+                for i in self.inputs
+                if "Passenger bus" in i[0] and i[2] == "unit"
+            ],
+        ] = (
+            array[self.array_inputs["lightweighting"], :]
+            * array[self.array_inputs["glider base mass"], :]
+            * -1
+        )
 
         ind_A = [
             self.inputs[i]
             for i in self.inputs
-            if "Passenger bus" in i[0]
-               and i[2] == "unit"
+            if "Passenger bus" in i[0] and i[2] == "unit"
         ]
 
         self.A[
@@ -4665,9 +5362,14 @@ class InventoryCalculation:
                     "converter, for electric passenger car",
                 )
             ],
-            [self.inputs[i] for i in self.inputs if "Passenger bus" in i[0] and i[2] == "unit"]
-        ] = array[self.array_inputs["converter mass"], :] * -1
-
+            [
+                self.inputs[i]
+                for i in self.inputs
+                if "Passenger bus" in i[0] and i[2] == "unit"
+            ],
+        ] = (
+            array[self.array_inputs["converter mass"], :] * -1
+        )
 
         self.A[
             :,
@@ -4679,8 +5381,14 @@ class InventoryCalculation:
                     "electric motor, electric passenger car",
                 )
             ],
-            [self.inputs[i] for i in self.inputs if "Passenger bus" in i[0] and i[2] == "unit"]
-        ] = array[self.array_inputs["electric engine mass"], :] * -1
+            [
+                self.inputs[i]
+                for i in self.inputs
+                if "Passenger bus" in i[0] and i[2] == "unit"
+            ],
+        ] = (
+            array[self.array_inputs["electric engine mass"], :] * -1
+        )
 
         self.A[
             :,
@@ -4692,9 +5400,14 @@ class InventoryCalculation:
                     "inverter, for electric passenger car",
                 )
             ],
-            [self.inputs[i] for i in self.inputs if "Passenger bus" in i[0] and i[2] == "unit"]
-        ] = array[self.array_inputs["inverter mass"], :] * -1
-
+            [
+                self.inputs[i]
+                for i in self.inputs
+                if "Passenger bus" in i[0] and i[2] == "unit"
+            ],
+        ] = (
+            array[self.array_inputs["inverter mass"], :] * -1
+        )
 
         self.A[
             :,
@@ -4706,8 +5419,14 @@ class InventoryCalculation:
                     "power distribution unit, for electric passenger car",
                 )
             ],
-            [self.inputs[i] for i in self.inputs if "Passenger bus" in i[0] and i[2] == "unit"]
-        ] = array[self.array_inputs["power distribution unit mass"], :] * -1
+            [
+                self.inputs[i]
+                for i in self.inputs
+                if "Passenger bus" in i[0] and i[2] == "unit"
+            ],
+        ] = (
+            array[self.array_inputs["power distribution unit mass"], :] * -1
+        )
 
         self.A[
             :,
@@ -4719,38 +5438,56 @@ class InventoryCalculation:
                     "internal combustion engine, for lorry",
                 )
             ],
-            [self.inputs[i] for i in self.inputs if "Passenger bus" in i[0] and i[2] == "unit"]
-        ] = array[
-                    [self.array_inputs[l] for l in ["combustion engine mass"]], :,
-                ].sum(axis=0) * -1
-
+            [
+                self.inputs[i]
+                for i in self.inputs
+                if "Passenger bus" in i[0] and i[2] == "unit"
+            ],
+        ] = (
+            array[
+                [self.array_inputs[l] for l in ["combustion engine mass"]],
+                :,
+            ].sum(axis=0)
+            * -1
+        )
 
         self.A[
             :,
             self.inputs[("Ancillary BoP", "GLO", "kilogram", "Ancillary BoP")],
-            [self.inputs[i] for i in self.inputs if "Passenger bus" in i[0] and i[2] == "unit"]
-        ] = (array[self.array_inputs["fuel cell ancillary BoP mass"], :]
-            * (1 + array[self.array_inputs["fuel cell lifetime replacements"]] * -1))
-
+            [
+                self.inputs[i]
+                for i in self.inputs
+                if "Passenger bus" in i[0] and i[2] == "unit"
+            ],
+        ] = array[self.array_inputs["fuel cell ancillary BoP mass"], :] * (
+            1 + array[self.array_inputs["fuel cell lifetime replacements"]] * -1
+        )
 
         self.A[
             :,
             self.inputs[("Essential BoP", "GLO", "kilogram", "Essential BoP")],
-            [self.inputs[i] for i in self.inputs if "Passenger bus" in i[0] and i[2] == "unit"]
-        ] = (array[self.array_inputs["fuel cell essential BoP mass"], :]
-            * (1 + array[self.array_inputs["fuel cell lifetime replacements"]]
-            ) * -1)
-
+            [
+                self.inputs[i]
+                for i in self.inputs
+                if "Passenger bus" in i[0] and i[2] == "unit"
+            ],
+        ] = (
+            array[self.array_inputs["fuel cell essential BoP mass"], :]
+            * (1 + array[self.array_inputs["fuel cell lifetime replacements"]])
+            * -1
+        )
 
         self.A[
             :,
             self.inputs[("Stack", "GLO", "kilowatt", "Stack")],
-            [self.inputs[i] for i in self.inputs if "Passenger bus" in i[0] and i[2] == "unit"]
+            [
+                self.inputs[i]
+                for i in self.inputs
+                if "Passenger bus" in i[0] and i[2] == "unit"
+            ],
         ] = (
             array[self.array_inputs["fuel cell stack mass"], :]
-            * (1 + array[
-                        self.array_inputs["fuel cell lifetime replacements"]]
-               )
+            * (1 + array[self.array_inputs["fuel cell lifetime replacements"]])
             / 0.51
             * -1
         )
@@ -4765,16 +5502,22 @@ class InventoryCalculation:
         # Energy storage for electric trucks
 
         print(
-            "The country of use is " + self.country, end="\n * ",
+            "The country of use is " + self.country,
+            end="\n * ",
         )
 
         # Battery BoP
-        index = self.get_index_vehicle_from_array(["BEV-depot", "BEV-opp", "BEV-motion", "FCEV", "HEV-d"])
+        index = self.get_index_vehicle_from_array(
+            ["BEV-depot", "BEV-opp", "BEV-motion", "FCEV", "HEV-d"]
+        )
         ind_A = [
             self.inputs[i]
             for i in self.inputs
             if "Passenger bus" in i[0]
-            and any(x in i[0] for x in ["BEV-depot", "BEV-opp", "BEV-motion", "FCEV", "HEV-d"])
+            and any(
+                x in i[0]
+                for x in ["BEV-depot", "BEV-opp", "BEV-motion", "FCEV", "HEV-d"]
+            )
             and i[2] == "unit"
         ]
 
@@ -4788,16 +5531,13 @@ class InventoryCalculation:
                     + array[
                         self.array_inputs["battery lifetime replacements"], :, index
                     ]
-
                 )
             )
             * -1
         ).T
 
         # Zero out electricity requirement for battery cell manufacture
-        for battery_tech in [
-            "NMC-111", "NCA", "LFP", "LTO"
-        ]:
+        for battery_tech in ["NMC-111", "NCA", "LFP", "LTO"]:
             battery_cell_label = (
                 "Battery cell, " + battery_tech,
                 "GLO",
@@ -4807,23 +5547,25 @@ class InventoryCalculation:
 
             # Set an input of electricity, given the country of manufacture
             self.A[
-            :,
-            self.inputs[
-                (
-                    "market group for electricity, medium voltage",
-                    "World",
-                    "kilowatt hour",
-                    "electricity, medium voltage",
-                )
-            ],
-            self.inputs[battery_cell_label],
+                :,
+                self.inputs[
+                    (
+                        "market group for electricity, medium voltage",
+                        "World",
+                        "kilowatt hour",
+                        "electricity, medium voltage",
+                    )
+                ],
+                self.inputs[battery_cell_label],
             ] = 0
 
         # We look into `background_configuration` to see what battery chemistry to
         # use for each bus
         for veh in self.background_configuration["energy storage"]["electric"]:
             if veh != "origin" and veh in self.scope["powertrain"]:
-                battery_tech = self.background_configuration["energy storage"]["electric"][veh]
+                battery_tech = self.background_configuration["energy storage"][
+                    "electric"
+                ][veh]
                 battery_cell_label = (
                     "Battery cell, " + battery_tech,
                     "GLO",
@@ -4837,8 +5579,8 @@ class InventoryCalculation:
                     self.inputs[i]
                     for i in self.inputs
                     if "Passenger bus" in i[0]
-                       and any(x in i[0] for x in [veh])
-                       and i[2] == "unit"
+                    and any(x in i[0] for x in [veh])
+                    and i[2] == "unit"
                 ]
 
                 self.A[:, self.inputs[battery_cell_label], ind_A] = (
@@ -4847,13 +5589,14 @@ class InventoryCalculation:
                         * (
                             1
                             + array[
-                                self.array_inputs["battery lifetime replacements"], :, idx
+                                self.array_inputs["battery lifetime replacements"],
+                                :,
+                                idx,
                             ]
-
                         )
                     )
                     * -1
-                    ).T
+                ).T
 
                 for y in self.scope["year"]:
                     idx = self.get_index_vehicle_from_array(y, veh, method="and")
@@ -4865,40 +5608,48 @@ class InventoryCalculation:
                                 self.inputs[i]
                                 for i in self.inputs
                                 if str(y) in i[0]
-                                   and "electricity market for energy storage production" in i[0]
+                                and "electricity market for energy storage production"
+                                in i[0]
                             ],
                             [
                                 self.inputs[i]
                                 for i in self.inputs
-                                if str(y) in i[0] and "Passenger bus" in i[0]
-                                   and i[2] == "unit" and veh in i[0]
+                                if str(y) in i[0]
+                                and "Passenger bus" in i[0]
+                                and i[2] == "unit"
+                                and veh in i[0]
                             ],
                         )
                     ] = (
-                            array[
-                                self.array_inputs["battery cell production electricity"], :, idx
-                            ].T
-                            * self.A[
-                                :,
-                                self.inputs[battery_cell_label],
-                                [
-                                    self.inputs[i]
-                                    for i in self.inputs
-                                    if str(y) in i[0] and "Passenger bus" in i[0]
-                                       and i[2] == "unit" and veh in i[0]
-                                ],
-                            ]
-                        ).reshape(
-                            self.iterations, 1, -1
-                        )
+                        array[
+                            self.array_inputs["battery cell production electricity"],
+                            :,
+                            idx,
+                        ].T
+                        * self.A[
+                            :,
+                            self.inputs[battery_cell_label],
+                            [
+                                self.inputs[i]
+                                for i in self.inputs
+                                if str(y) in i[0]
+                                and "Passenger bus" in i[0]
+                                and i[2] == "unit"
+                                and veh in i[0]
+                            ],
+                        ]
+                    ).reshape(
+                        self.iterations, 1, -1
+                    )
 
         # Use the inventory of Wolff et al. 2020 for lead acid battery for non-electric and non-hybrid trucks
 
         ind_A = [
             self.inputs[i]
             for i in self.inputs
-            if "Passenger bus" in i[0] and any(x in i[0] for x in ["ICEV-d", "ICEV-g"])
-               and i[2] == "unit"
+            if "Passenger bus" in i[0]
+            and any(x in i[0] for x in ["ICEV-d", "ICEV-g"])
+            and i[2] == "unit"
         ]
         index = self.get_index_vehicle_from_array(["ICEV-d", "ICEV-g"])
 
@@ -4921,7 +5672,6 @@ class InventoryCalculation:
                     + array[
                         self.array_inputs["battery lifetime replacements"], :, index
                     ]
-
                 )
             )
             * -1
@@ -4946,7 +5696,6 @@ class InventoryCalculation:
                     + array[
                         self.array_inputs["battery lifetime replacements"], :, index
                     ]
-
                 )
             )
             * -1
@@ -4956,10 +5705,9 @@ class InventoryCalculation:
         index_A = [
             self.inputs[c]
             for c in self.inputs
-            if any(ele in c[0] for ele in ["ICEV-d",  "HEV-d"])
-            and c[2] == "unit"
+            if any(ele in c[0] for ele in ["ICEV-d", "HEV-d"]) and c[2] == "unit"
         ]
-        index = self.get_index_vehicle_from_array(["ICEV-d",  "HEV-d"])
+        index = self.get_index_vehicle_from_array(["ICEV-d", "HEV-d"])
 
         self.A[
             :,
@@ -4967,16 +5715,12 @@ class InventoryCalculation:
                 ("fuel tank, for diesel vehicle", "RER", "kilogram", "fuel tank")
             ],
             index_A,
-        ] = (
-            array[self.array_inputs["fuel tank mass"], :, index]
-            * -1
-        ).T
+        ] = (array[self.array_inputs["fuel tank mass"], :, index] * -1).T
 
         index_A = [
             self.inputs[c]
             for c in self.inputs
-            if any(ele in c[0] for ele in ["ICEV-g"])
-               and c[2] == "unit"
+            if any(ele in c[0] for ele in ["ICEV-g"]) and c[2] == "unit"
         ]
 
         index = self.get_index_vehicle_from_array("ICEV-g")
@@ -4991,10 +5735,7 @@ class InventoryCalculation:
                 )
             ],
             index_A,
-        ] = (
-            array[self.array_inputs["fuel tank mass"], :, index]
-            * -1
-        ).T
+        ] = (array[self.array_inputs["fuel tank mass"], :, index] * -1).T
 
         if "hydrogen" in self.background_configuration["energy storage"]:
             # If a customization dict is passed
@@ -5028,45 +5769,51 @@ class InventoryCalculation:
         index_A = [
             self.inputs[c]
             for c in self.inputs
-            if any(ele in c[0] for ele in ["FCEV"])
-               and c[2] == "unit"
+            if any(ele in c[0] for ele in ["FCEV"]) and c[2] == "unit"
         ]
 
         index = self.get_index_vehicle_from_array("FCEV")
         self.A[
-            :, self.inputs[dict_tank_map[hydro_tank_technology]], index_A,
-        ] = (
-            array[self.array_inputs["fuel tank mass"], :, index]
-            * -1
-        ).T
+            :,
+            self.inputs[dict_tank_map[hydro_tank_technology]],
+            index_A,
+        ] = (array[self.array_inputs["fuel tank mass"], :, index] * -1).T
 
         # End-of-life disposal and treatment
         self.A[
-        :,
-        self.inputs[
-            (
-                "treatment of used bus",
-                "CH",
-                "unit",
-                "used bus",
-            )
-        ],
-        -self.number_of_cars:,
+            :,
+            self.inputs[
+                (
+                    "treatment of used bus",
+                    "CH",
+                    "unit",
+                    "used bus",
+                )
+            ],
+            -self.number_of_cars :,
         ] = 1 * (array[self.array_inputs["gross mass"]] / 19000)
 
         # END of vehicle building
 
         self.A[
-        :,
-        [self.inputs[c] for c in self.inputs if "Passenger bus" in c[0] and c[2] == "unit"],
-        [self.inputs[c] for c in self.inputs if "transport, passenger bus, " in c[0]
-         and "kilometer" in c[2] and "market" not in c[0]
-         ],
+            :,
+            [
+                self.inputs[c]
+                for c in self.inputs
+                if "Passenger bus" in c[0] and c[2] == "unit"
+            ],
+            [
+                self.inputs[c]
+                for c in self.inputs
+                if "transport, passenger bus, " in c[0]
+                and "kilometer" in c[2]
+                and "market" not in c[0]
+            ],
         ] = (
-                -1
-                 / array[self.array_inputs["lifetime kilometers"]]
-                 / (array[self.array_inputs["average passengers"]])
-            )
+            -1
+            / array[self.array_inputs["lifetime kilometers"]]
+            / (array[self.array_inputs["average passengers"]])
+        )
 
         try:
             sum_renew, co2_intensity_tech = self.define_renewable_rate_in_mix()
@@ -5093,7 +5840,11 @@ class InventoryCalculation:
                 end=end_str,
             )
 
-            if any(True for x in ["BEV-depot", "BEV-opp", "BEV-motion", "PHEV-d"] if x in self.scope["powertrain"]):
+            if any(
+                True
+                for x in ["BEV-depot", "BEV-opp", "BEV-motion", "PHEV-d"]
+                if x in self.scope["powertrain"]
+            ):
 
                 index = self.get_index_vehicle_from_array(
                     ["BEV-depot", "BEV-opp", "BEV-motion", "PHEV-d"], year, method="and"
@@ -5115,12 +5866,21 @@ class InventoryCalculation:
                             and "transport, passenger bus, " in i[0]
                             and "market" not in i[0]
                             and "kilometer" in i[2]
-                            and any(True for x in ["BEV-depot", "BEV-opp", "BEV-motion", "PHEV-d"] if x in i[0])
+                            and any(
+                                True
+                                for x in [
+                                    "BEV-depot",
+                                    "BEV-opp",
+                                    "BEV-motion",
+                                    "PHEV-d",
+                                ]
+                                if x in i[0]
+                            )
                         ],
                     )
                 ] = (
                     array[self.array_inputs["electricity consumption"], :, index]
-                    / (array[self.array_inputs["average passengers"], :, index] )
+                    / (array[self.array_inputs["average passengers"], :, index])
                     * -1
                 ).T.reshape(
                     self.iterations, 1, -1
@@ -5133,28 +5893,28 @@ class InventoryCalculation:
                 ["BEV-motion"], [2000, 2010], method="and"
             )
 
-
             self.A[
                 np.ix_(
                     np.arange(self.iterations),
                     [
                         self.inputs[i]
                         for i in self.inputs
-                        if "diesel, burned in diesel-electric generating set, 18.5kW" in i[0]
+                        if "diesel, burned in diesel-electric generating set, 18.5kW"
+                        in i[0]
                     ],
                     [
                         self.inputs[i]
                         for i in self.inputs
                         if "transport, passenger bus, " in i[0]
-                           and any(True for x in ["BEV-motion"] if x in i[0])
-                           and any(True for x in [2000, 2010] if str(x) in i[0])
+                        and any(True for x in ["BEV-motion"] if x in i[0])
+                        and any(True for x in [2000, 2010] if str(x) in i[0])
                     ],
                 )
             ] = (
-                    array[self.array_inputs["oxidation energy stored"], :, index]
-                    / array[self.array_inputs["daily distance"], :, index]
-                    / array[self.array_inputs["average passengers"], :, index]
-                    * -1
+                array[self.array_inputs["oxidation energy stored"], :, index]
+                / array[self.array_inputs["daily distance"], :, index]
+                / array[self.array_inputs["average passengers"], :, index]
+                * -1
             ).T.reshape(
                 self.iterations, 1, -1
             )
@@ -5194,8 +5954,10 @@ class InventoryCalculation:
                 ind_A = [
                     self.inputs[i]
                     for i in self.inputs
-                    if str(year) in i[0] and "transport, passenger bus, " in i[0] and "FCEV" in i[0]
-                       and "kilometer" in i[2]
+                    if str(year) in i[0]
+                    and "transport, passenger bus, " in i[0]
+                    and "FCEV" in i[0]
+                    and "kilometer" in i[2]
                 ]
                 ind_array = [
                     x for x in self.get_index_vehicle_from_array(year) if x in index
@@ -5213,10 +5975,7 @@ class InventoryCalculation:
                 ] = (
                     array[self.array_inputs["fuel mass"], :, ind_array]
                     / array[self.array_inputs["daily distance"], :, ind_array]
-                    / (
-                        array[self.array_inputs["average passengers"], :, ind_array]
-
-                    )
+                    / (array[self.array_inputs["average passengers"], :, ind_array])
                     * -1
                 ).T
 
@@ -5242,7 +6001,8 @@ class InventoryCalculation:
                     + " _________________________________________ "
                     + str(
                         np.round(
-                            self.fuel_blends["cng"]["secondary"]["share"][y] * 100, 0,
+                            self.fuel_blends["cng"]["secondary"]["share"][y] * 100,
+                            0,
                         )
                     )
                     + "%",
@@ -5254,8 +6014,10 @@ class InventoryCalculation:
                 ind_A = [
                     self.inputs[i]
                     for i in self.inputs
-                    if str(year) in i[0] and "transport, passenger bus, " in i[0] and "ICEV-g" in i[0]
-                       and "kilometer" in i[2]
+                    if str(year) in i[0]
+                    and "transport, passenger bus, " in i[0]
+                    and "ICEV-g" in i[0]
+                    and "kilometer" in i[2]
                 ]
                 ind_array = [
                     x for x in self.get_index_vehicle_from_array(year) if x in index
@@ -5273,10 +6035,7 @@ class InventoryCalculation:
                 ] = (
                     (array[self.array_inputs["fuel mass"], :, ind_array])
                     / array[self.array_inputs["daily distance"], :, ind_array]
-                    / (
-                        array[self.array_inputs["average passengers"], :, ind_array]
-
-                    )
+                    / (array[self.array_inputs["average passengers"], :, ind_array])
                     * (
                         1
                         + array[
@@ -5288,14 +6047,19 @@ class InventoryCalculation:
 
                 # Gas leakage emission as methane
                 self.A[
-                    :, self.inputs[("Methane, fossil", ("air",), "kilogram",)], ind_A,
+                    :,
+                    self.inputs[
+                        (
+                            "Methane, fossil",
+                            ("air",),
+                            "kilogram",
+                        )
+                    ],
+                    ind_A,
                 ] = (
                     (array[self.array_inputs["fuel mass"], :, ind_array])
                     / array[self.array_inputs["daily distance"], :, ind_array]
-                    / (
-                        array[self.array_inputs["average passengers"], :, ind_array]
-
-                    )
+                    / (array[self.array_inputs["average passengers"], :, ind_array])
                     * array[self.array_inputs["CNG pump-to-tank leakage"], :, ind_array]
                     * -1
                 ).T
@@ -5308,26 +6072,26 @@ class InventoryCalculation:
 
                 if self.fuel_blends["cng"]["primary"]["type"] == "cng":
                     share_fossil += self.fuel_blends["cng"]["primary"]["share"][y]
-                    CO2_fossil = self.fuel_blends["cng"]["primary"]["CO2"] * self.fuel_blends["cng"]["primary"]["share"][y]
+                    CO2_fossil = (
+                        self.fuel_blends["cng"]["primary"]["CO2"]
+                        * self.fuel_blends["cng"]["primary"]["share"][y]
+                    )
 
                 if self.fuel_blends["cng"]["secondary"]["type"] == "cng":
                     share_fossil += self.fuel_blends["cng"]["secondary"]["share"][y]
-                    CO2_fossil = self.fuel_blends["cng"]["primary"]["CO2"] * self.fuel_blends["cng"]["secondary"]["share"][y]
+                    CO2_fossil = (
+                        self.fuel_blends["cng"]["primary"]["CO2"]
+                        * self.fuel_blends["cng"]["secondary"]["share"][y]
+                    )
 
                 self.A[
                     :,
                     self.inputs[("Carbon dioxide, fossil", ("air",), "kilogram")],
                     ind_A,
                 ] = (
-                    (
-                        array[self.array_inputs["fuel mass"], :, ind_array]
-                        * CO2_fossil
-                    )
+                    (array[self.array_inputs["fuel mass"], :, ind_array] * CO2_fossil)
                     / array[self.array_inputs["daily distance"], :, ind_array]
-                    / (
-                        array[self.array_inputs["average passengers"], :, ind_array]
-
-                    )
+                    / (array[self.array_inputs["average passengers"], :, ind_array])
                     * -1
                 ).T
 
@@ -5340,15 +6104,18 @@ class InventoryCalculation:
 
                 if self.fuel_blends["cng"]["primary"]["type"] != "cng":
                     share_non_fossil += self.fuel_blends["cng"]["primary"]["share"][y]
-                    CO2_non_fossil = (share_non_fossil * self.fuel_blends["cng"]["primary"]["CO2"]
-                                      * self.fuel_blends["cng"]["primary"]["share"][y])
+                    CO2_non_fossil = (
+                        share_non_fossil
+                        * self.fuel_blends["cng"]["primary"]["CO2"]
+                        * self.fuel_blends["cng"]["primary"]["share"][y]
+                    )
 
                 if self.fuel_blends["cng"]["secondary"]["type"] != "cng":
-                    share_non_fossil += self.fuel_blends["cng"]["secondary"][
-                        "share"
-                    ][y]
-                    CO2_non_fossil += (self.fuel_blends["cng"]["secondary"][
-                                          "share"][y] * self.fuel_blends["cng"]["secondary"]["CO2"])
+                    share_non_fossil += self.fuel_blends["cng"]["secondary"]["share"][y]
+                    CO2_non_fossil += (
+                        self.fuel_blends["cng"]["secondary"]["share"][y]
+                        * self.fuel_blends["cng"]["secondary"]["CO2"]
+                    )
 
                 self.A[
                     :,
@@ -5368,15 +6135,12 @@ class InventoryCalculation:
                         )
                     )
                     / array[self.array_inputs["daily distance"], :, ind_array]
-                    / (
-                        array[self.array_inputs["average passengers"], :, ind_array]
-
-                    )
+                    / (array[self.array_inputs["average passengers"], :, ind_array])
                     * -1
                 ).T
 
-        if [i for i in self.scope["powertrain"] if i in ["ICEV-d",  "HEV-d"]]:
-            index = self.get_index_vehicle_from_array(["ICEV-d",  "HEV-d"])
+        if [i for i in self.scope["powertrain"] if i in ["ICEV-d", "HEV-d"]]:
+            index = self.get_index_vehicle_from_array(["ICEV-d", "HEV-d"])
 
             print(
                 "{} is completed by {}.".format(
@@ -5410,8 +6174,8 @@ class InventoryCalculation:
                     for i in self.inputs
                     if str(year) in i[0]
                     and "transport, passenger bus, " in i[0]
-                    and any(x in i[0] for x in ["ICEV-d",  "HEV-d"])
-                       and "kilometer" in i[2]
+                    and any(x in i[0] for x in ["ICEV-d", "HEV-d"])
+                    and "kilometer" in i[2]
                 ]
 
                 ind_array = [
@@ -5440,23 +6204,24 @@ class InventoryCalculation:
                 CO2_fossil = 0
                 if self.fuel_blends["diesel"]["primary"]["type"] == "diesel":
                     share_fossil = self.fuel_blends["diesel"]["primary"]["share"][y]
-                    CO2_fossil = (self.fuel_blends["diesel"]["primary"]["CO2"]
-                        * self.fuel_blends["diesel"]["primary"]["share"][y])
+                    CO2_fossil = (
+                        self.fuel_blends["diesel"]["primary"]["CO2"]
+                        * self.fuel_blends["diesel"]["primary"]["share"][y]
+                    )
 
                 if self.fuel_blends["diesel"]["secondary"]["type"] == "diesel":
                     share_fossil += self.fuel_blends["diesel"]["secondary"]["share"][y]
-                    CO2_fossil += (self.fuel_blends["diesel"]["secondary"]["CO2"]
-                                   * self.fuel_blends["diesel"]["secondary"]["share"][y])
+                    CO2_fossil += (
+                        self.fuel_blends["diesel"]["secondary"]["CO2"]
+                        * self.fuel_blends["diesel"]["secondary"]["share"][y]
+                    )
 
                 self.A[
                     :,
                     self.inputs[("Carbon dioxide, fossil", ("air",), "kilogram")],
                     ind_A,
                 ] = (
-                    (
-                        array[self.array_inputs["fuel mass"], :, ind_array]
-                        * CO2_fossil
-                    )
+                    (array[self.array_inputs["fuel mass"], :, ind_array] * CO2_fossil)
                     / array[self.array_inputs["daily distance"], :, ind_array]
                     / array[self.array_inputs["average passengers"], :, ind_array]
                     * -1
@@ -5465,10 +6230,14 @@ class InventoryCalculation:
                 # Fuel-based SO2 emissions
                 # Sulfur concentration value for a given country, a given year, as concentration ratio
 
-                sulfur_concentration = self.get_sulfur_content(self.country, "diesel", year)
+                sulfur_concentration = self.get_sulfur_content(
+                    self.country, "diesel", year
+                )
 
                 self.A[
-                    :, self.inputs[("Sulfur dioxide", ("air",), "kilogram")], ind_A,
+                    :,
+                    self.inputs[("Sulfur dioxide", ("air",), "kilogram")],
+                    ind_A,
                 ] = (
                     (
                         (
@@ -5479,10 +6248,7 @@ class InventoryCalculation:
                         )
                     )
                     / array[self.array_inputs["daily distance"], :, ind_array]
-                    / (
-                        array[self.array_inputs["average passengers"], :, ind_array]
-
-                    )
+                    / (array[self.array_inputs["average passengers"], :, ind_array])
                     * -1
                 ).T
 
@@ -5493,15 +6259,21 @@ class InventoryCalculation:
                 # The share of non-fossil fuel in the blend is retrieved
                 # As well as the CO2 emission factor of the fuel
                 if self.fuel_blends["diesel"]["primary"]["type"] != "diesel":
-                    share_non_fossil += self.fuel_blends["diesel"]["primary"]["share"][y]
-                    CO2_non_fossil = (share_non_fossil * self.fuel_blends["diesel"]["primary"]["CO2"])
+                    share_non_fossil += self.fuel_blends["diesel"]["primary"]["share"][
+                        y
+                    ]
+                    CO2_non_fossil = (
+                        share_non_fossil * self.fuel_blends["diesel"]["primary"]["CO2"]
+                    )
 
                 if self.fuel_blends["diesel"]["secondary"]["type"] != "diesel":
                     share_non_fossil += self.fuel_blends["diesel"]["secondary"][
                         "share"
                     ][y]
-                    CO2_non_fossil += (self.fuel_blends["diesel"]["secondary"][
-                        "share"][y] * self.fuel_blends["diesel"]["secondary"]["CO2"])
+                    CO2_non_fossil += (
+                        self.fuel_blends["diesel"]["secondary"]["share"][y]
+                        * self.fuel_blends["diesel"]["secondary"]["CO2"]
+                    )
 
                 self.A[
                     :,
@@ -5521,10 +6293,7 @@ class InventoryCalculation:
                         )
                     )
                     / array[self.array_inputs["daily distance"], :, ind_array]
-                    / (
-                        array[self.array_inputs["average passengers"], :, ind_array]
-
-                    )
+                    / (array[self.array_inputs["average passengers"], :, ind_array])
                     * -1
                 ).T
 
@@ -5539,11 +6308,15 @@ class InventoryCalculation:
                     "road wear emissions, lorry",
                 )
             ],
-            [self.inputs[i] for i in self.inputs
-             if "transport, passenger bus, " in i[0] and "kilometer" in i[2] and "market" not in i[0]]
-        ] = (
-            array[self.array_inputs["tire wear emissions"], :]
-            / (array[self.array_inputs["average passengers"], :] )
+            [
+                self.inputs[i]
+                for i in self.inputs
+                if "transport, passenger bus, " in i[0]
+                and "kilometer" in i[2]
+                and "market" not in i[0]
+            ],
+        ] = array[self.array_inputs["tire wear emissions"], :] / (
+            array[self.array_inputs["average passengers"], :]
         )
         self.A[
             :,
@@ -5555,11 +6328,15 @@ class InventoryCalculation:
                     "tyre wear emissions, lorry",
                 )
             ],
-        [self.inputs[i] for i in self.inputs
-         if "transport, passenger bus, " in i[0] and "kilometer" in i[2] and "market" not in i[0]]
-        ] = (
-            array[self.array_inputs["tire wear emissions"], :]
-            / (array[self.array_inputs["average passengers"], :] )
+            [
+                self.inputs[i]
+                for i in self.inputs
+                if "transport, passenger bus, " in i[0]
+                and "kilometer" in i[2]
+                and "market" not in i[0]
+            ],
+        ] = array[self.array_inputs["tire wear emissions"], :] / (
+            array[self.array_inputs["average passengers"], :]
         )
 
         # Brake wear emissions
@@ -5576,48 +6353,64 @@ class InventoryCalculation:
                     "brake wear emissions, lorry",
                 )
             ],
-        [self.inputs[i] for i in self.inputs
-         if "transport, passenger bus, " in i[0] and "kilometer" in i[2] and "market" not in i[0]]
-        ] = (
-            array[self.array_inputs["brake wear emissions"], :]
-            / (array[self.array_inputs["average passengers"], :] )
+            [
+                self.inputs[i]
+                for i in self.inputs
+                if "transport, passenger bus, " in i[0]
+                and "kilometer" in i[2]
+                and "market" not in i[0]
+            ],
+        ] = array[self.array_inputs["brake wear emissions"], :] / (
+            array[self.array_inputs["average passengers"], :]
         )
 
         ind_A = [
             self.inputs[i]
             for i in self.inputs
             if "transport, passenger bus, " in i[0]
-               and any(x in i[0] for x in ["BEV-opp", "BEV-depot", "BEV-motion", "FCEV", "HEV-d", "PHEV-d"])
-               and "kilometer" in i[2]
+            and any(
+                x in i[0]
+                for x in [
+                    "BEV-opp",
+                    "BEV-depot",
+                    "BEV-motion",
+                    "FCEV",
+                    "HEV-d",
+                    "PHEV-d",
+                ]
+            )
+            and "kilometer" in i[2]
         ]
 
         self.A[
-        :,
-        self.inputs[
-            (
-                "treatment of brake wear emissions, lorry",
-                "RER",
-                "kilogram",
-                "brake wear emissions, lorry",
-            )
-        ],
-        ind_A
-        ] *= .1
+            :,
+            self.inputs[
+                (
+                    "treatment of brake wear emissions, lorry",
+                    "RER",
+                    "kilogram",
+                    "brake wear emissions, lorry",
+                )
+            ],
+            ind_A,
+        ] *= 0.1
 
         # Infrastructure: 5.37e-4 per gross tkm
         self.A[
             :,
             self.inputs[("market for road", "GLO", "meter-year", "road")],
-            [self.inputs[i] for i in self.inputs
-             if "transport, passenger bus, " in i[0] and "kilometer" in i[2] and "market" not in i[0]]
+            [
+                self.inputs[i]
+                for i in self.inputs
+                if "transport, passenger bus, " in i[0]
+                and "kilometer" in i[2]
+                and "market" not in i[0]
+            ],
         ] = (
-            (
-                (array[self.array_inputs["driving mass"], :] / 1000)
-                * 5.37e-4
-                / (array[self.array_inputs["average passengers"], :])
-            )
-            * -1
-        )
+            (array[self.array_inputs["driving mass"], :] / 1000)
+            * 5.37e-4
+            / (array[self.array_inputs["average passengers"], :])
+        ) * -1
 
         # Infrastructure maintenance
         self.A[
@@ -5625,9 +6418,16 @@ class InventoryCalculation:
             self.inputs[
                 ("market for road maintenance", "RER", "meter-year", "road maintenance")
             ],
-            [self.inputs[i] for i in self.inputs
-             if "transport, passenger bus, " in i[0] and "kilometer" in i[2] and "market" not in i[0]]
-        ] = (1.29e-3 / (array[self.array_inputs["average passengers"], :]) * -1)
+            [
+                self.inputs[i]
+                for i in self.inputs
+                if "transport, passenger bus, " in i[0]
+                and "kilometer" in i[2]
+                and "market" not in i[0]
+            ],
+        ] = (
+            1.29e-3 / (array[self.array_inputs["average passengers"], :]) * -1
+        )
 
         # Exhaust emissions
         # Non-fuel based emissions
@@ -5636,29 +6436,23 @@ class InventoryCalculation:
             self.inputs[i]
             for i in self.inputs
             if "transport, passenger bus, " in i[0]
-               and any(x in i[0] for x in ["ICEV-d", "ICEV-g", "HEV-d"])
-               and "kilometer" in i[2]
+            and any(x in i[0] for x in ["ICEV-d", "ICEV-g", "HEV-d"])
+            and "kilometer" in i[2]
         ]
 
         ind_array = self.get_index_vehicle_from_array(["ICEV-d", "ICEV-g", "HEV-d"])
 
-        self.A[
-
-            np.ix_(
-                np.arange(self.iterations),
-                self.index_emissions,
-                ind_A,
-            )
-        ] = (
+        self.A[np.ix_(np.arange(self.iterations), self.index_emissions, ind_A,)] = (
             array[
                 np.ix_(
-
                     [
-                        self.array_inputs[self.map_non_fuel_emissions[self.rev_inputs[x]]]
+                        self.array_inputs[
+                            self.map_non_fuel_emissions[self.rev_inputs[x]]
+                        ]
                         for x in self.index_emissions
                     ],
                     np.arange(self.iterations),
-                    ind_array
+                    ind_array,
                 )
             ]
             / (array[self.array_inputs["average passengers"], :, ind_array]).T
@@ -5667,18 +6461,18 @@ class InventoryCalculation:
 
         # Battery EoL
         self.A[
-        :,
-        self.inputs[
-            ("market for used Li-ion battery", "GLO", "kilogram", "used Li-ion battery")
-        ],
-        -self.number_of_cars:,
-        ] = (
-            array[self.array_inputs["energy battery mass"]]
-            * (
-                    1
-                    + array[self.array_inputs["battery lifetime replacements"]]
-
-            )
+            :,
+            self.inputs[
+                (
+                    "market for used Li-ion battery",
+                    "GLO",
+                    "kilogram",
+                    "used Li-ion battery",
+                )
+            ],
+            -self.number_of_cars :,
+        ] = array[self.array_inputs["energy battery mass"]] * (
+            1 + array[self.array_inputs["battery lifetime replacements"]]
         )
 
         # Noise emissions
@@ -5686,8 +6480,13 @@ class InventoryCalculation:
             np.ix_(
                 np.arange(self.iterations),
                 self.index_noise,
-                [self.inputs[i] for i in self.inputs
-                 if "transport, passenger bus, " in i[0] and "kilometer" in i[2] and "market" not in i[0]]
+                [
+                    self.inputs[i]
+                    for i in self.inputs
+                    if "transport, passenger bus, " in i[0]
+                    and "kilometer" in i[2]
+                    and "market" not in i[0]
+                ],
             )
         ] = (
             array[
@@ -5698,7 +6497,9 @@ class InventoryCalculation:
             ]
             / (array[self.array_inputs["average passengers"], :])
             * -1
-        ).transpose([1, 0, 2])
+        ).transpose(
+            [1, 0, 2]
+        )
 
         # Emissions of air conditioner refrigerant r134a
         # Leakage assumed to amount to 16kg per lifetime according to
@@ -5709,18 +6510,34 @@ class InventoryCalculation:
             self.inputs[
                 ("Ethane, 1,1,1,2-tetrafluoro-, HFC-134a", ("air",), "kilogram")
             ],
-            [self.inputs[i] for i in self.inputs
-             if "transport, passenger bus, " in i[0] and "kilometer" in i[2] and "market" not in i[0]]
-        ] = (16 / self.array.values[self.array_inputs["lifetime kilometers"]] * -1)
+            [
+                self.inputs[i]
+                for i in self.inputs
+                if "transport, passenger bus, " in i[0]
+                and "kilometer" in i[2]
+                and "market" not in i[0]
+            ],
+        ] = (
+            16 / self.array.values[self.array_inputs["lifetime kilometers"]] * -1
+        )
 
         self.A[
             :,
             self.inputs[
                 ("market for refrigerant R134a", "GLO", "kilogram", "refrigerant R134a")
             ],
-            [self.inputs[i] for i in self.inputs
-             if "transport, passenger bus, " in i[0] and "kilometer" in i[2] and "market" not in i[0]]
-        ] = ((16 + 7.5) / self.array.values[self.array_inputs["lifetime kilometers"]] * -1)
+            [
+                self.inputs[i]
+                for i in self.inputs
+                if "transport, passenger bus, " in i[0]
+                and "kilometer" in i[2]
+                and "market" not in i[0]
+            ],
+        ] = (
+            (16 + 7.5)
+            / self.array.values[self.array_inputs["lifetime kilometers"]]
+            * -1
+        )
 
         # Charging infrastructure
 
@@ -5744,14 +6561,20 @@ class InventoryCalculation:
                     self.inputs[i]
                     for i in self.inputs
                     if "transport, passenger bus, " in i[0]
-                       and any(True for x in ["BEV-depot", "PHEV-d"] if x in i[0])
+                    and any(True for x in ["BEV-depot", "PHEV-d"] if x in i[0])
                 ],
             )
-        ] = (-1 / (array[self.array_inputs["kilometers per year"], :, index]
-                   * array[self.array_inputs["average passengers"], :, index]
-                   * 2
-                   * 24
-                   )).T.reshape(self.iterations, 1, -1)
+        ] = (
+            -1
+            / (
+                array[self.array_inputs["kilometers per year"], :, index]
+                * array[self.array_inputs["average passengers"], :, index]
+                * 2
+                * 24
+            )
+        ).T.reshape(
+            self.iterations, 1, -1
+        )
 
         # Opportunity charging BEV buses
         # The charging station has a lifetime of 24 years
@@ -5774,14 +6597,18 @@ class InventoryCalculation:
                     self.inputs[i]
                     for i in self.inputs
                     if "transport, passenger bus, " in i[0]
-                       and any(True for x in ["BEV-opp"] if x in i[0])
+                    and any(True for x in ["BEV-opp"] if x in i[0])
                 ],
             )
-        ] = (-1 / (array[self.array_inputs["kilometers per year"], :, index]
-             * array[self.array_inputs["average passengers"], :, index]
-             * 10
-             * 24
-             )).T.reshape(
+        ] = (
+            -1
+            / (
+                array[self.array_inputs["kilometers per year"], :, index]
+                * array[self.array_inputs["average passengers"], :, index]
+                * 10
+                * 24
+            )
+        ).T.reshape(
             self.iterations, 1, -1
         )
 
@@ -5797,23 +6624,23 @@ class InventoryCalculation:
         self.A[
             np.ix_(
                 np.arange(self.iterations),
-                [
-                    self.inputs[i]
-                    for i in self.inputs
-                    if "Overhead lines" in i[0]
-                ],
+                [self.inputs[i] for i in self.inputs if "Overhead lines" in i[0]],
                 [
                     self.inputs[i]
                     for i in self.inputs
                     if "transport, passenger bus, " in i[0]
-                       and any(True for x in ["BEV-motion"] if x in i[0])
+                    and any(True for x in ["BEV-motion"] if x in i[0])
                 ],
             )
-        ] = (-1 / (array[self.array_inputs["lifetime kilometers"], :, index]
-             * array[self.array_inputs["average passengers"], :, index]
-             * 60
-             * 40
-             )).T.reshape(
+        ] = (
+            -1
+            / (
+                array[self.array_inputs["lifetime kilometers"], :, index]
+                * array[self.array_inputs["average passengers"], :, index]
+                * 60
+                * 40
+            )
+        ).T.reshape(
             self.iterations, 1, -1
         )
 
@@ -5856,20 +6683,25 @@ class InventoryCalculation:
             ),
         }
 
-        air_capture = self.inputs[('carbon dioxide, captured from atmosphere',
-                      'RER',
-                      'kilogram',
-                      'carbon dioxide, captured from the atmosphere')]
+        air_capture = self.inputs[
+            (
+                "carbon dioxide, captured from atmosphere",
+                "RER",
+                "kilogram",
+                "carbon dioxide, captured from the atmosphere",
+            )
+        ]
 
-        methanol_distillation = self.inputs[("Methanol distillation",
-                                             "RER",
-                                             "kilogram",
-                                             "Purified methanol")]
+        methanol_distillation = self.inputs[
+            ("Methanol distillation", "RER", "kilogram", "Purified methanol")
+        ]
 
         all_inds = [self.inputs[i] for i in list(d_heat_suppliers.values())]
 
         # DAC
-        heat_amount = self.A[np.ix_(range(self.A.shape[0]), all_inds, [air_capture])].sum()
+        heat_amount = self.A[
+            np.ix_(range(self.A.shape[0]), all_inds, [air_capture])
+        ].sum()
         # zero out the heat input
         self.A[np.ix_(range(self.A.shape[0]), all_inds, [air_capture])] = 0
         # find index of the new supplier and set the amount
@@ -5877,9 +6709,13 @@ class InventoryCalculation:
         self.A[np.ix_(range(self.A.shape[0]), [ind], [air_capture])] = heat_amount
 
         # Methanol distillation
-        heat_amount = self.A[np.ix_(range(self.A.shape[0]), all_inds, [methanol_distillation])].sum()
+        heat_amount = self.A[
+            np.ix_(range(self.A.shape[0]), all_inds, [methanol_distillation])
+        ].sum()
         # zero out the heat input
         self.A[np.ix_(range(self.A.shape[0]), all_inds, [methanol_distillation])] = 0
         # find index of the new supplier and set the amount
         ind = self.inputs[d_heat_suppliers[heat_supplier]]
-        self.A[np.ix_(range(self.A.shape[0]), [ind], [methanol_distillation])] = heat_amount
+        self.A[
+            np.ix_(range(self.A.shape[0]), [ind], [methanol_distillation])
+        ] = heat_amount

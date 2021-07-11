@@ -1,6 +1,7 @@
-from carculator_bus import *
 import numpy as np
 import pytest
+
+from carculator_bus import *
 
 
 def test_type_cip():
