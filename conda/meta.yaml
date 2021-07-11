@@ -1,8 +1,6 @@
-{% set data = load_setup_py_data() %}
-
 package:
   name: carculator_bus
-  version: {{ data['VERSION'] }}
+  version: {{ environ['VERSION'] }}
 
 source:
   path: ..
@@ -10,10 +8,10 @@ source:
 build:
   noarch: python
   number: 0
-  script: python setup.py install --single-version-externally-managed --record record.txt
+  script: python -m pip install --no-deps --ignore-installed .
   script_env:
-   - VERSION
-   - CONDA_BLD_PATH
+    - VERSION
+    - CONDA_BLD_PATH
 
 requirements:
   build:
@@ -25,13 +23,11 @@ requirements:
     - numpy
     - klausen
     - xlrd
-    - pytest
     - numexpr
     - bw2io
     - prettytable
     - pycountry
     - atmos
-
 test:
   imports:
     - carculator_bus
@@ -39,6 +35,5 @@ test:
 about:
   home: https://github.com/romainsacchi/carculator_bus
   license: BSD License
-  summary: 'A parameterized Python model to calculate the energy consumption and life cycle assessment of
-  urban and coach buses.'
+  summary: 'Life Cycle Assessment model for urban and coach buses.'
 license_family: BSD
