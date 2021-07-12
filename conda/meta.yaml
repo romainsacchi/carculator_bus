@@ -28,6 +28,7 @@ requirements:
     - prettytable
     - pycountry
     - atmos
+    - wurst
 test:
   imports:
     - carculator_bus
