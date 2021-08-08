@@ -811,6 +811,15 @@ class BusModel:
                 1,
             )
 
+            self.energy.loc[
+                dict(parameter="engine efficiency", powertrain=l_pwt)
+            ] *= (1 / self.array.sel(
+                parameter="engine efficiency",
+                powertrain=l_pwt,
+            ))
+
+
+
         # Correction for CNG trucks
         if "ICEV-g" in self.array.powertrain.values:
             self.energy.loc[
@@ -973,9 +982,10 @@ class BusModel:
                     * self["fuel cell own consumption"]
                 )
 
-                # our basic fuel cell mass is based on a car fuel cell with 800 mW/cm2 and 0.51 kg/kW
+                # our basic fuel cell mass is based on a car fuel cell with 800 mW/cm2
+                # and 1.02 kg/kW
                 self["fuel cell stack mass"] = (
-                    0.51
+                    1.02
                     * self["fuel cell power"]
                     * (800 / self["fuel cell power area density"])
                 )
@@ -1246,7 +1256,7 @@ class BusModel:
                 )
 
         # Fuel cell buses do also have a battery, which capacity
-        # corresponds roughly to 8% of the capacity contained in the
+        # corresponds roughly to 9% of the capacity contained in the
         # H2 tank
         if "FCEV" in self.array.powertrain.values:
             with self("FCEV") as cpm:
@@ -1747,6 +1757,12 @@ class BusModel:
             ] = hem.get_emissions_per_powertrain(
                 powertrain_type="diesel",
                 euro_classes=l_y,
+                lifetime_km=self.array.loc[
+                    dict(
+                        powertrain=l_pwt,
+                        parameter="lifetime kilometers",
+                    )
+                ],
                 energy_consumption=self.energy.sel(
                     powertrain=l_pwt,
                     parameter=[
@@ -1766,6 +1782,12 @@ class BusModel:
                 hem.get_emissions_per_powertrain(
                     powertrain_type="cng",
                     euro_classes=l_y,
+                    lifetime_km=self.array.loc[
+                        dict(
+                            powertrain="ICEV-g",
+                            parameter="lifetime kilometers",
+                        )
+                    ],
                     energy_consumption=self.energy.sel(
                         powertrain=["ICEV-g"],
                         parameter=[

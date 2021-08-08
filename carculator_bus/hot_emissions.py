@@ -25,6 +25,43 @@ def get_emission_factors():
 
     return hot
 
+def get_mileage_degradation_factor(powertrain_type, euro_class, lifetime_km):
+    """
+    Catalyst degrade overtime, leading to increased emissions
+    of NOX. We apply a correction factor
+    to reflect this, given by HBEFA.
+    :return:
+    """
+
+    d_corr = {
+        'diesel': {
+            'NOx': {
+                6: 2.6,
+            }
+        },
+    }
+
+    corr = np.ones_like(lifetime_km)
+
+    for p, pt in enumerate([powertrain_type]):
+        for e, ec in enumerate(euro_class):
+            for c, co in enumerate(['NOx']):
+                try:
+                    val = d_corr[pt][co][ec]
+                    y_max = 890000
+
+                    corr[:, :, e, c] = np.clip(
+                        np.interp(
+                            lifetime_km[:, :, e, 0] / 2,
+                            [0, y_max],
+                            [1, val]),
+                        1,
+                        None
+                        )
+
+                except KeyError:
+                   pass
+    return corr
 
 class HotEmissionsModel:
     """
@@ -42,7 +79,7 @@ class HotEmissionsModel:
         self.em = get_emission_factors()
 
     def get_emissions_per_powertrain(
-        self, powertrain_type, euro_classes, energy_consumption, size, debug_mode=False
+        self, powertrain_type, euro_classes, lifetime_km, energy_consumption, size, debug_mode=False
     ):
         """
         Calculate hot pollutants emissions given a powertrain type (i.e., diesel, CNG) and a EURO pollution class,
@@ -100,6 +137,11 @@ class HotEmissionsModel:
         em_arr = np.zeros(tuple(arr_shape))
 
         em_arr[:9] = a
+
+        # apply a mileage degradation factor for NOx
+        corr = get_mileage_degradation_factor(powertrain_type, euro_classes, lifetime_km)
+        if powertrain_type == "diesel":
+            em_arr[2] *= corr[..., None]
 
         # NH3 and N2O emissions seem to vary with the Euro class
         # rather than the fuel consumption

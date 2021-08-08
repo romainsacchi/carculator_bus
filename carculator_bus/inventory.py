@@ -43,10 +43,22 @@ def get_dict_input():
                 new_str = [s.strip() for s in new_str.split(",") if s]
                 t = ()
                 for s in new_str:
+
                     if "low population" in s:
                         s = "low population density, long-term"
                         t += (s,)
                         break
+
+                    elif "ground-" in s:
+                        if len(new_str) > 2:
+                            s = "ground-, long-term"
+                            t += (s,)
+                            break
+                        else:
+                            s = "ground-"
+                            t += (s,)
+                            break
+
                     else:
                         t += (s.replace("'", ""),)
                 csv_dict[(row[0], t, row[2])] = count
@@ -1648,7 +1660,7 @@ class InventoryCalculation:
                         euro_class = "EURO-II"
                     if 1999 <= y < 2005:
                         euro_class = "EURO-III"
-                    if 2000 <= y < 2008:
+                    if 2005 <= y < 2008:
                         euro_class = "EURO-IV"
                     if 2008 <= y < 2012:
                         euro_class = "EURO-V"
@@ -1664,30 +1676,67 @@ class InventoryCalculation:
                         "18m": "18m articulated urban bus",
                     }
 
-                    name = (
-                        "transport, passenger bus, "
-                        + pt
-                        + ", "
-                        + d_map_size[s]
-                        + ", "
-                        + str(y)
-                        + ", "
-                        + euro_class
-                    )
-
                     if self.scope["fu"]["unit"] == "pkm":
                         unit = "passenger-kilometer"
                     if self.scope["fu"]["unit"] == "vkm":
                         unit = "kilometer"
 
-                    self.inputs[
-                        (
-                            name,
-                            self.country,
-                            unit,
-                            "transport, passenger bus, " + euro_class,
+
+                    if pt in ["BEV-depot", "BEV-opp", "BEV-motion", "FCEV"]:
+
+                        if pt=="FCEV":
+                            name = (
+                                    "transport, passenger bus, "
+                                    + pt
+                                    + ", "
+                                    + d_map_size[s]
+                                    + ", "
+                                    + str(y)
+                            )
+                        else:
+                            name = (
+                                    "transport, passenger bus, "
+                                    + pt
+                                    + ", "
+                                    + self.background_configuration["energy storage"]["electric"][pt]
+                                    + " battery, "
+                                    + d_map_size[s]
+                                    + ", "
+                                    + str(y)
+                            )
+
+                        self.inputs[
+                            (
+                                name,
+                                self.country,
+                                unit,
+                                "transport, passenger bus"
+                            )
+                        ] = maximum
+
+                    else:
+                        name = (
+                            "transport, passenger bus, "
+                            + pt
+                            + ", "
+                            + d_map_size[s]
+                            + ", "
+                            + str(y)
+                            + ", "
+                            + euro_class
                         )
-                    ] = maximum
+                        self.inputs[
+                            (
+                                name,
+                                self.country,
+                                unit,
+                                "transport, passenger bus, " + euro_class,
+                            )
+                        ] = maximum
+
+
+
+
 
     def add_additional_activities_for_export(self):
         # Add as many rows and columns as trucks to consider
@@ -1709,7 +1758,7 @@ class InventoryCalculation:
                         euro_class = "EURO-II"
                     if 1999 <= y < 2005:
                         euro_class = "EURO-III"
-                    if 2000 <= y < 2008:
+                    if 2005 <= y < 2008:
                         euro_class = "EURO-IV"
                     if 2008 <= y < 2012:
                         euro_class = "EURO-V"
@@ -1725,26 +1774,58 @@ class InventoryCalculation:
                         "18m": "18m articulated urban bus",
                     }
 
-                    name = (
-                        "Passenger bus, "
-                        + pt
-                        + ", "
-                        + d_map_size[s]
-                        + ", "
-                        + str(y)
-                        + ", "
-                        + euro_class
-                    )
-                    ref = "Passenger bus, "
+                    if pt in ["BEV-depot", "BEV-opp", "BEV-motion", "FCEV"]:
 
-                    self.inputs[
-                        (
-                            name,
-                            self.country,
-                            "unit",
-                            ref + euro_class,
+                        if pt == "FCEV":
+                            name = (
+                                    "Passenger bus, "
+                                    + pt
+                                    + ", "
+                                    + d_map_size[s]
+                                    + ", "
+                                    + str(y)
+                            )
+                        else:
+
+                            name = (
+                                    "Passenger bus, "
+                                    + pt
+                                    + ", "
+                                    + self.background_configuration["energy storage"]["electric"][pt]
+                                    + " battery, "
+                                    + d_map_size[s]
+                                    + ", "
+                                    + str(y)
+                            )
+
+                        self.inputs[
+                            (
+                                name,
+                                self.country,
+                                "unit",
+                                "Passenger bus",
+                            )
+                        ] = maximum
+
+                    else:
+                        name = (
+                                "Passenger bus, "
+                                + pt
+                                + ", "
+                                + d_map_size[s]
+                                + ", "
+                                + str(y)
+                                + ", "
+                                + euro_class
                         )
-                    ] = maximum
+                        self.inputs[
+                            (
+                                name,
+                                self.country,
+                                "unit",
+                                "Passenger bus, " + euro_class,
+                            )
+                        ] = maximum
 
     def get_A_matrix(self):
         """
@@ -2339,23 +2420,50 @@ class InventoryCalculation:
 
         for i in self.inputs:
             if (
-                "transport, passenger bus, " in i[0]
+                "passenger bus, " in i[0].lower()
                 and "fleet average" not in i[0]
                 and "market" not in i[0]
             ):
 
                 if "transport" in i[0]:
-                    (
-                        _,
-                        _,
-                        pt,
-                        size,
-                        year,
-                        _,
-                    ) = [x.strip() for x in i[0].split(", ")]
+
+                    if "BEV" in i[0]:
+                        (
+                            _,
+                            _,
+                            pt,
+                            _,
+                            size,
+                            year
+                        ) = [x.strip() for x in i[0].split(", ")]
+
+                    elif "FCEV" in i[0]:
+                        (
+                            _,
+                            _,
+                            pt,
+                            size,
+                            year
+                        ) = [x.strip() for x in i[0].split(", ")]
+
+                    else:
+                        (
+                            _,
+                            _,
+                            pt,
+                            size,
+                            year,
+                            _,
+                        ) = [x.strip() for x in i[0].split(", ")]
                     size = d_map_size[size]
                 else:
-                    _, pt, size, year, _, _ = i[0].split(", ")
+                    if "BEV" in i[0]:
+                        _, pt, _, size, year = i[0].split(", ")
+                    elif "FCEV" in i[0]:
+                        _, pt, size, year = i[0].split(", ")
+                    else:
+                        _, pt, size, year, _ = i[0].split(", ")
+
                     size = d_map_size[size]
 
                 if (
@@ -4034,7 +4142,7 @@ class InventoryCalculation:
         ] = (
             array[self.array_inputs["fuel cell stack mass"], :]
             * (1 + array[self.array_inputs["fuel cell lifetime replacements"]])
-            / 0.51
+            / 1.02
             / array[self.array_inputs["lifetime kilometers"], :]
             / array[self.array_inputs["average passengers"], :]
             * -1
@@ -4841,8 +4949,9 @@ class InventoryCalculation:
         )
 
         # Brake wear emissions
-        # BEVs only emit 10% of what a combustion engine vehicle emits according to
-        # https://www.nrel.gov/docs/fy17osti/67209.pdf
+        # BEVs and other hybrid vehicles only emit 20%
+        # of what a combustion engine vehicle emit according to
+        # https://link.springer.com/article/10.1007/s11367-014-0792-4
 
         self.A[
             :,
@@ -4886,7 +4995,7 @@ class InventoryCalculation:
                 )
             ],
             ind_A,
-        ] *= 0.1
+        ] *= 0.2
 
         # Infrastructure: 5.37e-4 per gross tkm
         self.A[
@@ -4988,7 +5097,10 @@ class InventoryCalculation:
             ],
             -self.number_of_cars :,
         ] = (
-            16 / self.array.values[self.array_inputs["lifetime kilometers"]] * -1
+            16
+            / self.array.values[self.array_inputs["lifetime kilometers"]]
+            /  self.array.values[self.array_inputs["average passengers"]]
+            * -1
         )
 
         self.A[
@@ -5000,6 +5112,7 @@ class InventoryCalculation:
         ] = (
             (16 + 7.5)
             / self.array.values[self.array_inputs["lifetime kilometers"]]
+            / self.array.values[self.array_inputs["average passengers"]]
             * -1
         )
 
@@ -5488,7 +5601,7 @@ class InventoryCalculation:
         ] = (
             array[self.array_inputs["fuel cell stack mass"], :]
             * (1 + array[self.array_inputs["fuel cell lifetime replacements"]])
-            / 0.51
+            / 1.02
             * -1
         )
 
@@ -6340,9 +6453,9 @@ class InventoryCalculation:
         )
 
         # Brake wear emissions
-        # BEVs only emit 10% of what a combustion engine vehicle emits according to
-        # https://www.nrel.gov/docs/fy17osti/67209.pdf
-
+        # BEVs and other hybrid vehicles only emit 20%
+        # of what a combustion engine vehicle emit according to
+        # https://link.springer.com/article/10.1007/s11367-014-0792-4
         self.A[
             :,
             self.inputs[
@@ -6393,7 +6506,7 @@ class InventoryCalculation:
                 )
             ],
             ind_A,
-        ] *= 0.1
+        ] *= 0.2
 
         # Infrastructure: 5.37e-4 per gross tkm
         self.A[
@@ -6518,7 +6631,10 @@ class InventoryCalculation:
                 and "market" not in i[0]
             ],
         ] = (
-            16 / self.array.values[self.array_inputs["lifetime kilometers"]] * -1
+            16
+            / self.array.values[self.array_inputs["lifetime kilometers"]]
+            / self.array.values[self.array_inputs["average passengers"]]
+            * -1
         )
 
         self.A[
@@ -6536,6 +6652,7 @@ class InventoryCalculation:
         ] = (
             (16 + 7.5)
             / self.array.values[self.array_inputs["lifetime kilometers"]]
+            / self.array.values[self.array_inputs["average passengers"]]
             * -1
         )
 

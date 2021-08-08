@@ -2,6 +2,7 @@ split;category;search by;search for
 components;direct - non-exhaust;name;treatment of road wear
 components;direct - non-exhaust;name;treatment of brake wear
 components;direct - non-exhaust;name;treatment of tyre wear
+components;direct - non-exhaust;name;ethane, 1,1,1,2-tetrafluoro-, hfc-134a
 components;energy chain;name;fuel supply
 components;energy chain;name;electricity supply
 components;maintenance;name;maintenance, bus
@@ -34,6 +35,7 @@ components;energy storage;name;electricity market for energy storage production
 components;energy storage;name;lead acid
 components;energy storage;name;fuel tank, for diesel vehicle
 components;road;name;market for road
+components;road;name;road maintenance
 components;road;name;ev charger
 components;road;name;overhead
 components;EoL;name;treatment of used bus

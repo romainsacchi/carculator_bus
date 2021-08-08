@@ -392,12 +392,10 @@ class ExportInventory:
             "ICEV-d": "diesel",
             "ICEV-g": "compressed gas",
             "HEV-d": "diesel hybrid",
-            "PHEV-d": "diesel plugin-hybrid",
-            "BEV-depot": "electric - overnight charging",
-            "BEV-opp": "electric - opportunity charging",
-            "BEV-motion": "electric - battery-equipped trolleybus",
-            "FCEV": "fuel cell",
-            "TEV": "trolleybus",
+            "BEV-depot": "battery electric - overnight charging",
+            "BEV-opp": "battery electric - opportunity charging",
+            "BEV-motion": "battery electric - battery-equipped trolleybus",
+            "FCEV": "fuel cell electric",
         }
 
         for k, value in self.indices.items():
@@ -861,10 +859,10 @@ class ExportInventory:
                         "compressed gas": "ICEV-g",
                         "diesel hybrid": "HEV-d",
                         "diesel plugin-hybrid": "PHEV-d",
-                        "electric - overnight charging": "BEV-depot",
-                        "electric - opportunity charging": "BEV-opp",
-                        "electric - battery-equipped trolleybus": "BEV-motion",
-                        "fuel cell": "FCEV",
+                        "battery electric - overnight charging": "BEV-depot",
+                        "battery electric - opportunity charging": "BEV-opp",
+                        "battery electric - battery-equipped trolleybus": "BEV-motion",
+                        "fuel cell electric": "FCEV",
                         "trolleybus": "TEV",
                     }
 
@@ -911,9 +909,24 @@ class ExportInventory:
 
                     l = [t.strip() for t in tuple_output[0].split(",")]
 
-                    if len(l) == 6:
-                        _, _, pwt, size, year, _ = l
+                    if "fleet average" not in tuple_output[0]:
+                        if "transport, " in tuple_output[0]:
+                            if "battery electric" in l[2]:
+                                _, _, pwt, _, size, year = l
+                            elif "fuel cell" in l[2]:
+                                _, _, pwt, size, year = l
+                            else:
+                                _, _, pwt, size, year, _ = l
+                        else:
+                            if "battery electric" in l[1]:
+                                _, pwt, _, size, year = l
+                            elif "fuel cell" in l[1]:
+                                _, pwt, size, year = l
+                            else:
+                                _, pwt, size, year, _ = l
+
                     else:
+
                         if l[2] == "fleet average":
                             _, _, _, pwt, year = [
                                 t.strip() for t in tuple_output[0].split(",")
