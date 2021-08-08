@@ -1681,37 +1681,33 @@ class InventoryCalculation:
                     if self.scope["fu"]["unit"] == "vkm":
                         unit = "kilometer"
 
-
                     if pt in ["BEV-depot", "BEV-opp", "BEV-motion", "FCEV"]:
 
-                        if pt=="FCEV":
+                        if pt == "FCEV":
                             name = (
-                                    "transport, passenger bus, "
-                                    + pt
-                                    + ", "
-                                    + d_map_size[s]
-                                    + ", "
-                                    + str(y)
+                                "transport, passenger bus, "
+                                + pt
+                                + ", "
+                                + d_map_size[s]
+                                + ", "
+                                + str(y)
                             )
                         else:
                             name = (
-                                    "transport, passenger bus, "
-                                    + pt
-                                    + ", "
-                                    + self.background_configuration["energy storage"]["electric"][pt]
-                                    + " battery, "
-                                    + d_map_size[s]
-                                    + ", "
-                                    + str(y)
+                                "transport, passenger bus, "
+                                + pt
+                                + ", "
+                                + self.background_configuration["energy storage"][
+                                    "electric"
+                                ][pt]
+                                + " battery, "
+                                + d_map_size[s]
+                                + ", "
+                                + str(y)
                             )
 
                         self.inputs[
-                            (
-                                name,
-                                self.country,
-                                unit,
-                                "transport, passenger bus"
-                            )
+                            (name, self.country, unit, "transport, passenger bus")
                         ] = maximum
 
                     else:
@@ -1733,10 +1729,6 @@ class InventoryCalculation:
                                 "transport, passenger bus, " + euro_class,
                             )
                         ] = maximum
-
-
-
-
 
     def add_additional_activities_for_export(self):
         # Add as many rows and columns as trucks to consider
@@ -1778,24 +1770,26 @@ class InventoryCalculation:
 
                         if pt == "FCEV":
                             name = (
-                                    "Passenger bus, "
-                                    + pt
-                                    + ", "
-                                    + d_map_size[s]
-                                    + ", "
-                                    + str(y)
+                                "Passenger bus, "
+                                + pt
+                                + ", "
+                                + d_map_size[s]
+                                + ", "
+                                + str(y)
                             )
                         else:
 
                             name = (
-                                    "Passenger bus, "
-                                    + pt
-                                    + ", "
-                                    + self.background_configuration["energy storage"]["electric"][pt]
-                                    + " battery, "
-                                    + d_map_size[s]
-                                    + ", "
-                                    + str(y)
+                                "Passenger bus, "
+                                + pt
+                                + ", "
+                                + self.background_configuration["energy storage"][
+                                    "electric"
+                                ][pt]
+                                + " battery, "
+                                + d_map_size[s]
+                                + ", "
+                                + str(y)
                             )
 
                         self.inputs[
@@ -1809,14 +1803,14 @@ class InventoryCalculation:
 
                     else:
                         name = (
-                                "Passenger bus, "
-                                + pt
-                                + ", "
-                                + d_map_size[s]
-                                + ", "
-                                + str(y)
-                                + ", "
-                                + euro_class
+                            "Passenger bus, "
+                            + pt
+                            + ", "
+                            + d_map_size[s]
+                            + ", "
+                            + str(y)
+                            + ", "
+                            + euro_class
                         )
                         self.inputs[
                             (
@@ -2428,23 +2422,12 @@ class InventoryCalculation:
                 if "transport" in i[0]:
 
                     if "BEV" in i[0]:
-                        (
-                            _,
-                            _,
-                            pt,
-                            _,
-                            size,
-                            year
-                        ) = [x.strip() for x in i[0].split(", ")]
+                        (_, _, pt, _, size, year) = [
+                            x.strip() for x in i[0].split(", ")
+                        ]
 
                     elif "FCEV" in i[0]:
-                        (
-                            _,
-                            _,
-                            pt,
-                            size,
-                            year
-                        ) = [x.strip() for x in i[0].split(", ")]
+                        (_, _, pt, size, year) = [x.strip() for x in i[0].split(", ")]
 
                     else:
                         (
@@ -5099,7 +5082,7 @@ class InventoryCalculation:
         ] = (
             16
             / self.array.values[self.array_inputs["lifetime kilometers"]]
-            /  self.array.values[self.array_inputs["average passengers"]]
+            / self.array.values[self.array_inputs["average passengers"]]
             * -1
         )
 
