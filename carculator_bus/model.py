@@ -813,12 +813,10 @@ class BusModel:
 
             self.energy.loc[
                 dict(parameter="engine efficiency", powertrain=l_pwt)
-            ] *= (1 / self.array.sel(
+            ] *= 1 / self.array.sel(
                 parameter="engine efficiency",
                 powertrain=l_pwt,
-            ))
-
-
+            )
 
         # Correction for CNG trucks
         if "ICEV-g" in self.array.powertrain.values:
