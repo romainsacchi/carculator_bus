@@ -19254,7 +19254,7 @@
         "maximum": 1.15
     },
     "714-2000-fuel cell lifetime hours": {
-        "amount": 80000,
+        "amount": 8000,
         "category": "Energy Storage",
         "powertrain": [
             "FCEV"
@@ -19276,7 +19276,7 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 80000,
+        "loc": 8000,
         "minimum": 5000,
         "maximum": 10000
     },
@@ -27992,10 +27992,8 @@
         "comment": "Scaled on diesel efficiency + 17%, as reported by https://iopscience.iop.org/article/10.1088/2516-1083/ab56af/pdf",
         "status": "To be improved",
         "kind": "distribution",
-        "uncertainty_type": 5,
-        "loc": 0,
-        "minimum": 0,
-        "maximum": 0
+        "uncertainty_type": 1,
+        "loc": 0
     },
     "1034-2000-CNG engine efficiency correction factor": {
         "amount": 0.1,
@@ -28124,10 +28122,8 @@
         "comment": "Scaled on diesel efficiency + 17%, as reported by https://iopscience.iop.org/article/10.1088/2516-1083/ab56af/pdf",
         "status": "To be improved",
         "kind": "distribution",
-        "uncertainty_type": 5,
-        "loc": 0,
-        "minimum": 0,
-        "maximum": 0
+        "uncertainty_type": 1,
+        "loc": 0
     },
     "1040-2000-CNG engine efficiency correction factor": {
         "amount": 0.01,
@@ -28262,10 +28258,8 @@
         "comment": "Scaled on diesel efficiency + 17%, as reported by https://iopscience.iop.org/article/10.1088/2516-1083/ab56af/pdf",
         "status": "To be improved",
         "kind": "distribution",
-        "uncertainty_type": 5,
-        "loc": 0,
-        "minimum": 0,
-        "maximum": 0
+        "uncertainty_type": 1,
+        "loc": 0
     },
     "1046-2000-CNG engine efficiency correction factor": {
         "amount": 0.3,
@@ -28394,10 +28388,8 @@
         "comment": "Scaled on diesel efficiency + 17%, as reported by https://iopscience.iop.org/article/10.1088/2516-1083/ab56af/pdf",
         "status": "To be improved",
         "kind": "distribution",
-        "uncertainty_type": 5,
-        "loc": 0,
-        "minimum": 0,
-        "maximum": 0
+        "uncertainty_type": 1,
+        "loc": 0
     },
     "1052-2000-CNG engine efficiency correction factor": {
         "amount": 0.3,
@@ -28526,10 +28518,8 @@
         "comment": "Scaled on diesel efficiency + 17%, as reported by https://iopscience.iop.org/article/10.1088/2516-1083/ab56af/pdf",
         "status": "To be improved",
         "kind": "distribution",
-        "uncertainty_type": 5,
-        "loc": 0,
-        "minimum": 0,
-        "maximum": 0
+        "uncertainty_type": 1,
+        "loc": 0
     },
     "1058-2000-charging opportunity per trip": {
         "amount": 1.5,
