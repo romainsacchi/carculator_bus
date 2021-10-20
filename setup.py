@@ -28,7 +28,7 @@ def package_files(directory):
 
 setup(
     name="carculator_bus",
-    version="0.0.3",
+    version="0.0.4",
     packages=packages,
     author="Romain Sacchi <romain.sacchi@psi.ch>",
     license=open("LICENSE").read(),

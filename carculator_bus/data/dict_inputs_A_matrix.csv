@@ -223,7 +223,7 @@ Positive electrode paste, NMC-111;GLO;kilogram;Positive electrode paste
 market for soap;GLO;kilogram;soap
 Nickel;('air', 'urban air close to ground');kilogram
 market for electronics, for control units;GLO;kilogram;electronics, for control units
-Methane production, synthetic, from electrochemical methanation;RER;kilogram;Methane, synthetic
+methane, from electrochemical methanation, with carbon from atmospheric CO2 capture;RER;kilogram;methane, from electrochemical methanation
 market for used Li-ion battery;GLO;kilogram;used Li-ion battery
 Ozone;('air',);kilogram
 market for carbon black;GLO;kilogram;carbon black
@@ -700,7 +700,7 @@ aluminium production, primary, ingot;IAI Area, EU27 & EFTA;kilogram;aluminium, p
 noise, octave 8, day time, suburban;('octave 8', 'day time', 'suburban');joule
 Volume occupied, reservoir;('natural resource', 'in water');cubic meter-year
 pipeline construction, natural gas, high pressure distribution network;Europe without Switzerland;kilometer;pipeline, natural gas, high pressure distribution network
-Hydrogen, gaseous, 25 bar, from electrolysis;RER;kilogram;Hydrogen, gaseous, 25 bar
+hydrogen production, gaseous, 25 bar, from electrolysis;RER;kilogram;Hydrogen, gaseous, 25 bar
 transport, helicopter, LTO cycle;GLO;unit;transport, helicopter, LTO cycle
 Plant oil production | refining of crude vegetable oil from rapeseed| Alloc Rec, U;RER;megajoule;Plant oil production | refining of crude vegetable oil from rapeseed| Alloc Rec, U
 Particulates, < 2.5 um;('air', 'non-urban air or from high stacks');kilogram
