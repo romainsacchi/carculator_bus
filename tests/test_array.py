@@ -37,7 +37,7 @@ def test_modify_array():
     assert (
         array.sel(
             powertrain="ICEV-d",
-            size="40t",
+            size="13m-city",
             year=2020,
             parameter="lifetime kilometers",
         ).sum()
