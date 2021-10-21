@@ -4,12 +4,12 @@ from carculator_bus import *
 
 
 def test_acceleration():
-    ecm = EnergyConsumptionModel("Long haul")
+    ecm = EnergyConsumptionModel("Urban delivery", size=["13m-city"])
     # Sum of acceleration should be close to zero
     assert np.isclose(ecm.acceleration.sum(), 0) == True
-    # Average speed of Long haul driving cycle should be above 60 and below 80
-    assert (ecm.velocity[..., 0] / 1000 * 3600).mean() > 60
-    assert (ecm.velocity[..., 0] / 1000 * 3600).mean() < 80
+    # Average speed of Urban delivery driving cycle should be above 10 and below 50
+    assert (ecm.velocity[..., 0] / 1000 * 3600).mean() > 10
+    assert (ecm.velocity[..., 0] / 1000 * 3600).mean() < 50
 
 
 def test_motive_energy():
