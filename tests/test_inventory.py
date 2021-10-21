@@ -114,7 +114,7 @@ def test_fuel_blend():
             "biogas - biowaste",
         ),
         (
-            "synthetic diesel",
+            "synthetic diesel - energy allocation",
             "wood gasification with EF with CCS (Swiss forest)",
             "syngas",
         ),

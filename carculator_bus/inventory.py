@@ -350,24 +350,24 @@ class InventoryCalculation:
             self.background_configuration["energy storage"]["electric"].update(
                 bm.energy_storage["electric"]
             )
+
+        if "electric" not in self.background_configuration["energy storage"]:
+            self.background_configuration["energy storage"]["electric"] = {
+                "origin": "CN",
+                "BEV-opp": "LTO",
+                "BEV-depot": "NMC-111",
+                "BEV-motion": "LTO",
+                "FCEV": "NMC-111",
+                "HEV-d": "NMC-111",
+            }
         else:
-            if "electric" not in self.background_configuration["energy storage"]:
-                self.background_configuration["energy storage"]["electric"] = {
-                    "origin": "CN",
-                    "BEV-opp": "LTO",
-                    "BEV-depot": "NMC-111",
-                    "BEV-motion": "LTO",
-                    "FCEV": "NMC-111",
-                    "HEV-d": "NMC-111",
-                }
-            else:
-                if (
+            if (
+                "origin"
+                not in self.background_configuration["energy storage"]["electric"]
+            ):
+                self.background_configuration["energy storage"]["electric"][
                     "origin"
-                    not in self.background_configuration["energy storage"]["electric"]
-                ):
-                    self.background_configuration["energy storage"]["electric"][
-                        "origin"
-                    ] = "CN"
+                ] = "CN"
 
         self.inputs = get_dict_input()
         self.bs = BackgroundSystemModel()
