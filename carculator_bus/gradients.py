@@ -5,7 +5,9 @@ import numpy as np
 from . import DATA_DIR
 
 
-def get_gradients(size=["9m", "13m-city", "13m-coach", "13m-city-double", "13m-coach-double", "18m"]):
+def get_gradients(
+    size=["9m", "13m-city", "13m-coach", "13m-city-double", "13m-coach-double", "18m"]
+):
 
     """Get gradient data as a Pandas `Series`.
 
