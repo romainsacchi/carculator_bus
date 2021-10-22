@@ -173,9 +173,10 @@ def test_IAM_regions():
             method_type="midpoint",
             background_configuration={
                 "country": c,
-                "energy storage": {"electric": {"origin": c}},
             },
         )
+
+        ic.background_configuration["energy storage"]["electric"]["origin"] = c
         ic.calculate_impacts()
 
 

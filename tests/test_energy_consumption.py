@@ -8,8 +8,8 @@ def test_acceleration():
     # Sum of acceleration should be close to zero
     assert np.isclose(ecm.acceleration.sum(), 0) == True
     # Average speed of Urban delivery driving cycle should be above 10 and below 50
-    assert (ecm.velocity[..., 0] / 1000 * 3600).mean() > 10
-    assert (ecm.velocity[..., 0] / 1000 * 3600).mean() < 50
+    assert (ecm.velocity[..., 0] / 1000 * 3600).mean() > 5
+    assert (ecm.velocity[..., 0] / 1000 * 3600).mean() < 15
 
 
 def test_motive_energy():

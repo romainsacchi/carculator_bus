@@ -1684,49 +1684,23 @@ class InventoryCalculation:
                     if pt in ["BEV-depot", "BEV-opp", "BEV-motion", "FCEV"]:
 
                         if pt == "FCEV":
-                            name = (
-                                "transport, passenger bus, "
-                                + pt
-                                + ", "
-                                + d_map_size[s]
-                                + ", "
-                                + str(y)
-                            )
+                            name = f"transport, passenger bus, {pt}, {d_map_size[s]}, {y}"
                         else:
-                            name = (
-                                "transport, passenger bus, "
-                                + pt
-                                + ", "
-                                + self.background_configuration["energy storage"][
-                                    "electric"
-                                ][pt]
-                                + " battery, "
-                                + d_map_size[s]
-                                + ", "
-                                + str(y)
-                            )
+                            name = f"transport, passenger bus, {pt}, {self.background_configuration['energy storage']['electric'][pt]} battery, {d_map_size[s]}, {y}"
 
                         self.inputs[
                             (name, self.country, unit, "transport, passenger bus")
                         ] = maximum
 
                     else:
-                        name = (
-                            "transport, passenger bus, "
-                            + pt
-                            + ", "
-                            + d_map_size[s]
-                            + ", "
-                            + str(y)
-                            + ", "
-                            + euro_class
-                        )
+                        name = f"transport, passenger bus, {pt}, {d_map_size[s]}, {y}, {euro_class}"
+
                         self.inputs[
                             (
                                 name,
                                 self.country,
                                 unit,
-                                "transport, passenger bus, " + euro_class,
+                                f"transport, passenger bus, {euro_class}",
                             )
                         ] = maximum
 
@@ -1769,28 +1743,10 @@ class InventoryCalculation:
                     if pt in ["BEV-depot", "BEV-opp", "BEV-motion", "FCEV"]:
 
                         if pt == "FCEV":
-                            name = (
-                                "Passenger bus, "
-                                + pt
-                                + ", "
-                                + d_map_size[s]
-                                + ", "
-                                + str(y)
-                            )
-                        else:
+                            name = f"Passenger bus, {pt}, {d_map_size[s]}, {y}"
 
-                            name = (
-                                "Passenger bus, "
-                                + pt
-                                + ", "
-                                + self.background_configuration["energy storage"][
-                                    "electric"
-                                ][pt]
-                                + " battery, "
-                                + d_map_size[s]
-                                + ", "
-                                + str(y)
-                            )
+                        else:
+                            name = f"Passenger bus, {pt}, {self.background_configuration['energy storage']['electric'][pt]} battery, {d_map_size[s]}, {y}"
 
                         self.inputs[
                             (
@@ -1802,22 +1758,14 @@ class InventoryCalculation:
                         ] = maximum
 
                     else:
-                        name = (
-                            "Passenger bus, "
-                            + pt
-                            + ", "
-                            + d_map_size[s]
-                            + ", "
-                            + str(y)
-                            + ", "
-                            + euro_class
-                        )
+                        name = f"Passenger bus, {pt}, {d_map_size[s]}, {y}, {euro_class}"
+
                         self.inputs[
                             (
                                 name,
                                 self.country,
                                 "unit",
-                                "Passenger bus, " + euro_class,
+                                f"Passenger bus, {euro_class}"
                             )
                         ] = maximum
 
@@ -2000,12 +1948,7 @@ class InventoryCalculation:
                     "18m": "18m articulated urban bus",
                 }
 
-                name = (
-                    "transport, passenger bus, fleet average, "
-                    + d_map_size[s]
-                    + ", "
-                    + str(y)
-                )
+                name = f"transport, passenger bus, fleet average, {d_map_size[s]}, {y}"
                 ref = "transport, passenger bus, fleet average"
 
                 maximum += 1

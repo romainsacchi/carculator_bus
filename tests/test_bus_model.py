@@ -8,27 +8,20 @@ _, array = fill_xarray_from_input_parameters(tip)
 tm = BusModel(array, country="CH")
 tm.set_all()
 
-# def test_energy_target_compliance():
-# ICEV-d and ICEV-g after 2020 should comply with given energy targets
-# In this case, 30% reduction in 2030 compared to 2020
-#    assert np.all((tm.array.sel(powertrain=["ICEV-d", "ICEV-g"], size="40t", year=2030, parameter="TtW energy")/
-#     tm.array.sel(powertrain=["ICEV-d", "ICEV-g"], size="40t", year=2020, parameter="TtW energy")) <= .7)
-
-
 def test_presence_PHEVe():
     # PHEV-e should be dropped
     assert "PHEV-e" not in tm.array.powertrain.values.tolist()
 
 
 def test_ttw_energy_against_VECTO():
-    # The TtW energy consumption of a 40-ton diesel must be
+    # The TtW energy consumption of a 13m city bus diesel must be
     # within an interval given by VECTO
     vecto_empty, vecto_full = (8300, 13700)
 
     assert (
         vecto_empty
         <= tm.array.sel(
-            powertrain="ICEV-d", year=2020, size="40t", parameter="TtW energy", value=0
+            powertrain="ICEV-d", year=2020, size="13m-city", parameter="TtW energy", value=0
         )
         <= vecto_full
     )
@@ -93,20 +86,16 @@ def test_battery_mass():
         )
 
     # Cell mass must equal capacity divided by energy density of cells
-    with tm("BEV") as cpm:
+    with tm("BEV-depot") as cpm:
         assert np.allclose(
             cpm["battery cell mass"],
             cpm["electric energy stored"] / cpm["battery cell energy density"],
         )
 
 
-# Long haul efficiencies are superior to Urban delivery efficiencies for combustion vehicles
-
-# Emissions of NOx in 2020 must be below EURO VI limits
-
 
 def test_noise_emissions():
-    # Noise emissions with Urban delivery must only affect urban area
+    # Noise emissions of a city bus must only affect urban area
     tm = BusModel(array, country="CH")
     tm.set_all()
 
@@ -117,7 +106,4 @@ def test_noise_emissions():
         if "noise" in p and any([x in p for x in list_comp])
     ]
 
-    assert tm.array.sel(parameter=params).sum() == 0
-
-
-# Hydrogen must have zero CO2 emissions, synthetic diesel, 3.16
+    assert tm.array.sel(size="13m-city", parameter=params).sum() == 0
