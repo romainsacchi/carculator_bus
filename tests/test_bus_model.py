@@ -8,6 +8,7 @@ _, array = fill_xarray_from_input_parameters(tip)
 tm = BusModel(array, country="CH")
 tm.set_all()
 
+
 def test_presence_PHEVe():
     # PHEV-e should be dropped
     assert "PHEV-e" not in tm.array.powertrain.values.tolist()
@@ -21,7 +22,11 @@ def test_ttw_energy_against_VECTO():
     assert (
         vecto_empty
         <= tm.array.sel(
-            powertrain="ICEV-d", year=2020, size="13m-city", parameter="TtW energy", value=0
+            powertrain="ICEV-d",
+            year=2020,
+            size="13m-city",
+            parameter="TtW energy",
+            value=0,
         )
         <= vecto_full
     )
@@ -91,7 +96,6 @@ def test_battery_mass():
             cpm["battery cell mass"],
             cpm["electric energy stored"] / cpm["battery cell energy density"],
         )
-
 
 
 def test_noise_emissions():

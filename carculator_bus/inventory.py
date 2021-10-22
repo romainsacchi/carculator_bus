@@ -1684,7 +1684,9 @@ class InventoryCalculation:
                     if pt in ["BEV-depot", "BEV-opp", "BEV-motion", "FCEV"]:
 
                         if pt == "FCEV":
-                            name = f"transport, passenger bus, {pt}, {d_map_size[s]}, {y}"
+                            name = (
+                                f"transport, passenger bus, {pt}, {d_map_size[s]}, {y}"
+                            )
                         else:
                             name = f"transport, passenger bus, {pt}, {self.background_configuration['energy storage']['electric'][pt]} battery, {d_map_size[s]}, {y}"
 
@@ -1758,15 +1760,12 @@ class InventoryCalculation:
                         ] = maximum
 
                     else:
-                        name = f"Passenger bus, {pt}, {d_map_size[s]}, {y}, {euro_class}"
+                        name = (
+                            f"Passenger bus, {pt}, {d_map_size[s]}, {y}, {euro_class}"
+                        )
 
                         self.inputs[
-                            (
-                                name,
-                                self.country,
-                                "unit",
-                                f"Passenger bus, {euro_class}"
-                            )
+                            (name, self.country, "unit", f"Passenger bus, {euro_class}")
                         ] = maximum
 
     def get_A_matrix(self):
