@@ -107,7 +107,7 @@ class BusModel:
         On with block exit, this filter is cleared
         https://stackoverflow.com/a/10252925/164864
 
-        :param key: A powertrain type, e.g., "FCEV"
+        :param key: a_matrix powertrain type, e.g., "FCEV"
         :type key: str
         :return: An instance of `array` filtered after the powertrain selected.
 
@@ -1357,7 +1357,7 @@ class BusModel:
                     # Based on manufacturer data
                     # We use a four-cyclinder configuration
                     # Of 320L each
-                    # A cylinder of 320L @ 200 bar can hold 57.6 kg of CNG
+                    # a_matrix cylinder of 320L @ 200 bar can hold 57.6 kg of CNG
                     nb_cylinder = np.ceil(cpm["fuel mass"] / 57.6)
 
                     cpm["fuel tank mass"] = (
@@ -1979,7 +1979,7 @@ class BusModel:
             * Energy
             * Total cost of ownership
 
-        :return: A xarray array with cost information per vehicle-km
+        :return: a_matrix xarray array with cost information per vehicle-km
         :rtype: xarray.core.dataarray.DataArray
         """
 
@@ -2117,7 +2117,7 @@ class BusModel:
                 # See of a secondary fuel type has been specified
                 secondary = fuel_blend[fuel_type]["secondary fuel"]["type"]
             except:
-                # A secondary fuel has not been specified, set one by default
+                # a_matrix secondary fuel has not been specified, set one by default
                 # Check first if the default fuel is not similar to the primary fuel
 
                 if default_fuels[fuel_type]["secondary"] != primary:

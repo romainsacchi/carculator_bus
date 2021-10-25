@@ -22,7 +22,7 @@ def get_gradients(
     * Regional delivery
     * Long haul
 
-    :returns: A pandas DataFrame object with driving time (in seconds) as index,
+    :returns: a_matrix pandas DataFrame object with driving time (in seconds) as index,
         and velocity (in km/h) as values.
     :rtype: panda.Series
 

@@ -18,7 +18,7 @@ def load_parameters(obj):
 
 class BusInputParameters(NamedParameters):
     """
-    A class used to represent vehicles with associated type, size, technology, year and parameters.
+    a_matrix class used to represent vehicles with associated type, size, technology, year and parameters.
 
     This class inherits from NamedParameters, located in the *klausen* package.
     It sources default parameters for all vehicle types from a dictionary in
@@ -86,7 +86,7 @@ class BusInputParameters(NamedParameters):
         The parameters are split into the *metadata* and *values* attributes
         of the CarInputParameters class by the add_parameters() method of the parent class.
 
-        :param parameters: A dictionary that contains parameters.
+        :param parameters: a_matrix dictionary that contains parameters.
         :type parameters: dict
 
 

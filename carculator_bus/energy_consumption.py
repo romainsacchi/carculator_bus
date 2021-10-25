@@ -228,10 +228,10 @@ class EnergyConsumptionModel:
 
         .. math::
 
-            \frac{1}{2} \rho_{air} v^{3} A C_{d}
+            \frac{1}{2} \rho_{air} v^{3} a_matrix C_{d}
 
 
-        where :math:`\rho_{air}` is 1.225 (kg/m3), :math:`v` is velocity (m/s), :math:`A` is frontal area (m2), and :math:`C_{d}`
+        where :math:`\rho_{air}` is 1.225 (kg/m3), :math:`v` is velocity (m/s), :math:`a_matrix` is frontal area (m2), and :math:`C_{d}`
         is the aerodynamic drag coefficient (dimensionless).
 
         :returns: net motive energy (in kJ/km)

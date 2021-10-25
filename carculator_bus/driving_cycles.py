@@ -16,7 +16,7 @@ def get_standard_driving_cycle(
     * "9m", "13m-city", "13-city-double", "18m": `Urban` driving cycle from VECTO
     * "13m-coach", "13m-coach-double": `Coach` driving cycle from VECTO
 
-    :returns: A pandas DataFrame object with driving time (in seconds) as index,
+    :returns: a_matrix pandas DataFrame object with driving time (in seconds) as index,
         and velocity (in km/h) as values.
     :rtype: panda.Series
 

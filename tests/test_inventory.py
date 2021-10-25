@@ -240,6 +240,12 @@ def test_custom_electricity_mix():
 
 
 def test_export_to_bw():
+    tip = BusInputParameters()
+    tip.static()
+    _, array = fill_xarray_from_input_parameters(tip)
+    tm = BusModel(array, country="CH")
+    tm.set_all()
+
     """Test that inventories export successfully"""
     ic = InventoryCalculation(tm, method="recipe", method_type="midpoint")
     for a in (True, False):
@@ -253,13 +259,19 @@ def test_export_to_bw():
 
 
 def test_export_to_excel():
+    tip = BusInputParameters()
+    tip.static()
+    _, array = fill_xarray_from_input_parameters(tip)
+    tm = BusModel(array, country="CH")
+    tm.set_all()
+
     """Test that inventories export successfully to Excel/CSV"""
     ic = InventoryCalculation(tm)
     for a in (True, False):
         for b in ("3.5", "3.6", "3.7", "uvek"):
             for c in (True, False):
                 for d in ("file", "string"):
-                    i = ic.export_lci_to_excel(
+                    ic.export_lci_to_excel(
                         ecoinvent_compatibility=a,
                         ecoinvent_version=b,
                         create_vehicle_datasets=c,

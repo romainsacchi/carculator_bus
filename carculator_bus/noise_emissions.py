@@ -67,7 +67,7 @@ class NoiseEmissionsModel:
         :param category: "medium" or "heavy" duty vehicles.
         :type category: str.
 
-        :returns: A numpy array with rolling noise (dB) for each 8 octaves, per second of driving cycle
+        :returns: a_matrix numpy array with rolling noise (dB) for each 8 octaves, per second of driving cycle
         :rtype: numpy.array
 
         """
@@ -113,7 +113,7 @@ class NoiseEmissionsModel:
         :param powertrain_type:
         :param category: "medium" or "heavy" duty vehicles.
         :type category: str.
-        :returns: A numpy array with propulsion noise (dB) for all 8 octaves, per second of driving cycle
+        :returns: a_matrix numpy array with propulsion noise (dB) for all 8 octaves, per second of driving cycle
         :rtype: numpy.array
 
         """

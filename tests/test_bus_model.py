@@ -74,7 +74,7 @@ def test_fuel_blends():
             [1, 1, 1, 1, 1, 1],
         )
 
-    # A fuel cannot be specified both as primary and secondary fuel
+    # a_matrix fuel cannot be specified both as primary and secondary fuel
     for fuel in tm.fuel_blend:
         assert (
             tm.fuel_blend[fuel]["primary"]["type"]

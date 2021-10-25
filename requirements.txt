@@ -9,3 +9,4 @@ prettytable
 pycountry
 atmos
 wurst
+pypardiso
