@@ -264,36 +264,56 @@ class HotEmissionsModel:
             else:
 
                 urban[:, s] = (
-                                      np.sum(em_arr[..., :500], axis=-1) / 1000 / distance[:, None, None, None]
-                              )[:, s]
+                    np.sum(em_arr[..., :500], axis=-1)
+                    / 1000
+                    / distance[:, None, None, None]
+                )[:, s]
                 urban[:, s] += (
-                                       np.sum(em_arr[..., 6000:6800], axis=-1) / 1000 / distance[:, None, None, None]
-                               )[:, s]
+                    np.sum(em_arr[..., 6000:6800], axis=-1)
+                    / 1000
+                    / distance[:, None, None, None]
+                )[:, s]
                 urban[:, s] += (
-                                       np.sum(em_arr[..., 7600:8800], axis=-1) / 1000 / distance[:, None, None, None]
-                               )[:, s]
+                    np.sum(em_arr[..., 7600:8800], axis=-1)
+                    / 1000
+                    / distance[:, None, None, None]
+                )[:, s]
                 urban[:, s] += (
-                                       np.sum(em_arr[..., 10600:11500], axis=-1) / 1000 / distance[:, None, None, None]
-                               )[:, s]
+                    np.sum(em_arr[..., 10600:11500], axis=-1)
+                    / 1000
+                    / distance[:, None, None, None]
+                )[:, s]
                 urban[:, s] += (
-                                       np.sum(em_arr[..., 12500:14000], axis=-1) / 1000 / distance[:, None, None, None]
-                               )[:, s]
+                    np.sum(em_arr[..., 12500:14000], axis=-1)
+                    / 1000
+                    / distance[:, None, None, None]
+                )[:, s]
 
-                rural[:, s] = (np.sum(em_arr[..., 500:6000], axis=-1) / 1000 / distance[:, None, None, None])[
-                              :, s
-                              ]
-                rural[:, s] += (np.sum(em_arr[..., 6800:7600], axis=-1) / 1000 / distance[:, None, None, None])[
-                               :, s
-                               ]
-                rural[:, s] += (np.sum(em_arr[..., 8800:10600], axis=-1) / 1000 / distance[:, None, None, None])[
-                               :, s
-                               ]
-                rural[:, s] += (np.sum(em_arr[..., 11500:12500], axis=-1) / 1000 / distance[:, None, None, None])[
-                               :, s
-                               ]
-                rural[:, s] += (np.sum(em_arr[..., 14000:], axis=-1) / 1000 / distance[:, None, None, None])[
-                               :, s
-                               ]
+                rural[:, s] = (
+                    np.sum(em_arr[..., 500:6000], axis=-1)
+                    / 1000
+                    / distance[:, None, None, None]
+                )[:, s]
+                rural[:, s] += (
+                    np.sum(em_arr[..., 6800:7600], axis=-1)
+                    / 1000
+                    / distance[:, None, None, None]
+                )[:, s]
+                rural[:, s] += (
+                    np.sum(em_arr[..., 8800:10600], axis=-1)
+                    / 1000
+                    / distance[:, None, None, None]
+                )[:, s]
+                rural[:, s] += (
+                    np.sum(em_arr[..., 11500:12500], axis=-1)
+                    / 1000
+                    / distance[:, None, None, None]
+                )[:, s]
+                rural[:, s] += (
+                    np.sum(em_arr[..., 14000:], axis=-1)
+                    / 1000
+                    / distance[:, None, None, None]
+                )[:, s]
 
         res = np.vstack((urban, suburban, rural))
 
