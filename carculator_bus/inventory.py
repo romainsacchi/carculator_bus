@@ -5138,7 +5138,9 @@ class InventoryCalculation:
             self.find_inputs_indices(
                 must_contain=["Passenger bus, "], excludes=["market"]
             ),
-        ] = (array[self.array_inputs["transmission mass"], :] * 0.36 * -1)
+        ] = (
+            array[self.array_inputs["transmission mass"], :] * 0.36 * -1
+        )
 
         self.a_matrix[
             :,
@@ -5148,7 +5150,9 @@ class InventoryCalculation:
             self.find_inputs_indices(
                 must_contain=["Passenger bus, "], excludes=["market"]
             ),
-        ] = (array[self.array_inputs["transmission mass"], :] * 0.12 * -1)
+        ] = (
+            array[self.array_inputs["transmission mass"], :] * 0.12 * -1
+        )
 
         # Other components, for non-electric and hybrid trucks
         index = self.get_index_vehicle_from_array(["ICEV-d", "HEV-d", "ICEV-g"])
