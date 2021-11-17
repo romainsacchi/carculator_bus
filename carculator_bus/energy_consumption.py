@@ -258,73 +258,21 @@ class EnergyConsumptionModel:
         # Inertia: driving mass * acceleration
         inertia = self.acceleration * driving_mass.values.T
 
-        # Braking loss: when inertia is negative
-        braking_loss = np.where(inertia < 0, inertia * -1, 0)
-
         total_resistance = (
             rolling_resistance + air_resistance + gradient_resistance + inertia
         )
 
-        if not debug_mode:
+        # Braking loss: when inertia is negative
+        braking_loss = np.where(total_resistance < 0, total_resistance * -1, 0)
 
-            # Power required: total resistance * velocity
-            total_power = total_resistance * self.velocity / 1000
+        # Power required: total resistance * velocity
+        total_power = total_resistance * self.velocity / 1000
 
-            # Recuperation of the braking power within the limit of the electric engine power
-            recuperated_power = braking_loss * self.velocity / 1000
+        # Recuperation of the braking power
+        recuperated_power = braking_loss * self.velocity / 1000
 
-            return (
-                total_power.astype("float32"),
-                recuperated_power.astype("float32"),
-                distance,
-            )
-
-        # if `debug_mode` == True, returns instead
-        # the power to overcome rolling resistance, air resistance, gradient resistance,
-        # inertia and braking resistance, as well as the total power and the energy to overcome it.
-        else:
-            rolling_resistance *= self.velocity / 1000
-            air_resistance *= self.velocity / 1000
-            gradient_resistance *= self.velocity / 1000
-            inertia *= self.velocity / 1000
-            braking_loss *= self.velocity / 1000
-            total_resistance = (
-                rolling_resistance
-                + air_resistance
-                + gradient_resistance
-                + inertia
-                + braking_loss
-            )
-
-            recuperated_power = braking_loss * recuperation_efficiency.values.T
-            recuperated_power = np.clip(recuperated_power, 0, motor_power.values.T)
-
-            return (
-                xr.DataArray(
-                    np.squeeze(rolling_resistance),
-                    dims=["values", "year", "powertrain", "size"],
-                ),
-                xr.DataArray(
-                    np.squeeze(air_resistance),
-                    dims=["values", "year", "powertrain", "size"],
-                ),
-                xr.DataArray(
-                    np.squeeze(gradient_resistance),
-                    dims=["values", "year", "powertrain", "size"],
-                ),
-                xr.DataArray(
-                    np.squeeze(inertia), dims=["values", "year", "powertrain", "size"]
-                ),
-                xr.DataArray(
-                    np.squeeze(braking_loss),
-                    dims=["values", "year", "powertrain", "size"],
-                ),
-                xr.DataArray(
-                    np.squeeze(recuperated_power),
-                    dims=["values", "year", "powertrain", "size"],
-                ),
-                xr.DataArray(
-                    np.squeeze(total_resistance),
-                    dims=["values", "year", "powertrain", "size"],
-                ),
-            )
+        return (
+            total_power.astype("float32"),
+            recuperated_power.astype("float32"),
+            distance,
+        )

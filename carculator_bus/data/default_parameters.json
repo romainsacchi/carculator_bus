@@ -4146,7 +4146,7 @@
         "maximum": 17.763975155279507
     },
     "156-2000-power to mass ratio": {
-        "amount": 18,
+        "amount": 19,
         "category": "Glider",
         "powertrain": [
             "ICEV-d"
@@ -4163,12 +4163,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 18,
-        "minimum": 16.2,
-        "maximum": 19.8
+        "loc": 19,
+        "minimum": 17.1,
+        "maximum": 20.900000000000002
     },
     "157-2010-power to mass ratio": {
-        "amount": 18,
+        "amount": 19,
         "category": "Glider",
         "powertrain": [
             "ICEV-d"
@@ -4185,12 +4185,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 18,
-        "minimum": 16.2,
-        "maximum": 19.8
+        "loc": 19,
+        "minimum": 17.1,
+        "maximum": 20.900000000000002
     },
     "158-2020-power to mass ratio": {
-        "amount": 18,
+        "amount": 19,
         "category": "Glider",
         "powertrain": [
             "ICEV-d"
@@ -4207,12 +4207,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 18,
-        "minimum": 16.2,
-        "maximum": 19.8
+        "loc": 19,
+        "minimum": 17.1,
+        "maximum": 20.900000000000002
     },
     "159-2030-power to mass ratio": {
-        "amount": 18,
+        "amount": 19,
         "category": "Glider",
         "powertrain": [
             "ICEV-d"
@@ -4229,12 +4229,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 18,
-        "minimum": 16.2,
-        "maximum": 19.8
+        "loc": 19,
+        "minimum": 17.1,
+        "maximum": 20.900000000000002
     },
     "160-2040-power to mass ratio": {
-        "amount": 18,
+        "amount": 19,
         "category": "Glider",
         "powertrain": [
             "ICEV-d"
@@ -4251,12 +4251,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 18,
-        "minimum": 16.2,
-        "maximum": 19.8
+        "loc": 19,
+        "minimum": 17.1,
+        "maximum": 20.900000000000002
     },
     "161-2050-power to mass ratio": {
-        "amount": 18,
+        "amount": 19,
         "category": "Glider",
         "powertrain": [
             "ICEV-d"
@@ -4273,9 +4273,9 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 18,
-        "minimum": 16.2,
-        "maximum": 19.8
+        "loc": 19,
+        "minimum": 17.1,
+        "maximum": 20.900000000000002
     },
     "162-2000-power to mass ratio": {
         "amount": 16.149068322981368,
@@ -4830,7 +4830,7 @@
         "maximum": 17.763975155279507
     },
     "186-2000-power to mass ratio": {
-        "amount": 18,
+        "amount": 19,
         "category": "Glider",
         "powertrain": [
             "ICEV-d",
@@ -4849,12 +4849,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 18,
-        "minimum": 16.2,
-        "maximum": 19.8
+        "loc": 19,
+        "minimum": 17.1,
+        "maximum": 20.900000000000002
     },
     "187-2010-power to mass ratio": {
-        "amount": 18,
+        "amount": 19,
         "category": "Glider",
         "powertrain": [
             "ICEV-d",
@@ -4873,12 +4873,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 18,
-        "minimum": 16.2,
-        "maximum": 19.8
+        "loc": 19,
+        "minimum": 17.1,
+        "maximum": 20.900000000000002
     },
     "188-2020-power to mass ratio": {
-        "amount": 18,
+        "amount": 19,
         "category": "Glider",
         "powertrain": [
             "ICEV-d",
@@ -4897,12 +4897,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 18,
-        "minimum": 16.2,
-        "maximum": 19.8
+        "loc": 19,
+        "minimum": 17.1,
+        "maximum": 20.900000000000002
     },
     "189-2030-power to mass ratio": {
-        "amount": 18,
+        "amount": 19,
         "category": "Glider",
         "powertrain": [
             "ICEV-d",
@@ -4921,12 +4921,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 18,
-        "minimum": 16.2,
-        "maximum": 19.8
+        "loc": 19,
+        "minimum": 17.1,
+        "maximum": 20.900000000000002
     },
     "190-2040-power to mass ratio": {
-        "amount": 18,
+        "amount": 19,
         "category": "Glider",
         "powertrain": [
             "ICEV-d",
@@ -4945,12 +4945,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 18,
-        "minimum": 16.2,
-        "maximum": 19.8
+        "loc": 19,
+        "minimum": 17.1,
+        "maximum": 20.900000000000002
     },
     "191-2050-power to mass ratio": {
-        "amount": 18,
+        "amount": 19,
         "category": "Glider",
         "powertrain": [
             "ICEV-d",
@@ -4969,9 +4969,9 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 18,
-        "minimum": 16.2,
-        "maximum": 19.8
+        "loc": 19,
+        "minimum": 17.1,
+        "maximum": 20.900000000000002
     },
     "192-2000-power to mass ratio": {
         "amount": 16.149068322981368,
@@ -6060,7 +6060,7 @@
         "maximum": 16.5
     },
     "240-2000-power to mass ratio": {
-        "amount": 14,
+        "amount": 15,
         "category": "Glider",
         "powertrain": [
             "BEV-motion"
@@ -6077,12 +6077,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 14,
-        "minimum": 12.6,
-        "maximum": 15.400000000000002
+        "loc": 15,
+        "minimum": 13.5,
+        "maximum": 16.5
     },
     "241-2010-power to mass ratio": {
-        "amount": 14,
+        "amount": 15,
         "category": "Glider",
         "powertrain": [
             "BEV-motion"
@@ -6099,12 +6099,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 14,
-        "minimum": 12.6,
-        "maximum": 15.400000000000002
+        "loc": 15,
+        "minimum": 13.5,
+        "maximum": 16.5
     },
     "242-2020-power to mass ratio": {
-        "amount": 14,
+        "amount": 15,
         "category": "Glider",
         "powertrain": [
             "BEV-motion"
@@ -6121,12 +6121,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 14,
-        "minimum": 12.6,
-        "maximum": 15.400000000000002
+        "loc": 15,
+        "minimum": 13.5,
+        "maximum": 16.5
     },
     "243-2030-power to mass ratio": {
-        "amount": 14,
+        "amount": 15,
         "category": "Glider",
         "powertrain": [
             "BEV-motion"
@@ -6143,12 +6143,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 14,
-        "minimum": 12.6,
-        "maximum": 15.400000000000002
+        "loc": 15,
+        "minimum": 13.5,
+        "maximum": 16.5
     },
     "244-2040-power to mass ratio": {
-        "amount": 14,
+        "amount": 15,
         "category": "Glider",
         "powertrain": [
             "BEV-motion"
@@ -6165,12 +6165,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 14,
-        "minimum": 12.6,
-        "maximum": 15.400000000000002
+        "loc": 15,
+        "minimum": 13.5,
+        "maximum": 16.5
     },
     "245-2050-power to mass ratio": {
-        "amount": 14,
+        "amount": 15,
         "category": "Glider",
         "powertrain": [
             "BEV-motion"
@@ -6187,9 +6187,9 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 14,
-        "minimum": 12.6,
-        "maximum": 15.400000000000002
+        "loc": 15,
+        "minimum": 13.5,
+        "maximum": 16.5
     },
     "246-2000-power to mass ratio": {
         "amount": 11.5,
@@ -6456,7 +6456,7 @@
         "maximum": 12.100000000000001
     },
     "258-2000-power to mass ratio": {
-        "amount": 11.5,
+        "amount": 13,
         "category": "Glider",
         "powertrain": [
             "BEV-depot",
@@ -6474,12 +6474,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 11.5,
-        "minimum": 10.35,
-        "maximum": 12.65
+        "loc": 13,
+        "minimum": 11.700000000000001,
+        "maximum": 14.3
     },
     "259-2010-power to mass ratio": {
-        "amount": 11.5,
+        "amount": 13,
         "category": "Glider",
         "powertrain": [
             "BEV-depot",
@@ -6497,12 +6497,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 11.5,
-        "minimum": 10.35,
-        "maximum": 12.65
+        "loc": 13,
+        "minimum": 11.700000000000001,
+        "maximum": 14.3
     },
     "260-2020-power to mass ratio": {
-        "amount": 11.5,
+        "amount": 13,
         "category": "Glider",
         "powertrain": [
             "BEV-depot",
@@ -6520,12 +6520,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 11.5,
-        "minimum": 10.35,
-        "maximum": 12.65
+        "loc": 13,
+        "minimum": 11.700000000000001,
+        "maximum": 14.3
     },
     "261-2030-power to mass ratio": {
-        "amount": 11.5,
+        "amount": 13,
         "category": "Glider",
         "powertrain": [
             "BEV-depot",
@@ -6543,12 +6543,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 11.5,
-        "minimum": 10.35,
-        "maximum": 12.65
+        "loc": 13,
+        "minimum": 11.700000000000001,
+        "maximum": 14.3
     },
     "262-2040-power to mass ratio": {
-        "amount": 11.5,
+        "amount": 13,
         "category": "Glider",
         "powertrain": [
             "BEV-depot",
@@ -6566,12 +6566,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 11.5,
-        "minimum": 10.35,
-        "maximum": 12.65
+        "loc": 13,
+        "minimum": 11.700000000000001,
+        "maximum": 14.3
     },
     "263-2050-power to mass ratio": {
-        "amount": 11.5,
+        "amount": 13,
         "category": "Glider",
         "powertrain": [
             "BEV-depot",
@@ -6589,12 +6589,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 11.5,
-        "minimum": 10.35,
-        "maximum": 12.65
+        "loc": 13,
+        "minimum": 11.700000000000001,
+        "maximum": 14.3
     },
     "264-2000-power to mass ratio": {
-        "amount": 14,
+        "amount": 16,
         "category": "Glider",
         "powertrain": [
             "BEV-depot"
@@ -6611,12 +6611,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 14,
-        "minimum": 12.6,
-        "maximum": 15.400000000000002
+        "loc": 16,
+        "minimum": 14.4,
+        "maximum": 17.6
     },
     "265-2010-power to mass ratio": {
-        "amount": 14,
+        "amount": 16,
         "category": "Glider",
         "powertrain": [
             "BEV-depot"
@@ -6633,12 +6633,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 14,
-        "minimum": 12.6,
-        "maximum": 15.400000000000002
+        "loc": 16,
+        "minimum": 14.4,
+        "maximum": 17.6
     },
     "266-2020-power to mass ratio": {
-        "amount": 14,
+        "amount": 16,
         "category": "Glider",
         "powertrain": [
             "BEV-depot"
@@ -6655,12 +6655,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 14,
-        "minimum": 12.6,
-        "maximum": 15.400000000000002
+        "loc": 16,
+        "minimum": 14.4,
+        "maximum": 17.6
     },
     "267-2030-power to mass ratio": {
-        "amount": 14,
+        "amount": 16,
         "category": "Glider",
         "powertrain": [
             "BEV-depot"
@@ -6677,12 +6677,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 14,
-        "minimum": 12.6,
-        "maximum": 15.400000000000002
+        "loc": 16,
+        "minimum": 14.4,
+        "maximum": 17.6
     },
     "268-2040-power to mass ratio": {
-        "amount": 14,
+        "amount": 16,
         "category": "Glider",
         "powertrain": [
             "BEV-depot"
@@ -6699,12 +6699,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 14,
-        "minimum": 12.6,
-        "maximum": 15.400000000000002
+        "loc": 16,
+        "minimum": 14.4,
+        "maximum": 17.6
     },
     "269-2050-power to mass ratio": {
-        "amount": 14,
+        "amount": 16,
         "category": "Glider",
         "powertrain": [
             "BEV-depot"
@@ -6721,9 +6721,9 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 14,
-        "minimum": 12.6,
-        "maximum": 15.400000000000002
+        "loc": 16,
+        "minimum": 14.4,
+        "maximum": 17.6
     },
     "270-2000-power distribution unit mass": {
         "amount": 36,
@@ -16782,7 +16782,7 @@
         "maximum": 5927.5
     },
     "624-2000-glider base mass": {
-        "amount": 6265,
+        "amount": 7300,
         "category": "Glider",
         "powertrain": [
             "ICEV-d",
@@ -16805,12 +16805,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 6265,
-        "minimum": 4698.75,
-        "maximum": 7831.25
+        "loc": 7300,
+        "minimum": 5475,
+        "maximum": 9125
     },
     "625-2010-glider base mass": {
-        "amount": 6265,
+        "amount": 7300,
         "category": "Glider",
         "powertrain": [
             "ICEV-d",
@@ -16833,12 +16833,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 6265,
-        "minimum": 4698.75,
-        "maximum": 7831.25
+        "loc": 7300,
+        "minimum": 5475,
+        "maximum": 9125
     },
     "626-2020-glider base mass": {
-        "amount": 6265,
+        "amount": 7300,
         "category": "Glider",
         "powertrain": [
             "ICEV-d",
@@ -16861,12 +16861,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 6265,
-        "minimum": 4698.75,
-        "maximum": 7831.25
+        "loc": 7300,
+        "minimum": 5475,
+        "maximum": 9125
     },
     "627-2030-glider base mass": {
-        "amount": 6265,
+        "amount": 7300,
         "category": "Glider",
         "powertrain": [
             "ICEV-d",
@@ -16889,12 +16889,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 6265,
-        "minimum": 4698.75,
-        "maximum": 7831.25
+        "loc": 7300,
+        "minimum": 5475,
+        "maximum": 9125
     },
     "628-2040-glider base mass": {
-        "amount": 6265,
+        "amount": 7300,
         "category": "Glider",
         "powertrain": [
             "ICEV-d",
@@ -16917,12 +16917,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 6265,
-        "minimum": 4698.75,
-        "maximum": 7831.25
+        "loc": 7300,
+        "minimum": 5475,
+        "maximum": 9125
     },
     "629-2050-glider base mass": {
-        "amount": 6265,
+        "amount": 7300,
         "category": "Glider",
         "powertrain": [
             "ICEV-d",
@@ -16945,9 +16945,9 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 6265,
-        "minimum": 4698.75,
-        "maximum": 7831.25
+        "loc": 7300,
+        "minimum": 5475,
+        "maximum": 9125
     },
     "630-2000-glider base mass": {
         "amount": 7546,
@@ -17174,7 +17174,7 @@
         "maximum": 13750
     },
     "638-2020-glider base mass": {
-        "amount": 7016,
+        "amount": 11000,
         "category": "Glider",
         "powertrain": [
             "ICEV-d",
@@ -17197,9 +17197,9 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 7016,
-        "minimum": 5262,
-        "maximum": 8770
+        "loc": 11000,
+        "minimum": 8250,
+        "maximum": 13750
     },
     "639-2030-glider base mass": {
         "amount": 7016,
@@ -22308,7 +22308,7 @@
         "maximum": 0.9765000000000001
     },
     "830-2020-engine efficiency": {
-        "amount": 0.93,
+        "amount": 0.95,
         "category": "Powertrain",
         "powertrain": [
             "BEV-depot",
@@ -22333,12 +22333,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 0.93,
-        "minimum": 0.8835,
-        "maximum": 0.9765000000000001
+        "loc": 0.95,
+        "minimum": 0.9025,
+        "maximum": 0.9974999999999999
     },
     "831-2030-engine efficiency": {
-        "amount": 0.93,
+        "amount": 0.95,
         "category": "Powertrain",
         "powertrain": [
             "BEV-depot",
@@ -22363,12 +22363,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 0.93,
-        "minimum": 0.8835,
-        "maximum": 0.9765000000000001
+        "loc": 0.95,
+        "minimum": 0.9025,
+        "maximum": 0.9974999999999999
     },
     "832-2040-engine efficiency": {
-        "amount": 0.93,
+        "amount": 0.95,
         "category": "Powertrain",
         "powertrain": [
             "BEV-depot",
@@ -22393,12 +22393,12 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 0.93,
-        "minimum": 0.8835,
-        "maximum": 0.9765000000000001
+        "loc": 0.95,
+        "minimum": 0.9025,
+        "maximum": 0.9974999999999999
     },
     "833-2050-engine efficiency": {
-        "amount": 0.93,
+        "amount": 0.95,
         "category": "Powertrain",
         "powertrain": [
             "BEV-depot",
@@ -22423,9 +22423,9 @@
         "status": "To be improved",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 0.93,
-        "minimum": 0.8835,
-        "maximum": 0.9765000000000001
+        "loc": 0.95,
+        "minimum": 0.9025,
+        "maximum": 0.9974999999999999
     },
     "834-2000-engine efficiency": {
         "amount": 1.1,
@@ -31497,7 +31497,7 @@
         "uncertainty_type": 1,
         "loc": 0.98
     },
-    "1166-2000-battery cycle life, NMC-111": {
+    "1166-2000-battery cycle life, NMC": {
         "amount": 3000,
         "category": "Energy Storage",
         "powertrain": [
@@ -31518,7 +31518,7 @@
             "18m"
         ],
         "year": 2000,
-        "name": "battery cycle life, NMC-111",
+        "name": "battery cycle life, NMC",
         "unit": "unit",
         "importance": "Critical",
         "source": "Yuliya Preger et al 2020 J. Electrochem. Soc. 167 120532",
@@ -31530,7 +31530,7 @@
         "minimum": 2250,
         "maximum": 3750
     },
-    "1167-2010-battery cycle life, NMC-111": {
+    "1167-2010-battery cycle life, NMC": {
         "amount": 3000,
         "category": "Energy Storage",
         "powertrain": [
@@ -31551,7 +31551,7 @@
             "18m"
         ],
         "year": 2010,
-        "name": "battery cycle life, NMC-111",
+        "name": "battery cycle life, NMC",
         "unit": "unit",
         "importance": "Critical",
         "source": "Yuliya Preger et al 2020 J. Electrochem. Soc. 167 120532",
@@ -31563,7 +31563,7 @@
         "minimum": 2250,
         "maximum": 3750
     },
-    "1168-2020-battery cycle life, NMC-111": {
+    "1168-2020-battery cycle life, NMC": {
         "amount": 3000,
         "category": "Energy Storage",
         "powertrain": [
@@ -31584,7 +31584,7 @@
             "18m"
         ],
         "year": 2020,
-        "name": "battery cycle life, NMC-111",
+        "name": "battery cycle life, NMC",
         "unit": "unit",
         "importance": "Critical",
         "source": "Yuliya Preger et al 2020 J. Electrochem. Soc. 167 120532",
@@ -31596,7 +31596,7 @@
         "minimum": 2250,
         "maximum": 3750
     },
-    "1169-2030-battery cycle life, NMC-111": {
+    "1169-2030-battery cycle life, NMC": {
         "amount": 4000,
         "category": "Energy Storage",
         "powertrain": [
@@ -31617,7 +31617,7 @@
             "18m"
         ],
         "year": 2030,
-        "name": "battery cycle life, NMC-111",
+        "name": "battery cycle life, NMC",
         "unit": "unit",
         "importance": "Critical",
         "source": "Yuliya Preger et al 2020 J. Electrochem. Soc. 167 120532",
@@ -31629,7 +31629,7 @@
         "minimum": 3000,
         "maximum": 5000
     },
-    "1170-2040-battery cycle life, NMC-111": {
+    "1170-2040-battery cycle life, NMC": {
         "amount": 4000,
         "category": "Energy Storage",
         "powertrain": [
@@ -31650,7 +31650,7 @@
             "18m"
         ],
         "year": 2040,
-        "name": "battery cycle life, NMC-111",
+        "name": "battery cycle life, NMC",
         "unit": "unit",
         "importance": "Critical",
         "source": "Yuliya Preger et al 2020 J. Electrochem. Soc. 167 120532",
@@ -31662,7 +31662,7 @@
         "minimum": 3000,
         "maximum": 5000
     },
-    "1171-2050-battery cycle life, NMC-111": {
+    "1171-2050-battery cycle life, NMC": {
         "amount": 4000,
         "category": "Energy Storage",
         "powertrain": [
@@ -31683,7 +31683,7 @@
             "18m"
         ],
         "year": 2050,
-        "name": "battery cycle life, NMC-111",
+        "name": "battery cycle life, NMC",
         "unit": "unit",
         "importance": "Critical",
         "source": "Yuliya Preger et al 2020 J. Electrochem. Soc. 167 120532",
@@ -33861,7 +33861,7 @@
         "minimum": 1.9500000000000002,
         "maximum": 3.4499999999999997
     },
-    "1244-2000-battery cell mass share": {
+    "1244-2000-battery cell mass share, NMC": {
         "amount": 0.6,
         "category": "Energy Storage",
         "powertrain": [
@@ -33878,7 +33878,7 @@
             "18m"
         ],
         "year": 2000,
-        "name": "battery cell mass share",
+        "name": "battery cell mass share, NMC",
         "unit": "unitless",
         "importance": "Critical",
         "source": "Cox et al. 2020",
@@ -33890,7 +33890,7 @@
         "minimum": 0.55,
         "maximum": 0.75
     },
-    "1245-2010-battery cell mass share": {
+    "1245-2010-battery cell mass share, NMC": {
         "amount": 0.6,
         "category": "Energy Storage",
         "powertrain": [
@@ -33907,7 +33907,7 @@
             "18m"
         ],
         "year": 2010,
-        "name": "battery cell mass share",
+        "name": "battery cell mass share, NMC",
         "unit": "unitless",
         "importance": "Critical",
         "source": "Cox et al. 2020",
@@ -33919,7 +33919,7 @@
         "minimum": 0.55,
         "maximum": 0.75
     },
-    "1246-2020-battery cell mass share": {
+    "1246-2020-battery cell mass share, NMC": {
         "amount": 0.7,
         "category": "Energy Storage",
         "powertrain": [
@@ -33936,7 +33936,7 @@
             "18m"
         ],
         "year": 2020,
-        "name": "battery cell mass share",
+        "name": "battery cell mass share, NMC",
         "unit": "unitless",
         "importance": "Critical",
         "source": "Cox et al. 2020",
@@ -33948,7 +33948,7 @@
         "minimum": 0.55,
         "maximum": 0.75
     },
-    "1247-2030-battery cell mass share": {
+    "1247-2030-battery cell mass share, NMC": {
         "amount": 0.7,
         "category": "Energy Storage",
         "powertrain": [
@@ -33965,7 +33965,7 @@
             "18m"
         ],
         "year": 2030,
-        "name": "battery cell mass share",
+        "name": "battery cell mass share, NMC",
         "unit": "unitless",
         "importance": "Critical",
         "source": "Cox et al. 2020",
@@ -33977,7 +33977,7 @@
         "minimum": 0.55,
         "maximum": 0.75
     },
-    "1248-2040-battery cell mass share": {
+    "1248-2040-battery cell mass share, NMC": {
         "amount": 0.75,
         "category": "Energy Storage",
         "powertrain": [
@@ -33994,7 +33994,7 @@
             "18m"
         ],
         "year": 2040,
-        "name": "battery cell mass share",
+        "name": "battery cell mass share, NMC",
         "unit": "unitless",
         "importance": "Critical",
         "source": "Cox et al. 2020",
@@ -34006,7 +34006,7 @@
         "minimum": 0.6,
         "maximum": 0.75
     },
-    "1249-2050-battery cell mass share": {
+    "1249-2050-battery cell mass share, NMC": {
         "amount": 0.8,
         "category": "Energy Storage",
         "powertrain": [
@@ -34023,7 +34023,7 @@
             "18m"
         ],
         "year": 2050,
-        "name": "battery cell mass share",
+        "name": "battery cell mass share, NMC",
         "unit": "unitless",
         "importance": "Critical",
         "source": "Cox et al. 2020",
@@ -34035,7 +34035,7 @@
         "minimum": 0.65,
         "maximum": 0.8
     },
-    "1250-2000-battery cell mass share": {
+    "1250-2000-battery cell mass share, NMC": {
         "amount": 0.5,
         "category": "Energy Storage",
         "powertrain": [
@@ -34051,7 +34051,7 @@
             "18m"
         ],
         "year": 2000,
-        "name": "battery cell mass share",
+        "name": "battery cell mass share, NMC",
         "unit": "unitless",
         "importance": "Critical",
         "source": "Cox et al. 2020",
@@ -34063,7 +34063,7 @@
         "minimum": 0.4,
         "maximum": 0.6
     },
-    "1251-2010-battery cell mass share": {
+    "1251-2010-battery cell mass share, NMC": {
         "amount": 0.5,
         "category": "Energy Storage",
         "powertrain": [
@@ -34079,7 +34079,7 @@
             "18m"
         ],
         "year": 2010,
-        "name": "battery cell mass share",
+        "name": "battery cell mass share, NMC",
         "unit": "unitless",
         "importance": "Critical",
         "source": "Cox et al. 2020",
@@ -34091,7 +34091,7 @@
         "minimum": 0.4,
         "maximum": 0.6
     },
-    "1252-2020-battery cell mass share": {
+    "1252-2020-battery cell mass share, NMC": {
         "amount": 0.5,
         "category": "Energy Storage",
         "powertrain": [
@@ -34107,7 +34107,7 @@
             "18m"
         ],
         "year": 2020,
-        "name": "battery cell mass share",
+        "name": "battery cell mass share, NMC",
         "unit": "unitless",
         "importance": "Critical",
         "source": "Cox et al. 2020",
@@ -34119,7 +34119,7 @@
         "minimum": 0.4,
         "maximum": 0.6
     },
-    "1253-2030-battery cell mass share": {
+    "1253-2030-battery cell mass share, NMC": {
         "amount": 0.5,
         "category": "Energy Storage",
         "powertrain": [
@@ -34135,7 +34135,7 @@
             "18m"
         ],
         "year": 2030,
-        "name": "battery cell mass share",
+        "name": "battery cell mass share, NMC",
         "unit": "unitless",
         "importance": "Critical",
         "source": "Cox et al. 2020",
@@ -34147,7 +34147,7 @@
         "minimum": 0.4,
         "maximum": 0.6
     },
-    "1254-2040-battery cell mass share": {
+    "1254-2040-battery cell mass share, NMC": {
         "amount": 0.55,
         "category": "Energy Storage",
         "powertrain": [
@@ -34163,7 +34163,7 @@
             "18m"
         ],
         "year": 2040,
-        "name": "battery cell mass share",
+        "name": "battery cell mass share, NMC",
         "unit": "unitless",
         "importance": "Critical",
         "source": "Cox et al. 2020",
@@ -34175,7 +34175,7 @@
         "minimum": 0.45,
         "maximum": 0.65
     },
-    "1255-2050-battery cell mass share": {
+    "1255-2050-battery cell mass share, NMC": {
         "amount": 0.6,
         "category": "Energy Storage",
         "powertrain": [
@@ -34191,7 +34191,7 @@
             "18m"
         ],
         "year": 2050,
-        "name": "battery cell mass share",
+        "name": "battery cell mass share, NMC",
         "unit": "unitless",
         "importance": "Critical",
         "source": "Cox et al. 2020",
@@ -34203,7 +34203,7 @@
         "minimum": 0.5,
         "maximum": 0.7
     },
-    "1256-2000-battery cell mass share": {
+    "1256-2000-battery cell mass share, NMC": {
         "amount": 0.5,
         "category": "Energy Storage",
         "powertrain": [
@@ -34219,7 +34219,7 @@
             "18m"
         ],
         "year": 2000,
-        "name": "battery cell mass share",
+        "name": "battery cell mass share, NMC",
         "unit": "unitless",
         "importance": "Critical",
         "source": "Cox et al. 2020",
@@ -34231,7 +34231,7 @@
         "minimum": 0.4,
         "maximum": 0.6
     },
-    "1257-2010-battery cell mass share": {
+    "1257-2010-battery cell mass share, NMC": {
         "amount": 0.5,
         "category": "Energy Storage",
         "powertrain": [
@@ -34247,7 +34247,7 @@
             "18m"
         ],
         "year": 2010,
-        "name": "battery cell mass share",
+        "name": "battery cell mass share, NMC",
         "unit": "unitless",
         "importance": "Critical",
         "source": "Cox et al. 2020",
@@ -34259,7 +34259,7 @@
         "minimum": 0.4,
         "maximum": 0.6
     },
-    "1258-2020-battery cell mass share": {
+    "1258-2020-battery cell mass share, NMC": {
         "amount": 0.5,
         "category": "Energy Storage",
         "powertrain": [
@@ -34275,7 +34275,7 @@
             "18m"
         ],
         "year": 2020,
-        "name": "battery cell mass share",
+        "name": "battery cell mass share, NMC",
         "unit": "unitless",
         "importance": "Critical",
         "source": "Cox et al. 2020",
@@ -34287,7 +34287,7 @@
         "minimum": 0.4,
         "maximum": 0.6
     },
-    "1259-2030-battery cell mass share": {
+    "1259-2030-battery cell mass share, NMC": {
         "amount": 0.5,
         "category": "Energy Storage",
         "powertrain": [
@@ -34303,7 +34303,7 @@
             "18m"
         ],
         "year": 2030,
-        "name": "battery cell mass share",
+        "name": "battery cell mass share, NMC",
         "unit": "unitless",
         "importance": "Critical",
         "source": "Cox et al. 2020",
@@ -34315,7 +34315,7 @@
         "minimum": 0.4,
         "maximum": 0.6
     },
-    "1260-2040-battery cell mass share": {
+    "1260-2040-battery cell mass share, NMC": {
         "amount": 0.55,
         "category": "Energy Storage",
         "powertrain": [
@@ -34331,7 +34331,7 @@
             "18m"
         ],
         "year": 2040,
-        "name": "battery cell mass share",
+        "name": "battery cell mass share, NMC",
         "unit": "unitless",
         "importance": "Critical",
         "source": "Cox et al. 2020",
@@ -34343,7 +34343,7 @@
         "minimum": 0.45,
         "maximum": 0.65
     },
-    "1261-2050-battery cell mass share": {
+    "1261-2050-battery cell mass share, NMC": {
         "amount": 0.6,
         "category": "Energy Storage",
         "powertrain": [
@@ -34359,7 +34359,7 @@
             "18m"
         ],
         "year": 2050,
-        "name": "battery cell mass share",
+        "name": "battery cell mass share, NMC",
         "unit": "unitless",
         "importance": "Critical",
         "source": "Cox et al. 2020",
@@ -34371,7 +34371,1537 @@
         "minimum": 0.5,
         "maximum": 0.7
     },
-    "1262-2000-battery cell energy density, NMC-111": {
+    "1262-2000-battery cell mass share, NCA": {
+        "amount": 0.6,
+        "category": "Energy Storage",
+        "powertrain": [
+            "BEV-depot",
+            "BEV-opp",
+            "BEV-motion"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2000,
+        "name": "battery cell mass share, NCA",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.6,
+        "minimum": 0.55,
+        "maximum": 0.75
+    },
+    "1263-2010-battery cell mass share, NCA": {
+        "amount": 0.6,
+        "category": "Energy Storage",
+        "powertrain": [
+            "BEV-depot",
+            "BEV-opp",
+            "BEV-motion"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2010,
+        "name": "battery cell mass share, NCA",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.6,
+        "minimum": 0.55,
+        "maximum": 0.75
+    },
+    "1264-2020-battery cell mass share, NCA": {
+        "amount": 0.7,
+        "category": "Energy Storage",
+        "powertrain": [
+            "BEV-depot",
+            "BEV-opp",
+            "BEV-motion"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2020,
+        "name": "battery cell mass share, NCA",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.7,
+        "minimum": 0.55,
+        "maximum": 0.75
+    },
+    "1265-2030-battery cell mass share, NCA": {
+        "amount": 0.7,
+        "category": "Energy Storage",
+        "powertrain": [
+            "BEV-depot",
+            "BEV-opp",
+            "BEV-motion"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2030,
+        "name": "battery cell mass share, NCA",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.7,
+        "minimum": 0.55,
+        "maximum": 0.75
+    },
+    "1266-2040-battery cell mass share, NCA": {
+        "amount": 0.75,
+        "category": "Energy Storage",
+        "powertrain": [
+            "BEV-depot",
+            "BEV-opp",
+            "BEV-motion"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2040,
+        "name": "battery cell mass share, NCA",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.75,
+        "minimum": 0.6,
+        "maximum": 0.75
+    },
+    "1267-2050-battery cell mass share, NCA": {
+        "amount": 0.8,
+        "category": "Energy Storage",
+        "powertrain": [
+            "BEV-depot",
+            "BEV-opp",
+            "BEV-motion"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2050,
+        "name": "battery cell mass share, NCA",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.8,
+        "minimum": 0.65,
+        "maximum": 0.8
+    },
+    "1268-2000-battery cell mass share, NCA": {
+        "amount": 0.5,
+        "category": "Energy Storage",
+        "powertrain": [
+            "FCEV",
+            "HEV-d"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2000,
+        "name": "battery cell mass share, NCA",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.5,
+        "minimum": 0.4,
+        "maximum": 0.6
+    },
+    "1269-2010-battery cell mass share, NCA": {
+        "amount": 0.5,
+        "category": "Energy Storage",
+        "powertrain": [
+            "FCEV",
+            "HEV-d"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2010,
+        "name": "battery cell mass share, NCA",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.5,
+        "minimum": 0.4,
+        "maximum": 0.6
+    },
+    "1270-2020-battery cell mass share, NCA": {
+        "amount": 0.5,
+        "category": "Energy Storage",
+        "powertrain": [
+            "FCEV",
+            "HEV-d"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2020,
+        "name": "battery cell mass share, NCA",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.5,
+        "minimum": 0.4,
+        "maximum": 0.6
+    },
+    "1271-2030-battery cell mass share, NCA": {
+        "amount": 0.5,
+        "category": "Energy Storage",
+        "powertrain": [
+            "FCEV",
+            "HEV-d"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2030,
+        "name": "battery cell mass share, NCA",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.5,
+        "minimum": 0.4,
+        "maximum": 0.6
+    },
+    "1272-2040-battery cell mass share, NCA": {
+        "amount": 0.55,
+        "category": "Energy Storage",
+        "powertrain": [
+            "FCEV",
+            "HEV-d"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2040,
+        "name": "battery cell mass share, NCA",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.55,
+        "minimum": 0.45,
+        "maximum": 0.65
+    },
+    "1273-2050-battery cell mass share, NCA": {
+        "amount": 0.6,
+        "category": "Energy Storage",
+        "powertrain": [
+            "FCEV",
+            "HEV-d"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2050,
+        "name": "battery cell mass share, NCA",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.6,
+        "minimum": 0.5,
+        "maximum": 0.7
+    },
+    "1274-2000-battery cell mass share, NCA": {
+        "amount": 0.5,
+        "category": "Energy Storage",
+        "powertrain": [
+            "ICEV-d",
+            "ICEV-g"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2000,
+        "name": "battery cell mass share, NCA",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.5,
+        "minimum": 0.4,
+        "maximum": 0.6
+    },
+    "1275-2010-battery cell mass share, NCA": {
+        "amount": 0.5,
+        "category": "Energy Storage",
+        "powertrain": [
+            "ICEV-d",
+            "ICEV-g"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2010,
+        "name": "battery cell mass share, NCA",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.5,
+        "minimum": 0.4,
+        "maximum": 0.6
+    },
+    "1276-2020-battery cell mass share, NCA": {
+        "amount": 0.5,
+        "category": "Energy Storage",
+        "powertrain": [
+            "ICEV-d",
+            "ICEV-g"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2020,
+        "name": "battery cell mass share, NCA",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.5,
+        "minimum": 0.4,
+        "maximum": 0.6
+    },
+    "1277-2030-battery cell mass share, NCA": {
+        "amount": 0.5,
+        "category": "Energy Storage",
+        "powertrain": [
+            "ICEV-d",
+            "ICEV-g"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2030,
+        "name": "battery cell mass share, NCA",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.5,
+        "minimum": 0.4,
+        "maximum": 0.6
+    },
+    "1278-2040-battery cell mass share, NCA": {
+        "amount": 0.55,
+        "category": "Energy Storage",
+        "powertrain": [
+            "ICEV-d",
+            "ICEV-g"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2040,
+        "name": "battery cell mass share, NCA",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.55,
+        "minimum": 0.45,
+        "maximum": 0.65
+    },
+    "1279-2050-battery cell mass share, NCA": {
+        "amount": 0.6,
+        "category": "Energy Storage",
+        "powertrain": [
+            "ICEV-d",
+            "ICEV-g"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2050,
+        "name": "battery cell mass share, NCA",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.6,
+        "minimum": 0.5,
+        "maximum": 0.7
+    },
+    "1280-2000-battery cell mass share, LFP": {
+        "amount": 0.6,
+        "category": "Energy Storage",
+        "powertrain": [
+            "BEV-depot",
+            "BEV-opp",
+            "BEV-motion"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2000,
+        "name": "battery cell mass share, LFP",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Yang, X.-G., Liu, T., & Wang, C.-Y. (2021). Thermally modulated lithium iron phosphate batteries for mass-market electric vehicles. Nature Energy 2021 6:2, 6(2), 176\u2013185. https://doi.org/10.1038/s41560-020-00757-7",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.6,
+        "minimum": 0.55,
+        "maximum": 0.75
+    },
+    "1281-2010-battery cell mass share, LFP": {
+        "amount": 0.6,
+        "category": "Energy Storage",
+        "powertrain": [
+            "BEV-depot",
+            "BEV-opp",
+            "BEV-motion"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2010,
+        "name": "battery cell mass share, LFP",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Yang, X.-G., Liu, T., & Wang, C.-Y. (2021). Thermally modulated lithium iron phosphate batteries for mass-market electric vehicles. Nature Energy 2021 6:2, 6(2), 176\u2013185. https://doi.org/10.1038/s41560-020-00757-7",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.6,
+        "minimum": 0.55,
+        "maximum": 0.75
+    },
+    "1282-2020-battery cell mass share, LFP": {
+        "amount": 0.8,
+        "category": "Energy Storage",
+        "powertrain": [
+            "BEV-depot",
+            "BEV-opp",
+            "BEV-motion"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2020,
+        "name": "battery cell mass share, LFP",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Yang, X.-G., Liu, T., & Wang, C.-Y. (2021). Thermally modulated lithium iron phosphate batteries for mass-market electric vehicles. Nature Energy 2021 6:2, 6(2), 176\u2013185. https://doi.org/10.1038/s41560-020-00757-7",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.8,
+        "minimum": 0.75,
+        "maximum": 0.85
+    },
+    "1283-2030-battery cell mass share, LFP": {
+        "amount": 0.85,
+        "category": "Energy Storage",
+        "powertrain": [
+            "BEV-depot",
+            "BEV-opp",
+            "BEV-motion"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2030,
+        "name": "battery cell mass share, LFP",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Yang, X.-G., Liu, T., & Wang, C.-Y. (2021). Thermally modulated lithium iron phosphate batteries for mass-market electric vehicles. Nature Energy 2021 6:2, 6(2), 176\u2013185. https://doi.org/10.1038/s41560-020-00757-7",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.85,
+        "minimum": 0.8,
+        "maximum": 0.9
+    },
+    "1284-2040-battery cell mass share, LFP": {
+        "amount": 0.9,
+        "category": "Energy Storage",
+        "powertrain": [
+            "BEV-depot",
+            "BEV-opp",
+            "BEV-motion"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2040,
+        "name": "battery cell mass share, LFP",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Yang, X.-G., Liu, T., & Wang, C.-Y. (2021). Thermally modulated lithium iron phosphate batteries for mass-market electric vehicles. Nature Energy 2021 6:2, 6(2), 176\u2013185. https://doi.org/10.1038/s41560-020-00757-7",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.9,
+        "minimum": 0.85,
+        "maximum": 0.95
+    },
+    "1285-2050-battery cell mass share, LFP": {
+        "amount": 0.9,
+        "category": "Energy Storage",
+        "powertrain": [
+            "BEV-depot",
+            "BEV-opp",
+            "BEV-motion"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2050,
+        "name": "battery cell mass share, LFP",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Yang, X.-G., Liu, T., & Wang, C.-Y. (2021). Thermally modulated lithium iron phosphate batteries for mass-market electric vehicles. Nature Energy 2021 6:2, 6(2), 176\u2013185. https://doi.org/10.1038/s41560-020-00757-7",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.9,
+        "minimum": 0.85,
+        "maximum": 0.95
+    },
+    "1286-2000-battery cell mass share, LFP": {
+        "amount": 0.5,
+        "category": "Energy Storage",
+        "powertrain": [
+            "FCEV",
+            "HEV-d"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2000,
+        "name": "battery cell mass share, LFP",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Yang, X.-G., Liu, T., & Wang, C.-Y. (2021). Thermally modulated lithium iron phosphate batteries for mass-market electric vehicles. Nature Energy 2021 6:2, 6(2), 176\u2013185. https://doi.org/10.1038/s41560-020-00757-7",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.5,
+        "minimum": 0.4,
+        "maximum": 0.6
+    },
+    "1287-2010-battery cell mass share, LFP": {
+        "amount": 0.5,
+        "category": "Energy Storage",
+        "powertrain": [
+            "FCEV",
+            "HEV-d"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2010,
+        "name": "battery cell mass share, LFP",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Yang, X.-G., Liu, T., & Wang, C.-Y. (2021). Thermally modulated lithium iron phosphate batteries for mass-market electric vehicles. Nature Energy 2021 6:2, 6(2), 176\u2013185. https://doi.org/10.1038/s41560-020-00757-7",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.5,
+        "minimum": 0.4,
+        "maximum": 0.6
+    },
+    "1288-2020-battery cell mass share, LFP": {
+        "amount": 0.8,
+        "category": "Energy Storage",
+        "powertrain": [
+            "FCEV",
+            "HEV-d"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2020,
+        "name": "battery cell mass share, LFP",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Yang, X.-G., Liu, T., & Wang, C.-Y. (2021). Thermally modulated lithium iron phosphate batteries for mass-market electric vehicles. Nature Energy 2021 6:2, 6(2), 176\u2013185. https://doi.org/10.1038/s41560-020-00757-7",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.8,
+        "minimum": 0.75,
+        "maximum": 0.85
+    },
+    "1289-2030-battery cell mass share, LFP": {
+        "amount": 0.85,
+        "category": "Energy Storage",
+        "powertrain": [
+            "FCEV",
+            "HEV-d"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2030,
+        "name": "battery cell mass share, LFP",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Yang, X.-G., Liu, T., & Wang, C.-Y. (2021). Thermally modulated lithium iron phosphate batteries for mass-market electric vehicles. Nature Energy 2021 6:2, 6(2), 176\u2013185. https://doi.org/10.1038/s41560-020-00757-7",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.85,
+        "minimum": 0.8,
+        "maximum": 0.9
+    },
+    "1290-2040-battery cell mass share, LFP": {
+        "amount": 0.9,
+        "category": "Energy Storage",
+        "powertrain": [
+            "FCEV",
+            "HEV-d"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2040,
+        "name": "battery cell mass share, LFP",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Yang, X.-G., Liu, T., & Wang, C.-Y. (2021). Thermally modulated lithium iron phosphate batteries for mass-market electric vehicles. Nature Energy 2021 6:2, 6(2), 176\u2013185. https://doi.org/10.1038/s41560-020-00757-7",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.9,
+        "minimum": 0.85,
+        "maximum": 0.95
+    },
+    "1291-2050-battery cell mass share, LFP": {
+        "amount": 0.9,
+        "category": "Energy Storage",
+        "powertrain": [
+            "FCEV",
+            "HEV-d"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2050,
+        "name": "battery cell mass share, LFP",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Yang, X.-G., Liu, T., & Wang, C.-Y. (2021). Thermally modulated lithium iron phosphate batteries for mass-market electric vehicles. Nature Energy 2021 6:2, 6(2), 176\u2013185. https://doi.org/10.1038/s41560-020-00757-7",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.9,
+        "minimum": 0.85,
+        "maximum": 0.95
+    },
+    "1292-2000-battery cell mass share, LFP": {
+        "amount": 0.5,
+        "category": "Energy Storage",
+        "powertrain": [
+            "ICEV-d",
+            "ICEV-g"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2000,
+        "name": "battery cell mass share, LFP",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Yang, X.-G., Liu, T., & Wang, C.-Y. (2021). Thermally modulated lithium iron phosphate batteries for mass-market electric vehicles. Nature Energy 2021 6:2, 6(2), 176\u2013185. https://doi.org/10.1038/s41560-020-00757-7",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.5,
+        "minimum": 0.4,
+        "maximum": 0.6
+    },
+    "1293-2010-battery cell mass share, LFP": {
+        "amount": 0.5,
+        "category": "Energy Storage",
+        "powertrain": [
+            "ICEV-d",
+            "ICEV-g"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2010,
+        "name": "battery cell mass share, LFP",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Yang, X.-G., Liu, T., & Wang, C.-Y. (2021). Thermally modulated lithium iron phosphate batteries for mass-market electric vehicles. Nature Energy 2021 6:2, 6(2), 176\u2013185. https://doi.org/10.1038/s41560-020-00757-7",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.5,
+        "minimum": 0.4,
+        "maximum": 0.6
+    },
+    "1294-2020-battery cell mass share, LFP": {
+        "amount": 0.8,
+        "category": "Energy Storage",
+        "powertrain": [
+            "ICEV-d",
+            "ICEV-g"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2020,
+        "name": "battery cell mass share, LFP",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Yang, X.-G., Liu, T., & Wang, C.-Y. (2021). Thermally modulated lithium iron phosphate batteries for mass-market electric vehicles. Nature Energy 2021 6:2, 6(2), 176\u2013185. https://doi.org/10.1038/s41560-020-00757-7",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.8,
+        "minimum": 0.75,
+        "maximum": 0.85
+    },
+    "1295-2030-battery cell mass share, LFP": {
+        "amount": 0.85,
+        "category": "Energy Storage",
+        "powertrain": [
+            "ICEV-d",
+            "ICEV-g"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2030,
+        "name": "battery cell mass share, LFP",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Yang, X.-G., Liu, T., & Wang, C.-Y. (2021). Thermally modulated lithium iron phosphate batteries for mass-market electric vehicles. Nature Energy 2021 6:2, 6(2), 176\u2013185. https://doi.org/10.1038/s41560-020-00757-7",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.85,
+        "minimum": 0.8,
+        "maximum": 0.9
+    },
+    "1296-2040-battery cell mass share, LFP": {
+        "amount": 0.9,
+        "category": "Energy Storage",
+        "powertrain": [
+            "ICEV-d",
+            "ICEV-g"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2040,
+        "name": "battery cell mass share, LFP",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Yang, X.-G., Liu, T., & Wang, C.-Y. (2021). Thermally modulated lithium iron phosphate batteries for mass-market electric vehicles. Nature Energy 2021 6:2, 6(2), 176\u2013185. https://doi.org/10.1038/s41560-020-00757-7",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.9,
+        "minimum": 0.85,
+        "maximum": 0.95
+    },
+    "1297-2050-battery cell mass share, LFP": {
+        "amount": 0.9,
+        "category": "Energy Storage",
+        "powertrain": [
+            "ICEV-d",
+            "ICEV-g"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2050,
+        "name": "battery cell mass share, LFP",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Yang, X.-G., Liu, T., & Wang, C.-Y. (2021). Thermally modulated lithium iron phosphate batteries for mass-market electric vehicles. Nature Energy 2021 6:2, 6(2), 176\u2013185. https://doi.org/10.1038/s41560-020-00757-7",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.9,
+        "minimum": 0.85,
+        "maximum": 0.95
+    },
+    "1298-2000-battery cell mass share, LTO": {
+        "amount": 0.6,
+        "category": "Energy Storage",
+        "powertrain": [
+            "BEV-depot",
+            "BEV-opp",
+            "BEV-motion"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2000,
+        "name": "battery cell mass share, LTO",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.6,
+        "minimum": 0.55,
+        "maximum": 0.75
+    },
+    "1299-2010-battery cell mass share, LTO": {
+        "amount": 0.6,
+        "category": "Energy Storage",
+        "powertrain": [
+            "BEV-depot",
+            "BEV-opp",
+            "BEV-motion"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2010,
+        "name": "battery cell mass share, LTO",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.6,
+        "minimum": 0.55,
+        "maximum": 0.75
+    },
+    "1300-2020-battery cell mass share, LTO": {
+        "amount": 0.7,
+        "category": "Energy Storage",
+        "powertrain": [
+            "BEV-depot",
+            "BEV-opp",
+            "BEV-motion"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2020,
+        "name": "battery cell mass share, LTO",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.7,
+        "minimum": 0.55,
+        "maximum": 0.75
+    },
+    "1301-2030-battery cell mass share, LTO": {
+        "amount": 0.7,
+        "category": "Energy Storage",
+        "powertrain": [
+            "BEV-depot",
+            "BEV-opp",
+            "BEV-motion"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2030,
+        "name": "battery cell mass share, LTO",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.7,
+        "minimum": 0.55,
+        "maximum": 0.75
+    },
+    "1302-2040-battery cell mass share, LTO": {
+        "amount": 0.75,
+        "category": "Energy Storage",
+        "powertrain": [
+            "BEV-depot",
+            "BEV-opp",
+            "BEV-motion"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2040,
+        "name": "battery cell mass share, LTO",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.75,
+        "minimum": 0.6,
+        "maximum": 0.75
+    },
+    "1303-2050-battery cell mass share, LTO": {
+        "amount": 0.8,
+        "category": "Energy Storage",
+        "powertrain": [
+            "BEV-depot",
+            "BEV-opp",
+            "BEV-motion"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2050,
+        "name": "battery cell mass share, LTO",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.8,
+        "minimum": 0.65,
+        "maximum": 0.8
+    },
+    "1304-2000-battery cell mass share, LTO": {
+        "amount": 0.5,
+        "category": "Energy Storage",
+        "powertrain": [
+            "FCEV",
+            "HEV-d"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2000,
+        "name": "battery cell mass share, LTO",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.5,
+        "minimum": 0.4,
+        "maximum": 0.6
+    },
+    "1305-2010-battery cell mass share, LTO": {
+        "amount": 0.5,
+        "category": "Energy Storage",
+        "powertrain": [
+            "FCEV",
+            "HEV-d"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2010,
+        "name": "battery cell mass share, LTO",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.5,
+        "minimum": 0.4,
+        "maximum": 0.6
+    },
+    "1306-2020-battery cell mass share, LTO": {
+        "amount": 0.5,
+        "category": "Energy Storage",
+        "powertrain": [
+            "FCEV",
+            "HEV-d"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2020,
+        "name": "battery cell mass share, LTO",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.5,
+        "minimum": 0.4,
+        "maximum": 0.6
+    },
+    "1307-2030-battery cell mass share, LTO": {
+        "amount": 0.5,
+        "category": "Energy Storage",
+        "powertrain": [
+            "FCEV",
+            "HEV-d"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2030,
+        "name": "battery cell mass share, LTO",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.5,
+        "minimum": 0.4,
+        "maximum": 0.6
+    },
+    "1308-2040-battery cell mass share, LTO": {
+        "amount": 0.55,
+        "category": "Energy Storage",
+        "powertrain": [
+            "FCEV",
+            "HEV-d"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2040,
+        "name": "battery cell mass share, LTO",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.55,
+        "minimum": 0.45,
+        "maximum": 0.65
+    },
+    "1309-2050-battery cell mass share, LTO": {
+        "amount": 0.6,
+        "category": "Energy Storage",
+        "powertrain": [
+            "FCEV",
+            "HEV-d"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2050,
+        "name": "battery cell mass share, LTO",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.6,
+        "minimum": 0.5,
+        "maximum": 0.7
+    },
+    "1310-2000-battery cell mass share, LTO": {
+        "amount": 0.5,
+        "category": "Energy Storage",
+        "powertrain": [
+            "ICEV-d",
+            "ICEV-g"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2000,
+        "name": "battery cell mass share, LTO",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.5,
+        "minimum": 0.4,
+        "maximum": 0.6
+    },
+    "1311-2010-battery cell mass share, LTO": {
+        "amount": 0.5,
+        "category": "Energy Storage",
+        "powertrain": [
+            "ICEV-d",
+            "ICEV-g"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2010,
+        "name": "battery cell mass share, LTO",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.5,
+        "minimum": 0.4,
+        "maximum": 0.6
+    },
+    "1312-2020-battery cell mass share, LTO": {
+        "amount": 0.5,
+        "category": "Energy Storage",
+        "powertrain": [
+            "ICEV-d",
+            "ICEV-g"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2020,
+        "name": "battery cell mass share, LTO",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.5,
+        "minimum": 0.4,
+        "maximum": 0.6
+    },
+    "1313-2030-battery cell mass share, LTO": {
+        "amount": 0.5,
+        "category": "Energy Storage",
+        "powertrain": [
+            "ICEV-d",
+            "ICEV-g"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2030,
+        "name": "battery cell mass share, LTO",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.5,
+        "minimum": 0.4,
+        "maximum": 0.6
+    },
+    "1314-2040-battery cell mass share, LTO": {
+        "amount": 0.55,
+        "category": "Energy Storage",
+        "powertrain": [
+            "ICEV-d",
+            "ICEV-g"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2040,
+        "name": "battery cell mass share, LTO",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.55,
+        "minimum": 0.45,
+        "maximum": 0.65
+    },
+    "1315-2050-battery cell mass share, LTO": {
+        "amount": 0.6,
+        "category": "Energy Storage",
+        "powertrain": [
+            "ICEV-d",
+            "ICEV-g"
+        ],
+        "sizes": [
+            "9m",
+            "13m-city",
+            "13m-coach",
+            "13m-city-double",
+            "13m-coach-double",
+            "18m"
+        ],
+        "year": 2050,
+        "name": "battery cell mass share, LTO",
+        "unit": "unitless",
+        "importance": "Critical",
+        "source": "Cox et al. 2020",
+        "comment": "Same as for passenger vehicles.",
+        "status": "Acceptable",
+        "kind": "distribution",
+        "uncertainty_type": 5,
+        "loc": 0.6,
+        "minimum": 0.5,
+        "maximum": 0.7
+    },
+    "1316-2000-battery cell energy density, NMC": {
         "amount": 0.05,
         "category": "Energy Storage",
         "powertrain": [
@@ -34392,7 +35922,7 @@
             "18m"
         ],
         "year": 2000,
-        "name": "battery cell energy density, NMC-111",
+        "name": "battery cell energy density, NMC",
         "unit": "kWh/kg",
         "importance": "Critical",
         "source": "https://pubs.acs.org/doi/pdf/10.1021/acsenergylett.7b00432",
@@ -34404,7 +35934,7 @@
         "minimum": 0.01,
         "maximum": 0.1
     },
-    "1263-2010-battery cell energy density, NMC-111": {
+    "1317-2010-battery cell energy density, NMC": {
         "amount": 0.1,
         "category": "Energy Storage",
         "powertrain": [
@@ -34425,7 +35955,7 @@
             "18m"
         ],
         "year": 2010,
-        "name": "battery cell energy density, NMC-111",
+        "name": "battery cell energy density, NMC",
         "unit": "kWh/kg",
         "importance": "Critical",
         "source": "https://pubs.acs.org/doi/pdf/10.1021/acsenergylett.7b00432",
@@ -34437,7 +35967,7 @@
         "minimum": 0.05,
         "maximum": 0.15
     },
-    "1264-2020-battery cell energy density, NMC-111": {
+    "1318-2020-battery cell energy density, NMC": {
         "amount": 0.2,
         "category": "Energy Storage",
         "powertrain": [
@@ -34458,7 +35988,7 @@
             "18m"
         ],
         "year": 2020,
-        "name": "battery cell energy density, NMC-111",
+        "name": "battery cell energy density, NMC",
         "unit": "kWh/kg",
         "importance": "Critical",
         "source": "https://pubs.acs.org/doi/pdf/10.1021/acsenergylett.7b00432",
@@ -34470,7 +36000,7 @@
         "minimum": 0.15,
         "maximum": 0.25
     },
-    "1265-2030-battery cell energy density, NMC-111": {
+    "1319-2030-battery cell energy density, NMC": {
         "amount": 0.3,
         "category": "Energy Storage",
         "powertrain": [
@@ -34491,7 +36021,7 @@
             "18m"
         ],
         "year": 2030,
-        "name": "battery cell energy density, NMC-111",
+        "name": "battery cell energy density, NMC",
         "unit": "kWh/kg",
         "importance": "Critical",
         "source": "https://pubs.acs.org/doi/pdf/10.1021/acsenergylett.7b00432",
@@ -34503,7 +36033,7 @@
         "minimum": 0.25,
         "maximum": 0.35
     },
-    "1266-2040-battery cell energy density, NMC-111": {
+    "1320-2040-battery cell energy density, NMC": {
         "amount": 0.4,
         "category": "Energy Storage",
         "powertrain": [
@@ -34524,7 +36054,7 @@
             "18m"
         ],
         "year": 2040,
-        "name": "battery cell energy density, NMC-111",
+        "name": "battery cell energy density, NMC",
         "unit": "kWh/kg",
         "importance": "Critical",
         "source": "https://pubs.acs.org/doi/pdf/10.1021/acsenergylett.7b00432",
@@ -34536,7 +36066,7 @@
         "minimum": 0.25,
         "maximum": 0.5
     },
-    "1267-2050-battery cell energy density, NMC-111": {
+    "1321-2050-battery cell energy density, NMC": {
         "amount": 0.5,
         "category": "Energy Storage",
         "powertrain": [
@@ -34557,7 +36087,7 @@
             "18m"
         ],
         "year": 2050,
-        "name": "battery cell energy density, NMC-111",
+        "name": "battery cell energy density, NMC",
         "unit": "kWh/kg",
         "importance": "Critical",
         "source": "https://pubs.acs.org/doi/pdf/10.1021/acsenergylett.7b00432",
@@ -34569,7 +36099,7 @@
         "minimum": 0.4,
         "maximum": 0.55
     },
-    "1268-2000-battery cell energy density, NCA": {
+    "1322-2000-battery cell energy density, NCA": {
         "amount": 0.05,
         "category": "Energy Storage",
         "powertrain": [
@@ -34602,7 +36132,7 @@
         "minimum": 0.01,
         "maximum": 0.1
     },
-    "1269-2010-battery cell energy density, NCA": {
+    "1323-2010-battery cell energy density, NCA": {
         "amount": 0.1,
         "category": "Energy Storage",
         "powertrain": [
@@ -34635,7 +36165,7 @@
         "minimum": 0.05,
         "maximum": 0.15
     },
-    "1270-2020-battery cell energy density, NCA": {
+    "1324-2020-battery cell energy density, NCA": {
         "amount": 0.23,
         "category": "Energy Storage",
         "powertrain": [
@@ -34668,7 +36198,7 @@
         "minimum": 0.15,
         "maximum": 0.25
     },
-    "1271-2030-battery cell energy density, NCA": {
+    "1325-2030-battery cell energy density, NCA": {
         "amount": 0.3,
         "category": "Energy Storage",
         "powertrain": [
@@ -34701,7 +36231,7 @@
         "minimum": 0.25,
         "maximum": 0.35
     },
-    "1272-2040-battery cell energy density, NCA": {
+    "1326-2040-battery cell energy density, NCA": {
         "amount": 0.4,
         "category": "Energy Storage",
         "powertrain": [
@@ -34734,7 +36264,7 @@
         "minimum": 0.25,
         "maximum": 0.5
     },
-    "1273-2050-battery cell energy density, NCA": {
+    "1327-2050-battery cell energy density, NCA": {
         "amount": 0.5,
         "category": "Energy Storage",
         "powertrain": [
@@ -34767,7 +36297,7 @@
         "minimum": 0.4,
         "maximum": 0.55
     },
-    "1274-2000-battery cell energy density, LTO": {
+    "1328-2000-battery cell energy density, LTO": {
         "amount": 0.04,
         "category": "Energy Storage",
         "powertrain": [
@@ -34800,7 +36330,7 @@
         "minimum": 0.03,
         "maximum": 0.05
     },
-    "1275-2010-battery cell energy density, LTO": {
+    "1329-2010-battery cell energy density, LTO": {
         "amount": 0.055,
         "category": "Energy Storage",
         "powertrain": [
@@ -34833,7 +36363,7 @@
         "minimum": 0.04125,
         "maximum": 0.06875
     },
-    "1276-2020-battery cell energy density, LTO": {
+    "1330-2020-battery cell energy density, LTO": {
         "amount": 0.075,
         "category": "Energy Storage",
         "powertrain": [
@@ -34866,7 +36396,7 @@
         "minimum": 0.056249999999999994,
         "maximum": 0.09375
     },
-    "1277-2030-battery cell energy density, LTO": {
+    "1331-2030-battery cell energy density, LTO": {
         "amount": 0.08,
         "category": "Energy Storage",
         "powertrain": [
@@ -34899,7 +36429,7 @@
         "minimum": 0.06,
         "maximum": 0.1
     },
-    "1278-2040-battery cell energy density, LTO": {
+    "1332-2040-battery cell energy density, LTO": {
         "amount": 0.09,
         "category": "Energy Storage",
         "powertrain": [
@@ -34932,7 +36462,7 @@
         "minimum": 0.0675,
         "maximum": 0.11249999999999999
     },
-    "1279-2050-battery cell energy density, LTO": {
+    "1333-2050-battery cell energy density, LTO": {
         "amount": 0.1,
         "category": "Energy Storage",
         "powertrain": [
@@ -34965,7 +36495,7 @@
         "minimum": 0.07500000000000001,
         "maximum": 0.125
     },
-    "1280-2000-battery cell energy density, LFP": {
+    "1334-2000-battery cell energy density, LFP": {
         "amount": 0.05,
         "category": "Energy Storage",
         "powertrain": [
@@ -34998,7 +36528,7 @@
         "minimum": 0.037500000000000006,
         "maximum": 0.0625
     },
-    "1281-2010-battery cell energy density, LFP": {
+    "1335-2010-battery cell energy density, LFP": {
         "amount": 0.075,
         "category": "Energy Storage",
         "powertrain": [
@@ -35031,8 +36561,8 @@
         "minimum": 0.056249999999999994,
         "maximum": 0.09375
     },
-    "1282-2020-battery cell energy density, LFP": {
-        "amount": 0.1,
+    "1336-2020-battery cell energy density, LFP": {
+        "amount": 0.15,
         "category": "Energy Storage",
         "powertrain": [
             "ICEV-d",
@@ -35060,11 +36590,11 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 0.1,
-        "minimum": 0.07500000000000001,
-        "maximum": 0.125
+        "loc": 0.15,
+        "minimum": 0.11249999999999999,
+        "maximum": 0.1875
     },
-    "1283-2030-battery cell energy density, LFP": {
+    "1337-2030-battery cell energy density, LFP": {
         "amount": 0.15,
         "category": "Energy Storage",
         "powertrain": [
@@ -35097,7 +36627,7 @@
         "minimum": 0.11249999999999999,
         "maximum": 0.1875
     },
-    "1284-2040-battery cell energy density, LFP": {
+    "1338-2040-battery cell energy density, LFP": {
         "amount": 0.15,
         "category": "Energy Storage",
         "powertrain": [
@@ -35130,8 +36660,8 @@
         "minimum": 0.11249999999999999,
         "maximum": 0.1875
     },
-    "1285-2050-battery cell energy density, LFP": {
-        "amount": 0.15,
+    "1339-2050-battery cell energy density, LFP": {
+        "amount": 0.18,
         "category": "Energy Storage",
         "powertrain": [
             "ICEV-d",
@@ -35159,11 +36689,11 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 0.15,
-        "minimum": 0.11249999999999999,
-        "maximum": 0.1875
+        "loc": 0.18,
+        "minimum": 0.135,
+        "maximum": 0.22499999999999998
     },
-    "1286-2000-average passengers": {
+    "1340-2000-average passengers": {
         "amount": 5,
         "category": "Driving",
         "powertrain": [
@@ -35191,7 +36721,7 @@
         "minimum": 3.75,
         "maximum": 6.25
     },
-    "1287-2010-average passengers": {
+    "1341-2010-average passengers": {
         "amount": 5,
         "category": "Driving",
         "powertrain": [
@@ -35219,7 +36749,7 @@
         "minimum": 3.75,
         "maximum": 6.25
     },
-    "1288-2020-average passengers": {
+    "1342-2020-average passengers": {
         "amount": 5,
         "category": "Driving",
         "powertrain": [
@@ -35247,7 +36777,7 @@
         "minimum": 3.75,
         "maximum": 6.25
     },
-    "1289-2030-average passengers": {
+    "1343-2030-average passengers": {
         "amount": 5,
         "category": "Driving",
         "powertrain": [
@@ -35275,7 +36805,7 @@
         "minimum": 3.75,
         "maximum": 6.25
     },
-    "1290-2040-average passengers": {
+    "1344-2040-average passengers": {
         "amount": 5,
         "category": "Driving",
         "powertrain": [
@@ -35303,7 +36833,7 @@
         "minimum": 3.75,
         "maximum": 6.25
     },
-    "1291-2050-average passengers": {
+    "1345-2050-average passengers": {
         "amount": 5,
         "category": "Driving",
         "powertrain": [
@@ -35331,7 +36861,7 @@
         "minimum": 3.75,
         "maximum": 6.25
     },
-    "1292-2000-average passengers": {
+    "1346-2000-average passengers": {
         "amount": 10,
         "category": "Driving",
         "powertrain": [
@@ -35359,7 +36889,7 @@
         "minimum": 7.5,
         "maximum": 12.5
     },
-    "1293-2010-average passengers": {
+    "1347-2010-average passengers": {
         "amount": 10,
         "category": "Driving",
         "powertrain": [
@@ -35387,7 +36917,7 @@
         "minimum": 7.5,
         "maximum": 12.5
     },
-    "1294-2020-average passengers": {
+    "1348-2020-average passengers": {
         "amount": 10,
         "category": "Driving",
         "powertrain": [
@@ -35415,7 +36945,7 @@
         "minimum": 7.5,
         "maximum": 12.5
     },
-    "1295-2030-average passengers": {
+    "1349-2030-average passengers": {
         "amount": 10,
         "category": "Driving",
         "powertrain": [
@@ -35443,7 +36973,7 @@
         "minimum": 7.5,
         "maximum": 12.5
     },
-    "1296-2040-average passengers": {
+    "1350-2040-average passengers": {
         "amount": 10,
         "category": "Driving",
         "powertrain": [
@@ -35471,7 +37001,7 @@
         "minimum": 7.5,
         "maximum": 12.5
     },
-    "1297-2050-average passengers": {
+    "1351-2050-average passengers": {
         "amount": 10,
         "category": "Driving",
         "powertrain": [
@@ -35499,7 +37029,7 @@
         "minimum": 7.5,
         "maximum": 12.5
     },
-    "1298-2000-average passengers": {
+    "1352-2000-average passengers": {
         "amount": 21,
         "category": "Driving",
         "powertrain": [
@@ -35527,7 +37057,7 @@
         "minimum": 15.75,
         "maximum": 26.25
     },
-    "1299-2010-average passengers": {
+    "1353-2010-average passengers": {
         "amount": 21,
         "category": "Driving",
         "powertrain": [
@@ -35555,7 +37085,7 @@
         "minimum": 15.75,
         "maximum": 26.25
     },
-    "1300-2020-average passengers": {
+    "1354-2020-average passengers": {
         "amount": 21,
         "category": "Driving",
         "powertrain": [
@@ -35583,7 +37113,7 @@
         "minimum": 15.75,
         "maximum": 26.25
     },
-    "1301-2030-average passengers": {
+    "1355-2030-average passengers": {
         "amount": 21,
         "category": "Driving",
         "powertrain": [
@@ -35611,7 +37141,7 @@
         "minimum": 15.75,
         "maximum": 26.25
     },
-    "1302-2040-average passengers": {
+    "1356-2040-average passengers": {
         "amount": 21,
         "category": "Driving",
         "powertrain": [
@@ -35639,7 +37169,7 @@
         "minimum": 15.75,
         "maximum": 26.25
     },
-    "1303-2050-average passengers": {
+    "1357-2050-average passengers": {
         "amount": 21,
         "category": "Driving",
         "powertrain": [
@@ -35667,7 +37197,7 @@
         "minimum": 15.75,
         "maximum": 26.25
     },
-    "1304-2000-average passengers": {
+    "1358-2000-average passengers": {
         "amount": 13,
         "category": "Driving",
         "powertrain": [
@@ -35695,7 +37225,7 @@
         "minimum": 9.75,
         "maximum": 16.25
     },
-    "1305-2010-average passengers": {
+    "1359-2010-average passengers": {
         "amount": 13,
         "category": "Driving",
         "powertrain": [
@@ -35723,7 +37253,7 @@
         "minimum": 9.75,
         "maximum": 16.25
     },
-    "1306-2020-average passengers": {
+    "1360-2020-average passengers": {
         "amount": 13,
         "category": "Driving",
         "powertrain": [
@@ -35751,7 +37281,7 @@
         "minimum": 9.75,
         "maximum": 16.25
     },
-    "1307-2030-average passengers": {
+    "1361-2030-average passengers": {
         "amount": 13,
         "category": "Driving",
         "powertrain": [
@@ -35779,7 +37309,7 @@
         "minimum": 9.75,
         "maximum": 16.25
     },
-    "1308-2040-average passengers": {
+    "1362-2040-average passengers": {
         "amount": 13,
         "category": "Driving",
         "powertrain": [
@@ -35807,7 +37337,7 @@
         "minimum": 9.75,
         "maximum": 16.25
     },
-    "1309-2050-average passengers": {
+    "1363-2050-average passengers": {
         "amount": 13,
         "category": "Driving",
         "powertrain": [
@@ -35835,7 +37365,7 @@
         "minimum": 9.75,
         "maximum": 16.25
     },
-    "1310-2000-average passengers": {
+    "1364-2000-average passengers": {
         "amount": 26,
         "category": "Driving",
         "powertrain": [
@@ -35863,7 +37393,7 @@
         "minimum": 19.5,
         "maximum": 32.5
     },
-    "1311-2010-average passengers": {
+    "1365-2010-average passengers": {
         "amount": 26,
         "category": "Driving",
         "powertrain": [
@@ -35891,7 +37421,7 @@
         "minimum": 19.5,
         "maximum": 32.5
     },
-    "1312-2020-average passengers": {
+    "1366-2020-average passengers": {
         "amount": 26,
         "category": "Driving",
         "powertrain": [
@@ -35919,7 +37449,7 @@
         "minimum": 19.5,
         "maximum": 32.5
     },
-    "1313-2030-average passengers": {
+    "1367-2030-average passengers": {
         "amount": 26,
         "category": "Driving",
         "powertrain": [
@@ -35947,7 +37477,7 @@
         "minimum": 19.5,
         "maximum": 32.5
     },
-    "1314-2040-average passengers": {
+    "1368-2040-average passengers": {
         "amount": 26,
         "category": "Driving",
         "powertrain": [
@@ -35975,7 +37505,7 @@
         "minimum": 19.5,
         "maximum": 32.5
     },
-    "1315-2050-average passengers": {
+    "1369-2050-average passengers": {
         "amount": 26,
         "category": "Driving",
         "powertrain": [
@@ -36003,7 +37533,7 @@
         "minimum": 19.5,
         "maximum": 32.5
     },
-    "1316-2000-average passengers": {
+    "1370-2000-average passengers": {
         "amount": 19,
         "category": "Driving",
         "powertrain": [
@@ -36031,7 +37561,7 @@
         "minimum": 14.25,
         "maximum": 23.75
     },
-    "1317-2010-average passengers": {
+    "1371-2010-average passengers": {
         "amount": 19,
         "category": "Driving",
         "powertrain": [
@@ -36059,7 +37589,7 @@
         "minimum": 14.25,
         "maximum": 23.75
     },
-    "1318-2020-average passengers": {
+    "1372-2020-average passengers": {
         "amount": 19,
         "category": "Driving",
         "powertrain": [
@@ -36087,7 +37617,7 @@
         "minimum": 14.25,
         "maximum": 23.75
     },
-    "1319-2030-average passengers": {
+    "1373-2030-average passengers": {
         "amount": 19,
         "category": "Driving",
         "powertrain": [
@@ -36115,7 +37645,7 @@
         "minimum": 14.25,
         "maximum": 23.75
     },
-    "1320-2040-average passengers": {
+    "1374-2040-average passengers": {
         "amount": 19,
         "category": "Driving",
         "powertrain": [
@@ -36143,7 +37673,7 @@
         "minimum": 14.25,
         "maximum": 23.75
     },
-    "1321-2050-average passengers": {
+    "1375-2050-average passengers": {
         "amount": 19,
         "category": "Driving",
         "powertrain": [
@@ -36171,7 +37701,7 @@
         "minimum": 14.25,
         "maximum": 23.75
     },
-    "1322-2000-average passenger mass": {
+    "1376-2000-average passenger mass": {
         "amount": 75,
         "category": "Driving",
         "powertrain": [
@@ -36204,7 +37734,7 @@
         "minimum": 60,
         "maximum": 90
     },
-    "1323-2010-average passenger mass": {
+    "1377-2010-average passenger mass": {
         "amount": 75,
         "category": "Driving",
         "powertrain": [
@@ -36237,7 +37767,7 @@
         "minimum": 60,
         "maximum": 90
     },
-    "1324-2020-average passenger mass": {
+    "1378-2020-average passenger mass": {
         "amount": 75,
         "category": "Driving",
         "powertrain": [
@@ -36270,7 +37800,7 @@
         "minimum": 60,
         "maximum": 90
     },
-    "1325-2030-average passenger mass": {
+    "1379-2030-average passenger mass": {
         "amount": 75,
         "category": "Driving",
         "powertrain": [
@@ -36303,7 +37833,7 @@
         "minimum": 60,
         "maximum": 90
     },
-    "1326-2040-average passenger mass": {
+    "1380-2040-average passenger mass": {
         "amount": 75,
         "category": "Driving",
         "powertrain": [
@@ -36336,7 +37866,7 @@
         "minimum": 60,
         "maximum": 90
     },
-    "1327-2050-average passenger mass": {
+    "1381-2050-average passenger mass": {
         "amount": 75,
         "category": "Driving",
         "powertrain": [
@@ -36369,7 +37899,7 @@
         "minimum": 60,
         "maximum": 90
     },
-    "1328-2000-auxiliary power base demand": {
+    "1382-2000-auxiliary power base demand": {
         "amount": 2250,
         "category": "Auxiliaries",
         "powertrain": [
@@ -36397,7 +37927,7 @@
         "minimum": 1687.5,
         "maximum": 2812.5
     },
-    "1329-2010-auxiliary power base demand": {
+    "1383-2010-auxiliary power base demand": {
         "amount": 2250,
         "category": "Auxiliaries",
         "powertrain": [
@@ -36425,7 +37955,7 @@
         "minimum": 1687.5,
         "maximum": 2812.5
     },
-    "1330-2020-auxiliary power base demand": {
+    "1384-2020-auxiliary power base demand": {
         "amount": 2250,
         "category": "Auxiliaries",
         "powertrain": [
@@ -36453,7 +37983,7 @@
         "minimum": 1687.5,
         "maximum": 2812.5
     },
-    "1331-2030-auxiliary power base demand": {
+    "1385-2030-auxiliary power base demand": {
         "amount": 2250,
         "category": "Auxiliaries",
         "powertrain": [
@@ -36481,7 +38011,7 @@
         "minimum": 1687.5,
         "maximum": 2812.5
     },
-    "1332-2040-auxiliary power base demand": {
+    "1386-2040-auxiliary power base demand": {
         "amount": 2250,
         "category": "Auxiliaries",
         "powertrain": [
@@ -36509,7 +38039,7 @@
         "minimum": 1687.5,
         "maximum": 2812.5
     },
-    "1333-2050-auxiliary power base demand": {
+    "1387-2050-auxiliary power base demand": {
         "amount": 2250,
         "category": "Auxiliaries",
         "powertrain": [
@@ -36537,7 +38067,7 @@
         "minimum": 1687.5,
         "maximum": 2812.5
     },
-    "1334-2000-auxiliary power base demand": {
+    "1388-2000-auxiliary power base demand": {
         "amount": 5000,
         "category": "Auxiliaries",
         "powertrain": [
@@ -36567,7 +38097,7 @@
         "minimum": 3750,
         "maximum": 6250
     },
-    "1335-2010-auxiliary power base demand": {
+    "1389-2010-auxiliary power base demand": {
         "amount": 5000,
         "category": "Auxiliaries",
         "powertrain": [
@@ -36597,7 +38127,7 @@
         "minimum": 3750,
         "maximum": 6250
     },
-    "1336-2020-auxiliary power base demand": {
+    "1390-2020-auxiliary power base demand": {
         "amount": 5000,
         "category": "Auxiliaries",
         "powertrain": [
@@ -36627,7 +38157,7 @@
         "minimum": 3750,
         "maximum": 6250
     },
-    "1337-2030-auxiliary power base demand": {
+    "1391-2030-auxiliary power base demand": {
         "amount": 5000,
         "category": "Auxiliaries",
         "powertrain": [
@@ -36657,7 +38187,7 @@
         "minimum": 3750,
         "maximum": 6250
     },
-    "1338-2040-auxiliary power base demand": {
+    "1392-2040-auxiliary power base demand": {
         "amount": 5000,
         "category": "Auxiliaries",
         "powertrain": [
@@ -36687,7 +38217,7 @@
         "minimum": 3750,
         "maximum": 6250
     },
-    "1339-2050-auxiliary power base demand": {
+    "1393-2050-auxiliary power base demand": {
         "amount": 5000,
         "category": "Auxiliaries",
         "powertrain": [
@@ -36717,7 +38247,7 @@
         "minimum": 3750,
         "maximum": 6250
     },
-    "1340-2000-auxiliary power base demand": {
+    "1394-2000-auxiliary power base demand": {
         "amount": 3500,
         "category": "Auxiliaries",
         "powertrain": [
@@ -36746,7 +38276,7 @@
         "minimum": 2625,
         "maximum": 4375
     },
-    "1341-2010-auxiliary power base demand": {
+    "1395-2010-auxiliary power base demand": {
         "amount": 3500,
         "category": "Auxiliaries",
         "powertrain": [
@@ -36775,7 +38305,7 @@
         "minimum": 2625,
         "maximum": 4375
     },
-    "1342-2020-auxiliary power base demand": {
+    "1396-2020-auxiliary power base demand": {
         "amount": 3500,
         "category": "Auxiliaries",
         "powertrain": [
@@ -36804,7 +38334,7 @@
         "minimum": 2625,
         "maximum": 4375
     },
-    "1343-2030-auxiliary power base demand": {
+    "1397-2030-auxiliary power base demand": {
         "amount": 3500,
         "category": "Auxiliaries",
         "powertrain": [
@@ -36833,7 +38363,7 @@
         "minimum": 2625,
         "maximum": 4375
     },
-    "1344-2040-auxiliary power base demand": {
+    "1398-2040-auxiliary power base demand": {
         "amount": 3500,
         "category": "Auxiliaries",
         "powertrain": [
@@ -36862,7 +38392,7 @@
         "minimum": 2625,
         "maximum": 4375
     },
-    "1345-2050-auxiliary power base demand": {
+    "1399-2050-auxiliary power base demand": {
         "amount": 3500,
         "category": "Auxiliaries",
         "powertrain": [
@@ -36891,7 +38421,7 @@
         "minimum": 2625,
         "maximum": 4375
     },
-    "1346-2000-aerodynamic drag coefficient": {
+    "1400-2000-aerodynamic drag coefficient": {
         "amount": 0.65,
         "category": "Glider",
         "powertrain": [
@@ -36924,7 +38454,7 @@
         "minimum": 0.6,
         "maximum": 0.68
     },
-    "1347-2010-aerodynamic drag coefficient": {
+    "1401-2010-aerodynamic drag coefficient": {
         "amount": 0.65,
         "category": "Glider",
         "powertrain": [
@@ -36957,7 +38487,7 @@
         "minimum": 0.6,
         "maximum": 0.68
     },
-    "1348-2020-aerodynamic drag coefficient": {
+    "1402-2020-aerodynamic drag coefficient": {
         "amount": 0.65,
         "category": "Glider",
         "powertrain": [
@@ -36990,7 +38520,7 @@
         "minimum": 0.6,
         "maximum": 0.68
     },
-    "1349-2030-aerodynamic drag coefficient": {
+    "1403-2030-aerodynamic drag coefficient": {
         "amount": 0.62,
         "category": "Glider",
         "powertrain": [
@@ -37023,7 +38553,7 @@
         "minimum": 0.6,
         "maximum": 0.64
     },
-    "1350-2040-aerodynamic drag coefficient": {
+    "1404-2040-aerodynamic drag coefficient": {
         "amount": 0.6,
         "category": "Glider",
         "powertrain": [
@@ -37056,7 +38586,7 @@
         "minimum": 0.58,
         "maximum": 0.62
     },
-    "1351-2050-aerodynamic drag coefficient": {
+    "1405-2050-aerodynamic drag coefficient": {
         "amount": 0.58,
         "category": "Glider",
         "powertrain": [
@@ -37089,7 +38619,7 @@
         "minimum": 0.56,
         "maximum": 0.6
     },
-    "1352-2000-adblue cost per kg": {
+    "1406-2000-adblue cost per kg": {
         "amount": 1,
         "category": "Costs",
         "powertrain": [
@@ -37117,7 +38647,7 @@
         "minimum": 0.8,
         "maximum": 1.2
     },
-    "1353-2010-adblue cost per kg": {
+    "1407-2010-adblue cost per kg": {
         "amount": 1,
         "category": "Costs",
         "powertrain": [
@@ -37145,7 +38675,7 @@
         "minimum": 0.8,
         "maximum": 1.2
     },
-    "1354-2020-adblue cost per kg": {
+    "1408-2020-adblue cost per kg": {
         "amount": 1,
         "category": "Costs",
         "powertrain": [
@@ -37173,7 +38703,7 @@
         "minimum": 0.8,
         "maximum": 1.2
     },
-    "1355-2030-adblue cost per kg": {
+    "1409-2030-adblue cost per kg": {
         "amount": 1,
         "category": "Costs",
         "powertrain": [
@@ -37201,7 +38731,7 @@
         "minimum": 0.8,
         "maximum": 1.2
     },
-    "1356-2040-adblue cost per kg": {
+    "1410-2040-adblue cost per kg": {
         "amount": 1,
         "category": "Costs",
         "powertrain": [
@@ -37229,7 +38759,7 @@
         "minimum": 0.8,
         "maximum": 1.2
     },
-    "1357-2050-adblue cost per kg": {
+    "1411-2050-adblue cost per kg": {
         "amount": 1,
         "category": "Costs",
         "powertrain": [

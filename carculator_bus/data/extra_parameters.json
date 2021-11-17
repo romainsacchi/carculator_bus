@@ -264,5 +264,10 @@
   "HVAC mass",
   "is_too_heavy",
   "has_schedule_issue",
-  "battery lifetime kilometers"
+  "battery lifetime kilometers",
+  "share recuperated energy",
+  "road dust emissions",
+  "transmission efficiency",
+  "battery cell energy density",
+  "battery cell mass share"
 ]

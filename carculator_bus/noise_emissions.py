@@ -240,15 +240,38 @@ class NoiseEmissionsModel:
 
             else:
 
-                suburban[:, s] = (
-                    np.sum(sound_power[:, :, 4000:12500], axis=2) / distance
+                urban[:, s] = (
+                    np.sum(sound_power[:, :, :500], axis=2) / distance
                 )[:, s]
-                rural[:, s] = (np.sum(sound_power[:, :, 2000:4000], axis=2) / distance)[
+                urban[:, s] += (
+                                      np.sum(sound_power[:, :, 6000:6800], axis=2) / distance
+                              )[:, s]
+                urban[:, s] += (
+                                      np.sum(sound_power[:, :, 7600:8800], axis=2) / distance
+                              )[:, s]
+                urban[:, s] += (
+                                       np.sum(sound_power[:, :, 10600:11500], axis=2) / distance
+                               )[:, s]
+                urban[:, s] += (
+                                       np.sum(sound_power[:, :, 12500:14000], axis=2) / distance
+                               )[:, s]
+
+
+                rural[:, s] = (np.sum(sound_power[:, :, 500:6000], axis=2) / distance)[
                     :, s
                 ]
-                rural[:, s] += (np.sum(sound_power[:, :, 12500:], axis=2) / distance)[
-                    :, s
-                ]
+                rural[:, s] += (np.sum(sound_power[:, :, 6800:7600], axis=2) / distance)[
+                              :, s
+                              ]
+                rural[:, s] += (np.sum(sound_power[:, :, 8800:10600], axis=2) / distance)[
+                               :, s
+                               ]
+                rural[:, s] += (np.sum(sound_power[:, :, 11500:12500], axis=2) / distance)[
+                               :, s
+                               ]
+                rural[:, s] += (np.sum(sound_power[:, :, 14000:], axis=2) / distance)[
+                               :, s
+                               ]
 
         res = np.vstack([urban, suburban, rural]).T
         return res.reshape(-1, 1, 24, 1, 1)
