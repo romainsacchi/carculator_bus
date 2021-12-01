@@ -1391,7 +1391,7 @@ class BusModel:
         # (we omitted the stops in the average)
         cycle[cycle == 0] = np.nan
         self["average speed"] = np.nanmean(cycle, axis=0)[:, None, None, None]
-        self["daily distance"] = self["operation time"].values * self["average speed"]
+        self["daily distance"] = self["operation time"] * self["average speed"]
 
         # the number of trips is simply the daily driven distance
         # divided by the distance of one trip
