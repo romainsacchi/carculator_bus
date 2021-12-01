@@ -60,7 +60,9 @@ class BusModel:
         }
 
         l_pwt = [
-            pt for pt in ("BEV-opp", "BEV-depot", "BEV-motion", "FCEV", "HEV-d") if pt in self.array.powertrain.values
+            pt
+            for pt in ("BEV-opp", "BEV-depot", "BEV-motion", "FCEV", "HEV-d")
+            if pt in self.array.powertrain.values
         ]
 
         for pt in l_pwt:
@@ -411,13 +413,16 @@ class BusModel:
                 )
 
                 if arr.sum() > 0:
-                    new_shares = self.array.loc[
-                        dict(
-                            powertrain=l_pwt,
-                            parameter="combustion power share",
-                            year=actual_years,
-                        )
-                    ] - (arr * 0.04)
+                    new_shares = (
+                        self.array.loc[
+                            dict(
+                                powertrain=l_pwt,
+                                parameter="combustion power share",
+                                year=actual_years,
+                            )
+                        ]
+                        - (arr * 0.04)
+                    )
 
                     self.array.loc[
                         dict(
@@ -488,7 +493,11 @@ class BusModel:
 
         if len(l_size) > 0:
             self.array.loc[
-                dict(powertrain="BEV-motion", parameter="is_available", size=l_size,)
+                dict(
+                    powertrain="BEV-motion",
+                    parameter="is_available",
+                    size=l_size,
+                )
             ] = 0
 
         # if the mass allowance left
@@ -590,7 +599,11 @@ class BusModel:
         # Correction of combustion powertrain cost for ICEV-g
         if "ICEV-g" in self.array.powertrain.values:
             self.array.loc[
-                :, ["ICEV-g"], "combustion powertrain cost per kW", :, :,
+                :,
+                ["ICEV-g"],
+                "combustion powertrain cost per kW",
+                :,
+                :,
             ] = np.reshape(
                 (5.92e160 * np.exp(-0.1819 * self.array.year.values) + 26.76)
                 * cost_factor,
@@ -771,11 +784,10 @@ class BusModel:
         if len(l_pwt) > 0:
 
             self.energy.loc[dict(parameter="power load", powertrain=l_pwt)] = (
-                (motive_power.T[:, idx, ...] + recuperated_power.T[:, idx, ...])
-                / self.array.sel(parameter="electric power", powertrain=l_pwt).values[
-                    ..., None
-                ]
-            )
+                motive_power.T[:, idx, ...] + recuperated_power.T[:, idx, ...]
+            ) / self.array.sel(parameter="electric power", powertrain=l_pwt).values[
+                ..., None
+            ]
 
         self.energy.loc[dict(parameter="power load")] = np.clip(
             self.energy.loc[dict(parameter="power load")], 0.0, 1
@@ -803,9 +815,15 @@ class BusModel:
         ]
 
         if len(l_pwt) > 0:
-            self.energy.loc[dict(parameter="transmission efficiency", powertrain=l_pwt)] = np.clip(
-                self.energy.loc[dict(parameter="transmission efficiency", powertrain=l_pwt)] * 1.1,
-                None, 0.95
+            self.energy.loc[
+                dict(parameter="transmission efficiency", powertrain=l_pwt)
+            ] = np.clip(
+                self.energy.loc[
+                    dict(parameter="transmission efficiency", powertrain=l_pwt)
+                ]
+                * 1.1,
+                None,
+                0.95,
             )
 
         l_pwt = [
@@ -817,7 +835,10 @@ class BusModel:
         if len(l_pwt) > 0:
 
             self.energy.loc[
-                dict(parameter="engine efficiency", powertrain=l_pwt,)
+                dict(
+                    parameter="engine efficiency",
+                    powertrain=l_pwt,
+                )
             ] = np.clip(
                 np.interp(
                     self.energy.loc[dict(parameter="power load", powertrain=l_pwt)],
@@ -845,12 +866,9 @@ class BusModel:
         if "ICEV-g" in self.array.powertrain.values:
             self.energy.loc[
                 dict(parameter="engine efficiency", powertrain="ICEV-g")
-            ] *= (
-                1
-                - self.array.sel(
-                    parameter="CNG engine efficiency correction factor",
-                    powertrain="ICEV-g",
-                )
+            ] *= 1 - self.array.sel(
+                parameter="CNG engine efficiency correction factor",
+                powertrain="ICEV-g",
             )
 
         l_pwt = [
@@ -861,9 +879,11 @@ class BusModel:
         if len(l_pwt) > 0:
             self.energy.loc[
                 dict(parameter="engine efficiency", powertrain=l_pwt)
-            ] = self.array.loc[dict(
-                parameter="engine efficiency", powertrain=l_pwt
-            )].values[..., None]
+            ] = self.array.loc[
+                dict(parameter="engine efficiency", powertrain=l_pwt)
+            ].values[
+                ..., None
+            ]
 
         self.energy.loc[dict(parameter="motive energy at wheels")] = np.clip(
             self.energy.loc[dict(parameter="motive energy at wheels")], 0.4, None
@@ -967,7 +987,6 @@ class BusModel:
                 parameter="battery discharge efficiency", powertrain=l_pwt
             )
 
-
         # Correction for fuel cell stack efficiency
         if "FCEV" in self.array.powertrain.values:
             self.array.loc[
@@ -1003,21 +1022,17 @@ class BusModel:
             axis=-1,
         )
 
-        self.array.loc[
-            dict(parameter="transmission efficiency")
-        ] = np.nanmean(
+        self.array.loc[dict(parameter="transmission efficiency")] = np.nanmean(
             np.where(
                 self.energy.loc[dict(parameter="power load")] == 0,
                 np.nan,
-                self.energy.loc[
-                    dict(parameter="transmission efficiency")
-                ],
+                self.energy.loc[dict(parameter="transmission efficiency")],
             ),
             axis=-1,
         )
 
     def set_share_recuperated_energy(self):
-        """ Calculate the share of recuperated energy, over the total negative motive energy"""
+        """Calculate the share of recuperated energy, over the total negative motive energy"""
 
         self["share recuperated energy"] = (
             (
@@ -1097,7 +1112,8 @@ class BusModel:
         ]:
             with self(pt) as cpm:
                 battery_tech_label = (
-                    "battery cycle life, " + self.energy_storage["electric"][pt].split("-")[0]
+                    "battery cycle life, "
+                    + self.energy_storage["electric"][pt].split("-")[0]
                 )
                 cpm["battery lifetime replacements"] = finite(
                     np.ceil(
@@ -1548,7 +1564,11 @@ class BusModel:
         # For battery, need to divide cost of electricity in battery by efficiency of charging
         for pt in [
             pwt
-            for pwt in ["BEV-opp", "BEV-depot", "BEV-motion",]
+            for pwt in [
+                "BEV-opp",
+                "BEV-depot",
+                "BEV-motion",
+            ]
             if pwt in self.array.coords["powertrain"].values
         ]:
             with self(pt) as cpm:
@@ -1827,12 +1847,18 @@ class BusModel:
 
         if len(l_pwt) > 0:
             self.array.loc[
-                dict(powertrain=l_pwt, parameter=list_direct_emissions,)
+                dict(
+                    powertrain=l_pwt,
+                    parameter=list_direct_emissions,
+                )
             ] = hem.get_emissions_per_powertrain(
                 powertrain_type="diesel",
                 euro_classes=l_y,
                 lifetime_km=self.array.loc[
-                    dict(powertrain=l_pwt, parameter="lifetime kilometers",)
+                    dict(
+                        powertrain=l_pwt,
+                        parameter="lifetime kilometers",
+                    )
                 ],
                 energy_consumption=self.energy.sel(
                     powertrain=l_pwt,
@@ -1854,7 +1880,10 @@ class BusModel:
                     powertrain_type="cng",
                     euro_classes=l_y,
                     lifetime_km=self.array.loc[
-                        dict(powertrain="ICEV-g", parameter="lifetime kilometers",)
+                        dict(
+                            powertrain="ICEV-g",
+                            parameter="lifetime kilometers",
+                        )
                     ],
                     energy_consumption=self.energy.sel(
                         powertrain=["ICEV-g"],
@@ -1910,13 +1939,25 @@ class BusModel:
         ]
 
         l_pwt_combustion = [
-            p for p in self.array.powertrain.values if p in ["ICEV-g", "ICEV-d",]
+            p
+            for p in self.array.powertrain.values
+            if p
+            in [
+                "ICEV-g",
+                "ICEV-d",
+            ]
         ]
 
         l_pwt_electric = [
             p
             for p in self.array.powertrain.values
-            if p in ["BEV-opp", "BEV-depot", "BEV-motion", "FCEV",]
+            if p
+            in [
+                "BEV-opp",
+                "BEV-depot",
+                "BEV-motion",
+                "FCEV",
+            ]
         ]
 
         l_size_medium = [
@@ -2119,7 +2160,10 @@ class BusModel:
 
         share_biofuel = (
             self.bs.biofuel.sel(
-                region=region, value=0, fuel_type="Biomass fuel", scenario=scenario,
+                region=region,
+                value=0,
+                fuel_type="Biomass fuel",
+                scenario=scenario,
             )
             .interp(
                 year=self.array.coords["year"].values,
