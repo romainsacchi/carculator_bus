@@ -97,12 +97,13 @@ jobs:
       - uses: conda-incubator/setup-miniconda@v2
         with:
           python-version: ${{ matrix.python-version }}
-          channels: conda-forge,cmutel,konstantinstadler,haasad,pascallesage,romainsacchi,mcgibbon
+          channels: conda-forge,cmutel,konstantinstadler,haasad,pascallesage,romainsacchi
           allow-softlinks: true
           channel-priority: strict
           auto-update-conda: true
           conda-build-version: 3.21.4
           activate-environment: test
+
       - name: Conda info
         shell: bash -l {0}
         run: conda info
