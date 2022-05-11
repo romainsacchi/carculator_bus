@@ -37,7 +37,7 @@ setup(
     },
     install_requires=[
         "pandas",
-        "xarray <0.18",
+        "xarray",
         "numpy",
         "klausen",
         "xlrd",
@@ -47,7 +47,6 @@ setup(
         "wurst",
         "pycountry",
         "atmos",
-        "pypardiso",
     ],
     url="https://github.com/romainsacchi/carculator_bus",
     description="Prospective environmental and economic life cycle assessment of urban and coach buses",
