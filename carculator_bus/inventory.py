@@ -3017,10 +3017,10 @@ class InventoryCalculation:
                         * losses_to_low
                         * 1000
                     ),
-                    (len(self.scope["year"]), 15),
+                    (len(self.scope["year"]), 21),
                 )
         else:
-            co2_intensity_tech = np.zeros((len(self.scope["year"]), 15))
+            co2_intensity_tech = np.zeros((len(self.scope["year"]), 21))
 
         sum_renew = [
             np.sum([self.mix[x][i] for i in [0, 3, 4, 5, 8]])
@@ -3042,7 +3042,7 @@ class InventoryCalculation:
 
         # Fill the electricity markets for battery charging and hydrogen production
         for y, year in enumerate(self.scope["year"]):
-            m = np.array(self.mix[y]).reshape(-1, 15, 1)
+            m = np.array(self.mix[y]).reshape(-1, 21, 1)
             col_num = [
                 val
                 for key, val in self.inputs.items()
@@ -3213,7 +3213,7 @@ class InventoryCalculation:
 
         # Fill the electricity markets for battery production
         for y, year in enumerate(self.scope["year"]):
-            m = np.array(mix_battery_manufacturing[y]).reshape(-1, 15, 1)
+            m = np.array(mix_battery_manufacturing[y]).reshape(-1, 21, 1)
 
             col_num = [
                 val
