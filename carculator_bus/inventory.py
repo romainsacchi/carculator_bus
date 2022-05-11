@@ -3765,7 +3765,7 @@ class InventoryCalculation:
         """
 
         # assembly operations
-        self.A[
+        self.a_matrix[
             :,
             self.inputs[
                 (
@@ -5183,7 +5183,7 @@ class InventoryCalculation:
         """
 
         # assembly operations
-        self.A[
+        self.a_matrix[
             :,
             self.inputs[
                 (
