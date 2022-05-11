@@ -29,7 +29,6 @@ requirements:
     - pycountry
     - atmos
     - wurst
-    - pypardiso
 test:
   imports:
     - carculator_bus
