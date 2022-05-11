@@ -1,7 +1,6 @@
-import pickle
-
 import numpy as np
 import xarray
+import pandas as pd
 
 from . import DATA_DIR
 
