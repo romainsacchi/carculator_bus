@@ -5182,7 +5182,6 @@ class InventoryCalculation:
         :param array: :attr:`array` from :class:`BusModel` class
         """
 
-
         # assembly operations
         self.a_matrix[
             :,
