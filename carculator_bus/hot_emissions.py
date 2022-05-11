@@ -1,6 +1,6 @@
 import numpy as np
-import xarray
 import pandas as pd
+import xarray
 
 from . import DATA_DIR
 
