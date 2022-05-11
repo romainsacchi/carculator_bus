@@ -16,12 +16,16 @@ def _(o):
 
 def get_emission_factors():
     """Emissions factors extracted for trucks from HBEFA 4.1
-    deatiled by size, powertrain and EURO class for each substance.
+    detailed by size, powertrain and EURO class for each substance.
     """
-    fp = DATA_DIR / "hot_buses.pickle"
+    filepath = DATA_DIR / "hot_buses.csv"
 
-    with open(fp, "rb") as f:
-        hot = pickle.load(f)
+    hot = (
+        pd.read_csv(filepath)
+        .groupby(["variable", "powertrain", "euro_class", "component"])["value"]
+        .mean()
+        .to_xarray()
+    )
 
     return hot
 
