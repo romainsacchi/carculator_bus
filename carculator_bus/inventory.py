@@ -2928,6 +2928,12 @@ class InventoryCalculation:
                         "Coal CCS",
                         "Gas CCS",
                         "Wood CCS",
+                        "Hydro, reservoir",
+                        "Gas CCGT",
+                        "Gas CHP",
+                        "Solar, thermal",
+                        "Wind, offshore",
+                        "Lignite",
                     ],
                 )
                 .interp(
@@ -2955,6 +2961,12 @@ class InventoryCalculation:
                         "Coal CCS",
                         "Gas CCS",
                         "Wood CCS",
+                        "Hydro, reservoir",
+                        "Gas CCGT",
+                        "Gas CHP",
+                        "Solar, thermal",
+                        "Wind, offshore",
+                        "Lignite",
                     ],
                 )
                 .interp(
@@ -3182,6 +3194,12 @@ class InventoryCalculation:
                         "Coal CCS",
                         "Gas CCS",
                         "Wood CCS",
+                        "Hydro, reservoir",
+                        "Gas CCGT",
+                        "Gas CHP",
+                        "Solar, thermal",
+                        "Wind, offshore",
+                        "Lignite",
                     ],
                 )
                 .interp(year=self.scope["year"], kwargs={"fill_value": "extrapolate"})
