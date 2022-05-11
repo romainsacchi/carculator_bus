@@ -421,7 +421,6 @@ class InventoryCalculation:
 
         self.index_emissions = [self.inputs[i] for i in self.map_fuel_emissions.keys()]
 
-
         self.map_noise_emissions = {
             (
                 f"noise, octave {i}, day time, {comp}",
@@ -435,7 +434,6 @@ class InventoryCalculation:
         with open(DATA_DIR / "elec_tech_map.yaml", "r", encoding="utf-8") as stream:
             self.elec_map = yaml.safe_load(stream)
             self.elec_map = {k: tuple(v) for k, v in self.elec_map.items()}
-
 
         self.index_noise = [self.inputs[i] for i in self.map_noise_emissions]
 
