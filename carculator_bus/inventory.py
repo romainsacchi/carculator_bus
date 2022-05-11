@@ -7,6 +7,7 @@ from pathlib import Path
 import numpy as np
 import xarray as xr
 from scipy import sparse
+from scipy.sparse.linalg import spsolve
 
 from . import DATA_DIR
 from .background_systems import BackgroundSystemModel
@@ -777,7 +778,7 @@ class InventoryCalculation:
             demand_vector[:] = 0
             demand_vector[demand] = 1
             inverse = np.float32(
-                sparse.linalg(sparse.csr_matrix(self.a_matrix[0]), demand_vector.T)
+                spsolve(sparse.csr_matrix(self.a_matrix[0]), demand_vector.T)
             )
 
             if self.scenario == "static":
@@ -2712,7 +2713,7 @@ class InventoryCalculation:
         demand_vector[index_output] = 1
 
         matrix = np.float32(
-            sparse.linalg(sparse.csr_matrix(self.a_matrix[0]), demand_vector.T)
+            spsolve(sparse.csr_matrix(self.a_matrix[0]), demand_vector.T)
         )
 
         ind_inputs = np.nonzero(matrix)[0]
