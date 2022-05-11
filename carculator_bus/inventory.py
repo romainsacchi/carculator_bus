@@ -6,7 +6,6 @@ from pathlib import Path
 
 import numpy as np
 import xarray as xr
-from pypardiso import spsolve
 from scipy import sparse
 
 from . import DATA_DIR
@@ -778,7 +777,7 @@ class InventoryCalculation:
             demand_vector[:] = 0
             demand_vector[demand] = 1
             inverse = np.float32(
-                spsolve(sparse.csr_matrix(self.a_matrix[0]), demand_vector.T)
+                sparse.linalg(sparse.csr_matrix(self.a_matrix[0]), demand_vector.T)
             )
 
             if self.scenario == "static":
@@ -2713,7 +2712,7 @@ class InventoryCalculation:
         demand_vector[index_output] = 1
 
         matrix = np.float32(
-            spsolve(sparse.csr_matrix(self.a_matrix[0]), demand_vector.T)
+            sparse.linalg(sparse.csr_matrix(self.a_matrix[0]), demand_vector.T)
         )
 
         ind_inputs = np.nonzero(matrix)[0]
