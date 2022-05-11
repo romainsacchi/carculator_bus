@@ -413,16 +413,13 @@ class BusModel:
                 )
 
                 if arr.sum() > 0:
-                    new_shares = (
-                        self.array.loc[
-                            dict(
-                                powertrain=l_pwt,
-                                parameter="combustion power share",
-                                year=actual_years,
-                            )
-                        ]
-                        - (arr * 0.04)
-                    )
+                    new_shares = self.array.loc[
+                        dict(
+                            powertrain=l_pwt,
+                            parameter="combustion power share",
+                            year=actual_years,
+                        )
+                    ] - (arr * 0.04)
 
                     self.array.loc[
                         dict(
