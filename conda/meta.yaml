@@ -29,6 +29,8 @@ requirements:
     - pycountry
     - atmos
     - wurst
+    - pyyaml
+
 test:
   imports:
     - carculator_bus
