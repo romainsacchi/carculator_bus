@@ -1,7 +1,8 @@
+import warnings
+
 import numexpr as ne
 import numpy as np
 import xarray as xr
-import warnings
 from prettytable import PrettyTable
 
 from .background_systems import BackgroundSystemModel
@@ -11,7 +12,8 @@ from .hot_emissions import HotEmissionsModel
 from .noise_emissions import NoiseEmissionsModel
 from .particulates_emissions import ParticulatesEmissionsModel
 
-warnings.simplefilter(action='ignore', category=FutureWarning)
+warnings.simplefilter(action="ignore", category=FutureWarning)
+
 
 def finite(array, mask_value=0):
     return np.where(np.isfinite(array), array, mask_value)
@@ -1022,7 +1024,9 @@ class BusModel:
                 np.where(
                     self.energy.loc[dict(parameter="power load", powertrain=pwt)] == 0,
                     np.nan,
-                    self.energy.loc[dict(parameter="engine efficiency", powertrain=pwt)],
+                    self.energy.loc[
+                        dict(parameter="engine efficiency", powertrain=pwt)
+                    ],
                 ),
                 axis=-1,
             )
