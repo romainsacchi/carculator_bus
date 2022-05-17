@@ -1435,7 +1435,7 @@ class InventoryCalculation:
                     f"{REMIND_FILES_DIR}/*recipe_midpoint*{self.scenario}*.csv"
                 )
                 list_file_names = sorted(list_file_names)
-                matrix_b = np.zeros((len(list_file_names), 21, len(self.inputs)))
+                matrix_b = np.zeros((len(list_file_names), 23, len(self.inputs)))
             elif self.method_type == "endpoint":
                 list_file_names = glob.glob(
                     f"{REMIND_FILES_DIR}/*recipe_endpoint*{self.scenario}*.csv"
@@ -2925,10 +2925,10 @@ class InventoryCalculation:
             },
             "diesel": {
                 "name": (
-                    "market group for diesel, low-sulfur",
-                    "RER",
+                    "market for diesel",
+                    "Europe without Switzerland",
                     "kilogram",
-                    "diesel, low-sulfur",
+                    "diesel",
                 )
             },
             "biodiesel - algae": {
@@ -3241,7 +3241,7 @@ class InventoryCalculation:
         self.a_matrix[
             :,
             self.inputs[
-                ("Glider lightweighting", "GLO", "kilogram", "Glider lightweighting")
+                ("Glider lightweighting", "GLO", "kilogram", "glider lightweighting")
             ],
             -self.number_of_cars :,
         ] = (
@@ -3468,7 +3468,7 @@ class InventoryCalculation:
                 self.inputs[
                     (
                         "market group for electricity, medium voltage",
-                        "World",
+                        "GLO",
                         "kilowatt hour",
                         "electricity, medium voltage",
                     )
@@ -4213,7 +4213,7 @@ class InventoryCalculation:
         self.a_matrix[:, self.index_emissions, -self.number_of_cars :] = (
             array[
                 [
-                    self.array_inputs[self.map_non_fuel_emissions[self.rev_inputs[x]]]
+                    self.array_inputs[self.map_fuel_emissions[self.rev_inputs[x]]]
                     for x in self.index_emissions
                 ]
             ]
@@ -4628,7 +4628,7 @@ class InventoryCalculation:
         self.a_matrix[
             :,
             self.inputs[
-                ("Glider lightweighting", "GLO", "kilogram", "Glider lightweighting")
+                ("Glider lightweighting", "GLO", "kilogram", "glider lightweighting")
             ],
             self.find_inputs_indices(
                 must_contain=["Passenger bus, "], excludes=["market"]
@@ -4813,7 +4813,7 @@ class InventoryCalculation:
                 self.inputs[
                     (
                         "market group for electricity, medium voltage",
-                        "World",
+                        "GLO",
                         "kilowatt hour",
                         "electricity, medium voltage",
                     )
@@ -5034,6 +5034,20 @@ class InventoryCalculation:
         ] = 1 * (array[self.array_inputs["gross mass"]] / 19000)
 
         # END of vehicle building
+
+        print((
+            -1
+            / array[self.array_inputs["lifetime kilometers"]]
+            / (array[self.array_inputs["average passengers"]])
+        ).shape)
+
+        print(len(self.find_inputs_indices(
+                must_contain=["Passenger bus, "],
+            )))
+
+        print(len(self.find_inputs_indices(
+                must_contain=["transport, passenger bus, "], excludes=["market"]
+            )))
 
         self.a_matrix[
             :,
@@ -5588,7 +5602,7 @@ class InventoryCalculation:
                 np.ix_(
                     [
                         self.array_inputs[
-                            self.map_non_fuel_emissions[self.rev_inputs[x]]
+                            self.map_fuel_emissions[self.rev_inputs[x]]
                         ]
                         for x in self.index_emissions
                     ],

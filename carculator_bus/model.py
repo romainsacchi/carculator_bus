@@ -1,6 +1,7 @@
 import numexpr as ne
 import numpy as np
 import xarray as xr
+import warnings
 from prettytable import PrettyTable
 
 from .background_systems import BackgroundSystemModel
@@ -10,6 +11,7 @@ from .hot_emissions import HotEmissionsModel
 from .noise_emissions import NoiseEmissionsModel
 from .particulates_emissions import ParticulatesEmissionsModel
 
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 def finite(array, mask_value=0):
     return np.where(np.isfinite(array), array, mask_value)
@@ -953,17 +955,20 @@ class BusModel:
             self.energy.sel(parameter="auxiliary energy").sum(dim="second").T / distance
         ).T
 
-        self["TtW efficiency"] = np.nanmean(
-            np.where(
-                self.energy.loc[dict(parameter="power load")] == 0,
-                np.nan,
-                (
-                    self.energy.loc[dict(parameter="transmission efficiency")]
-                    * self.energy.loc[dict(parameter="engine efficiency")]
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=RuntimeWarning)
+
+            self["TtW efficiency"] = np.nanmean(
+                np.where(
+                    self.energy.loc[dict(parameter="power load")] == 0,
+                    np.nan,
+                    (
+                        self.energy.loc[dict(parameter="transmission efficiency")]
+                        * self.energy.loc[dict(parameter="engine efficiency")]
+                    ),
                 ),
-            ),
-            axis=-1,
-        )
+                axis=-1,
+            )
 
         # Correction for electric motors
         l_pwt = [
@@ -1008,25 +1013,28 @@ class BusModel:
             if p not in ["BEV-opp", "BEV-depot", "BEV-motion", "FCEV"]
         ]
 
-        self.array.loc[
-            dict(parameter="engine efficiency", powertrain=pwt)
-        ] = np.nanmean(
-            np.where(
-                self.energy.loc[dict(parameter="power load", powertrain=pwt)] == 0,
-                np.nan,
-                self.energy.loc[dict(parameter="engine efficiency", powertrain=pwt)],
-            ),
-            axis=-1,
-        )
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=RuntimeWarning)
 
-        self.array.loc[dict(parameter="transmission efficiency")] = np.nanmean(
-            np.where(
-                self.energy.loc[dict(parameter="power load")] == 0,
-                np.nan,
-                self.energy.loc[dict(parameter="transmission efficiency")],
-            ),
-            axis=-1,
-        )
+            self.array.loc[
+                dict(parameter="engine efficiency", powertrain=pwt)
+            ] = np.nanmean(
+                np.where(
+                    self.energy.loc[dict(parameter="power load", powertrain=pwt)] == 0,
+                    np.nan,
+                    self.energy.loc[dict(parameter="engine efficiency", powertrain=pwt)],
+                ),
+                axis=-1,
+            )
+
+            self.array.loc[dict(parameter="transmission efficiency")] = np.nanmean(
+                np.where(
+                    self.energy.loc[dict(parameter="power load")] == 0,
+                    np.nan,
+                    self.energy.loc[dict(parameter="transmission efficiency")],
+                ),
+                axis=-1,
+            )
 
     def set_share_recuperated_energy(self):
         """Calculate the share of recuperated energy, over the total negative motive energy"""

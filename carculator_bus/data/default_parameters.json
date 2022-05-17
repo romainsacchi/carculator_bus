@@ -17118,7 +17118,7 @@
         "maximum": 9432.5
     },
     "636-2000-glider base mass": {
-        "amount": 11000,
+        "amount": 9801,
         "category": "Glider",
         "powertrain": [
             "ICEV-d",
@@ -17141,12 +17141,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 11000,
-        "minimum": 8250,
-        "maximum": 13750
+        "loc": 9801,
+        "minimum": 7350.75,
+        "maximum": 12251.25
     },
     "637-2010-glider base mass": {
-        "amount": 11000,
+        "amount": 9801,
         "category": "Glider",
         "powertrain": [
             "ICEV-d",
@@ -17169,12 +17169,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 11000,
-        "minimum": 8250,
-        "maximum": 13750
+        "loc": 9801,
+        "minimum": 7350.75,
+        "maximum": 12251.25
     },
     "638-2020-glider base mass": {
-        "amount": 11000,
+        "amount": 9801,
         "category": "Glider",
         "powertrain": [
             "ICEV-d",
@@ -17197,12 +17197,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 11000,
-        "minimum": 8250,
-        "maximum": 13750
+        "loc": 9801,
+        "minimum": 7350.75,
+        "maximum": 12251.25
     },
     "639-2030-glider base mass": {
-        "amount": 7016,
+        "amount": 9801,
         "category": "Glider",
         "powertrain": [
             "ICEV-d",
@@ -17225,12 +17225,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 7016,
-        "minimum": 5262,
-        "maximum": 8770
+        "loc": 9801,
+        "minimum": 7350.75,
+        "maximum": 12251.25
     },
     "640-2040-glider base mass": {
-        "amount": 7016,
+        "amount": 9801,
         "category": "Glider",
         "powertrain": [
             "ICEV-d",
@@ -17253,12 +17253,12 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 7016,
-        "minimum": 5262,
-        "maximum": 8770
+        "loc": 9801,
+        "minimum": 7350.75,
+        "maximum": 12251.25
     },
     "641-2050-glider base mass": {
-        "amount": 7016,
+        "amount": 9801,
         "category": "Glider",
         "powertrain": [
             "ICEV-d",
@@ -17281,9 +17281,9 @@
         "status": "Acceptable",
         "kind": "distribution",
         "uncertainty_type": 5,
-        "loc": 7016,
-        "minimum": 5262,
-        "maximum": 8770
+        "loc": 9801,
+        "minimum": 7350.75,
+        "maximum": 12251.25
     },
     "642-2000-glider base mass": {
         "amount": 9801,
