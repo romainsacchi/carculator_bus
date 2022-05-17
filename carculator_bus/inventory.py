@@ -5035,19 +5035,29 @@ class InventoryCalculation:
 
         # END of vehicle building
 
-        print((
-            -1
-            / array[self.array_inputs["lifetime kilometers"]]
-            / (array[self.array_inputs["average passengers"]])
-        ).shape)
+        print(
+            (
+                -1
+                / array[self.array_inputs["lifetime kilometers"]]
+                / (array[self.array_inputs["average passengers"]])
+            ).shape
+        )
 
-        print(len(self.find_inputs_indices(
-                must_contain=["Passenger bus, "],
-            )))
+        print(
+            len(
+                self.find_inputs_indices(
+                    must_contain=["Passenger bus, "],
+                )
+            )
+        )
 
-        print(len(self.find_inputs_indices(
-                must_contain=["transport, passenger bus, "], excludes=["market"]
-            )))
+        print(
+            len(
+                self.find_inputs_indices(
+                    must_contain=["transport, passenger bus, "], excludes=["market"]
+                )
+            )
+        )
 
         self.a_matrix[
             :,
@@ -5601,9 +5611,7 @@ class InventoryCalculation:
             array[
                 np.ix_(
                     [
-                        self.array_inputs[
-                            self.map_fuel_emissions[self.rev_inputs[x]]
-                        ]
+                        self.array_inputs[self.map_fuel_emissions[self.rev_inputs[x]]]
                         for x in self.index_emissions
                     ],
                     np.arange(self.iterations),
