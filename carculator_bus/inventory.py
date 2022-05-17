@@ -6,9 +6,9 @@ from pathlib import Path
 
 import numpy as np
 import xarray as xr
+import yaml
 from scipy import sparse
 from scipy.sparse.linalg import spsolve
-import yaml
 
 from . import DATA_DIR
 from .background_systems import BackgroundSystemModel
