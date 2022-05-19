@@ -4394,7 +4394,7 @@ class InventoryCalculation:
                 np.arange(self.iterations),
                 self.find_inputs_indices(
                     must_contain=[
-                        "Overhead lines",
+                        "Catenary system",
                     ],
                 ),
                 self.find_inputs_indices(
@@ -4409,10 +4409,10 @@ class InventoryCalculation:
         ] = (
             -1
             / (
-                array[self.array_inputs["lifetime kilometers"], :, index]
+                array[self.array_inputs["kilometers per year"], :, index]
                 * array[self.array_inputs["average passengers"], :, index]
-                * 60
-                * 40
+                * 60 # 60 buses
+                * 40 # 40 years
             )
         ).T.reshape(
             self.iterations, 1, -1
@@ -5774,7 +5774,7 @@ class InventoryCalculation:
             np.ix_(
                 np.arange(self.iterations),
                 self.find_inputs_indices(
-                    must_contain=["Overhead lines"],
+                    must_contain=["Catenary system"],
                 ),
                 self.find_inputs_indices(
                     must_contain=["transport, passenger bus, "],
@@ -5784,10 +5784,10 @@ class InventoryCalculation:
         ] = (
             -1
             / (
-                array[self.array_inputs["lifetime kilometers"], :, index]
+                array[self.array_inputs["kilometers per year"], :, index]
                 * array[self.array_inputs["average passengers"], :, index]
-                * 60
-                * 40
+                * 60 # 60 buses
+                * 40 # 40 years
             )
         ).T.reshape(
             self.iterations, 1, -1
