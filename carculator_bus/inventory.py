@@ -4411,8 +4411,8 @@ class InventoryCalculation:
             / (
                 array[self.array_inputs["kilometers per year"], :, index]
                 * array[self.array_inputs["average passengers"], :, index]
-                * 60 # 60 buses
-                * 40 # 40 years
+                * 60  # 60 buses
+                * 40  # 40 years
             )
         ).T.reshape(
             self.iterations, 1, -1
@@ -5786,8 +5786,8 @@ class InventoryCalculation:
             / (
                 array[self.array_inputs["kilometers per year"], :, index]
                 * array[self.array_inputs["average passengers"], :, index]
-                * 60 # 60 buses
-                * 40 # 40 years
+                * 60  # 60 buses
+                * 40  # 40 years
             )
         ).T.reshape(
             self.iterations, 1, -1
