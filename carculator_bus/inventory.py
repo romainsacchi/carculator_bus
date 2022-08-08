@@ -432,9 +432,98 @@ class InventoryCalculation:
             for comp in ["urban", "suburban", "rural"]
         }
 
-        with open(DATA_DIR / "elec_tech_map.yaml", "r", encoding="utf-8") as stream:
-            self.elec_map = yaml.safe_load(stream)
-            self.elec_map = {k: tuple(v) for k, v in self.elec_map.items()}
+        self.elec_map = {
+            "Hydro": (
+                "electricity production, hydro, run-of-river",
+                "DE",
+                "kilowatt hour",
+                "electricity, high voltage",
+            ),
+            "Nuclear": (
+                "electricity production, nuclear, pressure water reactor",
+                "DE",
+                "kilowatt hour",
+                "electricity, high voltage",
+            ),
+            "Gas": (
+                "electricity production, natural gas, conventional power plant",
+                "DE",
+                "kilowatt hour",
+                "electricity, high voltage",
+            ),
+            "Solar": (
+                "electricity production, photovoltaic, 3kWp slanted-roof installation, multi-Si, panel, mounted",
+                "DE",
+                "kilowatt hour",
+                "electricity, low voltage",
+            ),
+            "Wind": (
+                "electricity production, wind, 1-3MW turbine, onshore",
+                "DE",
+                "kilowatt hour",
+                "electricity, high voltage",
+            ),
+            "Biomass": (
+                "heat and power co-generation, wood chips, 6667 kW, state-of-the-art 2014",
+                "DE",
+                "kilowatt hour",
+                "electricity, high voltage",
+            ),
+            "Coal": (
+                "electricity production, hard coal",
+                "DE",
+                "kilowatt hour",
+                "electricity, high voltage",
+            ),
+            "Oil": (
+                "electricity production, oil",
+                "DE",
+                "kilowatt hour",
+                "electricity, high voltage",
+            ),
+            "Geo": (
+                "electricity production, deep geothermal",
+                "DE",
+                "kilowatt hour",
+                "electricity, high voltage",
+            ),
+            "Waste": (
+                "treatment of municipal solid waste, incineration",
+                "DE",
+                "kilowatt hour",
+                "electricity, for reuse in municipal waste incineration only",
+            ),
+            "Biogas CCS": (
+                "electricity production, at power plant/biogas, post, pipeline 200km, storage 1000m",
+                "RER",
+                "kilowatt hour",
+                "electricity, high voltage",
+            ),
+            "Biomass CCS": (
+                "electricity production, at BIGCC power plant 450MW, pre, pipeline 200km, storage 1000m",
+                "RER",
+                "kilowatt hour",
+                "electricity, high voltage",
+            ),
+            "Coal CCS": (
+                "electricity production, at power plant/hard coal, post, pipeline 200km, storage 1000m",
+                "RER",
+                "kilowatt hour",
+                "electricity, high voltage",
+            ),
+            "Gas CCS": (
+                "electricity production, at power plant/natural gas, post, pipeline 200km, storage 1000m",
+                "RER",
+                "kilowatt hour",
+                "electricity, high voltage",
+            ),
+            "Wood CCS": (
+                "electricity production, at wood burning power plant 20 MW, truck 25km, post, pipeline 200km, storage 1000m",
+                "RER",
+                "kilowatt hour",
+                "electricity, high voltage",
+            ),
+        }
 
         self.index_noise = [self.inputs[i] for i in self.map_noise_emissions]
 
@@ -1435,7 +1524,7 @@ class InventoryCalculation:
                     f"{REMIND_FILES_DIR}/*recipe_midpoint*{self.scenario}*.csv"
                 )
                 list_file_names = sorted(list_file_names)
-                matrix_b = np.zeros((len(list_file_names), 23, len(self.inputs)))
+                matrix_b = np.zeros((len(list_file_names), 21, len(self.inputs)))
             elif self.method_type == "endpoint":
                 list_file_names = glob.glob(
                     f"{REMIND_FILES_DIR}/*recipe_endpoint*{self.scenario}*.csv"
@@ -2156,12 +2245,6 @@ class InventoryCalculation:
                         "Coal CCS",
                         "Gas CCS",
                         "Wood CCS",
-                        "Hydro, reservoir",
-                        "Gas CCGT",
-                        "Gas CHP",
-                        "Solar, thermal",
-                        "Wind, offshore",
-                        "Lignite",
                     ],
                 )
                 .interp(
@@ -2189,12 +2272,6 @@ class InventoryCalculation:
                         "Coal CCS",
                         "Gas CCS",
                         "Wood CCS",
-                        "Hydro, reservoir",
-                        "Gas CCGT",
-                        "Gas CHP",
-                        "Solar, thermal",
-                        "Wind, offshore",
-                        "Lignite",
                     ],
                 )
                 .interp(
@@ -2245,10 +2322,10 @@ class InventoryCalculation:
                         * losses_to_low
                         * 1000
                     ),
-                    (len(self.scope["year"]), 21),
+                    (len(self.scope["year"]), 15),
                 )
         else:
-            co2_intensity_tech = np.zeros((len(self.scope["year"]), 21))
+            co2_intensity_tech = np.zeros((len(self.scope["year"]), 15))
 
         sum_renew = [
             np.sum([self.mix[x][i] for i in [0, 3, 4, 5, 8]])
@@ -2270,7 +2347,7 @@ class InventoryCalculation:
 
         # Fill the electricity markets for battery charging and hydrogen production
         for y, year in enumerate(self.scope["year"]):
-            m = np.array(self.mix[y]).reshape(-1, 21, 1)
+            m = np.array(self.mix[y]).reshape(-1, 15, 1)
             col_num = [
                 val
                 for key, val in self.inputs.items()
@@ -2422,12 +2499,6 @@ class InventoryCalculation:
                         "Coal CCS",
                         "Gas CCS",
                         "Wood CCS",
-                        "Hydro, reservoir",
-                        "Gas CCGT",
-                        "Gas CHP",
-                        "Solar, thermal",
-                        "Wind, offshore",
-                        "Lignite",
                     ],
                 )
                 .interp(year=self.scope["year"], kwargs={"fill_value": "extrapolate"})
@@ -2441,7 +2512,7 @@ class InventoryCalculation:
 
         # Fill the electricity markets for battery production
         for y, year in enumerate(self.scope["year"]):
-            m = np.array(mix_battery_manufacturing[y]).reshape(-1, 21, 1)
+            m = np.array(mix_battery_manufacturing[y]).reshape(-1, 15, 1)
 
             col_num = [
                 val
@@ -2925,10 +2996,10 @@ class InventoryCalculation:
             },
             "diesel": {
                 "name": (
-                    "market for diesel",
-                    "Europe without Switzerland",
+                    "market group for diesel, low-sulfur",
+                    "RER",
                     "kilogram",
-                    "diesel",
+                    "diesel, low-sulfur",
                 )
             },
             "biodiesel - algae": {
@@ -3009,25 +3080,6 @@ class InventoryCalculation:
 
         :param array: :attr:`array` from :class:`BusModel` class
         """
-
-        # assembly operations
-        self.a_matrix[
-            :,
-            self.inputs[
-                (
-                    "assembly operation, for lorry",
-                    "RER",
-                    "kilogram",
-                    "assembly operation, for lorry",
-                )
-            ],
-            -self.number_of_cars :,
-        ] = (
-            (array[self.array_inputs["curb mass"], :])
-            / array[self.array_inputs["lifetime kilometers"], :]
-            / array[self.array_inputs["average passengers"]]
-            * -1
-        )
 
         # Glider/Frame
         self.a_matrix[
@@ -3241,7 +3293,7 @@ class InventoryCalculation:
         self.a_matrix[
             :,
             self.inputs[
-                ("Glider lightweighting", "GLO", "kilogram", "glider lightweighting")
+                ("Glider lightweighting", "GLO", "kilogram", "Glider lightweighting")
             ],
             -self.number_of_cars :,
         ] = (
@@ -3401,9 +3453,8 @@ class InventoryCalculation:
             self.inputs[("Stack", "GLO", "kilowatt", "Stack")],
             -self.number_of_cars :,
         ] = (
-            array[self.array_inputs["fuel cell stack mass"], :]
+            array[self.array_inputs["fuel cell power"], :]
             * (1 + array[self.array_inputs["fuel cell lifetime replacements"]])
-            / 1.02
             / array[self.array_inputs["lifetime kilometers"], :]
             / array[self.array_inputs["average passengers"], :]
             * -1
@@ -3468,7 +3519,7 @@ class InventoryCalculation:
                 self.inputs[
                     (
                         "market group for electricity, medium voltage",
-                        "GLO",
+                        "World",
                         "kilowatt hour",
                         "electricity, medium voltage",
                     )
@@ -3647,10 +3698,10 @@ class InventoryCalculation:
             :,
             self.inputs[
                 (
-                    "Fuel tank, compressed natural gas, 200 bar",
+                    "Fuel tank, compressed hydrogen gas, 700bar, with aluminium liner",
                     "RER",
                     "kilogram",
-                    "Fuel tank, compressed natural gas, 200 bar",
+                    "Hydrogen tank",
                 )
             ],
             self.index_cng,
@@ -3667,7 +3718,7 @@ class InventoryCalculation:
                 "hydrogen"
             ]["type"]
         else:
-            hydro_tank_technology = "aluminium"
+            hydro_tank_technology = "carbon fiber"
 
         dict_tank_map = {
             "carbon fiber": (
@@ -4213,7 +4264,7 @@ class InventoryCalculation:
         self.a_matrix[:, self.index_emissions, -self.number_of_cars :] = (
             array[
                 [
-                    self.array_inputs[self.map_fuel_emissions[self.rev_inputs[x]]]
+                    self.array_inputs[self.map_non_fuel_emissions[self.rev_inputs[x]]]
                     for x in self.index_emissions
                 ]
             ]
@@ -4394,7 +4445,7 @@ class InventoryCalculation:
                 np.arange(self.iterations),
                 self.find_inputs_indices(
                     must_contain=[
-                        "Catenary system",
+                        "Overhead lines",
                     ],
                 ),
                 self.find_inputs_indices(
@@ -4409,10 +4460,10 @@ class InventoryCalculation:
         ] = (
             -1
             / (
-                array[self.array_inputs["kilometers per year"], :, index]
+                array[self.array_inputs["lifetime kilometers"], :, index]
                 * array[self.array_inputs["average passengers"], :, index]
-                * 60  # 60 buses
-                * 40  # 40 years
+                * 60
+                * 40
             )
         ).T.reshape(
             self.iterations, 1, -1
@@ -4427,24 +4478,6 @@ class InventoryCalculation:
 
         :param array: :attr:`array` from :class:`BusModel` class
         """
-
-        # assembly operations
-        self.a_matrix[
-            :,
-            self.inputs[
-                (
-                    "assembly operation, for lorry",
-                    "RER",
-                    "kilogram",
-                    "assembly operation, for lorry",
-                )
-            ],
-            self.find_inputs_indices(
-                must_contain=["Passenger bus, "], excludes=["market"]
-            ),
-        ] = (
-            array[self.array_inputs["curb mass"]] * -1
-        )
 
         # Glider/Frame
         self.a_matrix[
@@ -4628,7 +4661,7 @@ class InventoryCalculation:
         self.a_matrix[
             :,
             self.inputs[
-                ("Glider lightweighting", "GLO", "kilogram", "glider lightweighting")
+                ("Glider lightweighting", "GLO", "kilogram", "Glider lightweighting")
             ],
             self.find_inputs_indices(
                 must_contain=["Passenger bus, "], excludes=["market"]
@@ -4752,9 +4785,8 @@ class InventoryCalculation:
         )
 
         self.a_matrix[:, self.inputs[("Stack", "GLO", "kilowatt", "Stack")], ind_a] = (
-            array[self.array_inputs["fuel cell stack mass"], :]
+            array[self.array_inputs["fuel cell power"], :]
             * (1 + array[self.array_inputs["fuel cell lifetime replacements"]])
-            / 1.02
             * -1
         )
 
@@ -4813,7 +4845,7 @@ class InventoryCalculation:
                 self.inputs[
                     (
                         "market group for electricity, medium voltage",
-                        "GLO",
+                        "World",
                         "kilowatt hour",
                         "electricity, medium voltage",
                     )
@@ -4970,10 +5002,10 @@ class InventoryCalculation:
             :,
             self.inputs[
                 (
-                    "Fuel tank, compressed natural gas, 200 bar",
+                    "Fuel tank, compressed hydrogen gas, 700bar, with aluminium liner",
                     "RER",
                     "kilogram",
-                    "Fuel tank, compressed natural gas, 200 bar",
+                    "Hydrogen tank",
                 )
             ],
             ind_a,
@@ -4985,7 +5017,7 @@ class InventoryCalculation:
                 "hydrogen"
             ]["type"]
         else:
-            hydro_tank_technology = "aluminium"
+            hydro_tank_technology = "carbon fiber"
 
         dict_tank_map = {
             "carbon fiber": (
@@ -5034,30 +5066,6 @@ class InventoryCalculation:
         ] = 1 * (array[self.array_inputs["gross mass"]] / 19000)
 
         # END of vehicle building
-
-        print(
-            (
-                -1
-                / array[self.array_inputs["lifetime kilometers"]]
-                / (array[self.array_inputs["average passengers"]])
-            ).shape
-        )
-
-        print(
-            len(
-                self.find_inputs_indices(
-                    must_contain=["Passenger bus, "],
-                )
-            )
-        )
-
-        print(
-            len(
-                self.find_inputs_indices(
-                    must_contain=["transport, passenger bus, "], excludes=["market"]
-                )
-            )
-        )
 
         self.a_matrix[
             :,
@@ -5611,7 +5619,9 @@ class InventoryCalculation:
             array[
                 np.ix_(
                     [
-                        self.array_inputs[self.map_fuel_emissions[self.rev_inputs[x]]]
+                        self.array_inputs[
+                            self.map_non_fuel_emissions[self.rev_inputs[x]]
+                        ]
                         for x in self.index_emissions
                     ],
                     np.arange(self.iterations),
@@ -5774,7 +5784,7 @@ class InventoryCalculation:
             np.ix_(
                 np.arange(self.iterations),
                 self.find_inputs_indices(
-                    must_contain=["Catenary system"],
+                    must_contain=["Overhead lines"],
                 ),
                 self.find_inputs_indices(
                     must_contain=["transport, passenger bus, "],
@@ -5784,10 +5794,10 @@ class InventoryCalculation:
         ] = (
             -1
             / (
-                array[self.array_inputs["kilometers per year"], :, index]
+                array[self.array_inputs["lifetime kilometers"], :, index]
                 * array[self.array_inputs["average passengers"], :, index]
-                * 60  # 60 buses
-                * 40  # 40 years
+                * 60
+                * 40
             )
         ).T.reshape(
             self.iterations, 1, -1

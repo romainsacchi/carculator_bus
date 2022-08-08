@@ -6,6 +6,13 @@ recipe;ReCiPe 2008 Midpoint (H) V1.13;terrestrial acidification;midpoint;TAP100;
 recipe;ReCiPe 2008 Midpoint (H) V1.13;photochemical oxidant formation;midpoint;POFP;kg NMVOC-.;https://www.rivm.nl/documenten/6recipe111
 recipe;ReCiPe 2008 Midpoint (H) V1.13;metal depletion;midpoint;MDP;kg Fe-Eq.;https://www.rivm.nl/documenten/6recipe111
 recipe;ReCiPe 2008 Midpoint (H) V1.13;water depletion;midpoint;WDP;m3 water-.;https://www.rivm.nl/documenten/6recipe111
+recipe;ReCiPe 2008 Midpoint (H) V1.13;agricultural land occupation;midpoint;ALOP;square meter-year;https://www.rivm.nl/documenten/6recipe111
+recipe;ReCiPe 2008 Midpoint (H) V1.13;ozone depletion;midpoint;ODPinf;kg CFC-11.;https://www.rivm.nl/documenten/6recipe111
+recipe;ReCiPe 2008 Midpoint (H) V1.13;climate change;midpoint;GWP100;kg CO2-Eq.;https://www.rivm.nl/documenten/6recipe111
+recipe;ReCiPe 2008 Midpoint (H) V1.13;terrestrial acidification;midpoint;TAP100;kg SO2-Eq.;https://www.rivm.nl/documenten/6recipe111
+recipe;ReCiPe 2008 Midpoint (H) V1.13;photochemical oxidant formation;midpoint;POFP;kg NMVOC-.;https://www.rivm.nl/documenten/6recipe111
+recipe;ReCiPe 2008 Midpoint (H) V1.13;metal depletion;midpoint;MDP;kg Fe-Eq.;https://www.rivm.nl/documenten/6recipe111
+recipe;ReCiPe 2008 Midpoint (H) V1.13;water depletion;midpoint;WDP;m3 water-.;https://www.rivm.nl/documenten/6recipe111
 recipe;ReCiPe 2008 Midpoint (H) V1.13;freshwater ecotoxicity;midpoint;FETPinf;kg 1,4-DC.;https://www.rivm.nl/documenten/6recipe111
 recipe;ReCiPe 2008 Midpoint (H) V1.13;human toxicity;midpoint;HTPinf;kg 1,4-DC.;https://www.rivm.nl/documenten/6recipe111
 recipe;ReCiPe 2008 Midpoint (H) V1.13;urban land occupation;midpoint;ULOP;square meter-year;https://www.rivm.nl/documenten/6recipe111
