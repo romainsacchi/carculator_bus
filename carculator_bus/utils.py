@@ -45,7 +45,6 @@ def extract_biofuel_shares_from_IAM(
 
     if model == "remind":
         if allocate_all_synfuel:
-
             # get shares of synthetic fuel
             df_total = df.loc[df["Variable"] == "FE-Transport-Pass-Road-LDV-Liquids"]
             df_total.index = df.loc[df["Variable"] == "SE-Liquids-Hydrogen"].index
@@ -72,7 +71,6 @@ def extract_biofuel_shares_from_IAM(
             df_liquids = df_liquids.append(a_series, ignore_index=True)
 
         else:
-
             var = [
                 "FE-Transport-Liquids-Oil",
                 "FE-Transport-Liquids-Biomass",
@@ -171,7 +169,6 @@ def extract_electricity_mix_from_IAM_file(model, fp, IAM_region, years):
     rev_tech = {v: k for k, v in electricity_markets.items()}
 
     if model == "remind":
-
         df = pd.read_csv(
             fp, delimiter=";", index_col=["Region", "Variable", "Unit"]
         ).drop(columns=["Model", "Scenario"])

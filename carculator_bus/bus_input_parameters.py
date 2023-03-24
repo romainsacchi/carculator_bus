@@ -4,7 +4,6 @@ from typing import Union
 
 from carculator_utils.vehicle_input_parameters import VehicleInputParameters
 
-
 DEFAULT = Path(__file__, "..").resolve() / "data" / "default_parameters.json"
 EXTRA = Path(__file__, "..").resolve() / "data" / "extra_parameters.json"
 
@@ -16,6 +15,7 @@ def load_parameters(obj):
     else:
         # Already in correct form, just return
         return obj
+
 
 class BusInputParameters(VehicleInputParameters):
     """ """

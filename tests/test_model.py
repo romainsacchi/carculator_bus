@@ -1,9 +1,10 @@
-import numpy as np
 from pathlib import Path
-import pandas as pd
 
+import numpy as np
+import pandas as pd
 from carculator_utils.array import fill_xarray_from_input_parameters
-from carculator_bus import BusModel, BusInputParameters
+
+from carculator_bus import BusInputParameters, BusModel
 
 bip = BusInputParameters()
 bip.static()
@@ -87,7 +88,6 @@ ref = pd.read_excel(DATA, index_col=0)
 
 
 def test_model_results():
-
     list_powertrains = [
         "ICEV-d",
         "BEV-depot",

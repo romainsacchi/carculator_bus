@@ -3,8 +3,9 @@ inventory.py contains Inventory which provides all methods to solve inventories.
 """
 
 import numpy as np
-from . import DATA_DIR
 from carculator_utils.inventory import Inventory
+
+from . import DATA_DIR
 
 np.warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning)
 
@@ -28,11 +29,11 @@ class InventoryBus(Inventory):
 
         # Assembly
         self.A[
-        :,
-        self.find_input_indices(("assembly operation, for lorry",)),
-        self.find_input_indices(("Bus, ",)),
+            :,
+            self.find_input_indices(("assembly operation, for lorry",)),
+            self.find_input_indices(("Bus, ",)),
         ] = (
-                self.array[self.array_inputs["curb mass"]] * -1
+            self.array[self.array_inputs["curb mass"]] * -1
         )
 
         # Glider/Frame
@@ -121,7 +122,9 @@ class InventoryBus(Inventory):
             self.find_input_indices(
                 contains=("Bus, ",), excludes=("BEV", "FCEV", "PHEV")
             ),
-        ] = (self.array[self.array_inputs["other components mass"], :, index] * -1)
+        ] = (
+            self.array[self.array_inputs["other components mass"], :, index] * -1
+        )
 
         # Other components, for electric trucks
         index = self.get_index_vehicle_from_array(
@@ -131,10 +134,10 @@ class InventoryBus(Inventory):
         self.A[
             :,
             self.find_input_indices(("other components, for electric lorry",)),
-            self.find_input_indices(
-                contains=("Bus, ",), excludes=("ICEV", "HEV")
-            ),
-        ] = (self.array[self.array_inputs["other components mass"], :, index] * -1)
+            self.find_input_indices(contains=("Bus, ",), excludes=("ICEV", "HEV")),
+        ] = (
+            self.array[self.array_inputs["other components mass"], :, index] * -1
+        )
 
         self.A[
             :,
@@ -221,19 +224,21 @@ class InventoryBus(Inventory):
             self.find_input_indices(("lead acid battery, for lorry",)),
             self.find_input_indices(contains=("Bus, ", "ICEV")),
         ] = (
-            (
-                self.array[
-                    [self.array_inputs[x] for x in ["battery BoP mass", "battery cell mass"]], :, index
-                ].sum(dim="parameter")
-                * (
-                    1
-                    + self.array[
-                        self.array_inputs["battery lifetime replacements"], :, index
-                    ]
-                )
+            self.array[
+                [
+                    self.array_inputs[x]
+                    for x in ["battery BoP mass", "battery cell mass"]
+                ],
+                :,
+                index,
+            ].sum(dim="parameter")
+            * (
+                1
+                + self.array[
+                    self.array_inputs["battery lifetime replacements"], :, index
+                ]
             )
-            * -1
-        )
+        ) * -1
 
         # Fuel tank for diesel trucks
         index = self.get_index_vehicle_from_array(["ICEV-d", "HEV-d"])
@@ -242,10 +247,11 @@ class InventoryBus(Inventory):
             :,
             self.find_input_indices(("fuel tank, for diesel vehicle",)),
             self.find_input_indices(contains=("Bus, ", "EV-d"), excludes=("battery",)),
-        ] = (self.array[self.array_inputs["fuel tank mass"], :, index] * -1)
+        ] = (
+            self.array[self.array_inputs["fuel tank mass"], :, index] * -1
+        )
 
         self.add_cng_tank()
-
 
         # End-of-life disposal and treatment
         self.A[
@@ -274,7 +280,9 @@ class InventoryBus(Inventory):
                 np.ix_(
                     np.arange(self.iterations),
                     self.find_input_indices(
-                        contains=("diesel, burned in diesel-electric generating set, 18.5kW",),
+                        contains=(
+                            "diesel, burned in diesel-electric generating set, 18.5kW",
+                        ),
                         excludes=("market for"),
                     ),
                     self.find_input_indices(
@@ -290,15 +298,19 @@ class InventoryBus(Inventory):
         self.add_fuel_to_vehicles("cng", ["ICEV-g"], "EV-g")
 
         for year in self.scope["year"]:
-
-            cng_idx = self.get_index_vehicle_from_array(["ICEV-g"], [year], method="and")
+            cng_idx = self.get_index_vehicle_from_array(
+                ["ICEV-g"], [year], method="and"
+            )
 
             self.A[
                 :,
                 self.find_input_indices(("fuel supply for cng vehicles", str(year))),
-                self.find_input_indices((f"transport, {self.vm.vehicle_type}, ", "ICEV-g", str(year))),
+                self.find_input_indices(
+                    (f"transport, {self.vm.vehicle_type}, ", "ICEV-g", str(year))
+                ),
             ] *= (
-                1 + self.array[self.array_inputs["CNG pump-to-tank leakage"], :, cng_idx]
+                1
+                + self.array[self.array_inputs["CNG pump-to-tank leakage"], :, cng_idx]
             )
 
             # Gas leakage to air
@@ -346,9 +358,8 @@ class InventoryBus(Inventory):
                     contains=("Bus, ", "battery"), excludes=("motion", "opp")
                 ),
             )
-        ] = (
-            -1
-            / (self.array[self.array_inputs["kilometers per year"], :, index] * 2 * 24)
+        ] = -1 / (
+            self.array[self.array_inputs["kilometers per year"], :, index] * 2 * 24
         )
 
         # Opportunity charging BEV buses
@@ -368,9 +379,8 @@ class InventoryBus(Inventory):
                 ),
                 self.find_input_indices(contains=("Bus, ", "BEV-opp")),
             )
-        ] = (
-            -1
-            / (self.array[self.array_inputs["kilometers per year"], :, index] * 10 * 24)
+        ] = -1 / (
+            self.array[self.array_inputs["kilometers per year"], :, index] * 10 * 24
         )
 
         # In-motion charging BEV buses
@@ -388,9 +398,8 @@ class InventoryBus(Inventory):
                 self.find_input_indices(("Overhead lines",)),
                 self.find_input_indices(contains=("Bus, ", "BEV-motion")),
             )
-        ] = (
-            -1
-            / (self.array[self.array_inputs["lifetime kilometers"], :, index] * 60 * 40)
+        ] = -1 / (
+            self.array[self.array_inputs["lifetime kilometers"], :, index] * 60 * 40
         )
 
         print("*********************************************************************")
