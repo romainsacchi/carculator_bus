@@ -281,7 +281,7 @@ def extract_electricity_mix_from_IAM_file(model, fp, IAM_region, years):
 def create_fleet_composition_from_IAM_file(fp):
     """
     This function creates a consumable fleet composition array from a CSV file.
-    The array returned is consumed by `InventoryCalculation`.
+    The array returned is consumed by `InventoryBus`.
 
     :param fp: Path file path
     :type fp: Path

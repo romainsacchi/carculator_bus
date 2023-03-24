@@ -6,19 +6,19 @@ from carculator_bus import *
 tip = BusInputParameters()
 tip.static()
 _, array = fill_xarray_from_input_parameters(tip)
-tm = BusModel(array, country="CH")
-tm.set_all()
+bm = BusModel(array, country="CH")
+bm.set_all()
 
 
 def test_check_country():
-    # Ensure that country specified in BusModel equals country in InventoryCalculation
-    ic = InventoryCalculation(tm)
-    assert tm.country == ic.country
+    # Ensure that country specified in BusModel equals country in InventoryBus
+    ic = InventoryBus(bm)
+    assert bm.country == ic.country
 
 
 def test_electricity_mix():
     # Electricity mix must be equal to 1
-    ic = InventoryCalculation(tm)
+    ic = InventoryBus(bm)
     assert np.allclose(np.sum(ic.mix, axis=1), [1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
 
     # If we pass a custom electricity mix, check that it is used
@@ -32,17 +32,17 @@ def test_electricity_mix():
     ]
 
     bc = {"custom electricity mix": custom_mix}
-    ic = InventoryCalculation(tm, background_configuration=bc)
+    ic = InventoryBus(bm, background_configuration=bc)
 
     assert np.allclose(ic.mix, custom_mix)
 
 
 def test_scope():
     """Test if scope works as expected"""
-    ic = InventoryCalculation(
-        tm,
+    ic = InventoryBus(
+        bm,
         method="recipe",
-        method_type="midpoint",
+        indicator="midpoint",
         scope={"powertrain": ["ICEV-d"], "size": ["9m"]},
     )
     results = ic.calculate_impacts()
@@ -76,7 +76,7 @@ def test_fuel_blend():
     tm = BusModel(array, country="CH", fuel_blend=fb)
     tm.set_all()
 
-    ic = InventoryCalculation(tm, method="recipe", method_type="midpoint")
+    ic = InventoryBus(tm, method="recipe", indicator="midpoint")
 
     assert np.allclose(
         ic.fuel_blends["diesel"]["primary"]["share"],
@@ -129,74 +129,42 @@ def test_fuel_blend():
 
         tm = BusModel(array, country="CH", fuel_blend=fb)
         tm.set_all()
-        ic = InventoryCalculation(tm, method="recipe", method_type="midpoint")
+        ic = InventoryBus(tm, method="recipe", indicator="midpoint")
         ic.calculate_impacts()
 
 
 def test_countries():
     """Test that calculation works with all countries"""
     for c in [
-        "AO",
-        #         # "AT","AU","BE","BF","BG","BI","BJ","BR","BW","CA","CD","CF",
-        #         # "CG","CH","CI","CL","CM","CN","CY","CZ","DE","DJ","DK","DZ","EE",
-        #         # "EG","ER","ES","ET","FI","FR","GA",
-        #         # "GB","GH","GM","GN","GQ","GR","GW","HR","HU","IE",
-        #         # "IN","IT", "IS", "JP", "KE", "LR","LS","LT","LU","LV","LY","MA","ML","MR","MT","MW","MZ",
-        #         # "NE", "NG","NL","NM","NO","PL","PT","RER","RO","RU","RW","SD","SE","SI","SK","SL","SN","SO","SS","SZ",
-        #         # "TD","TG","TN","TZ","UG","UK","US","ZA","ZM",
-        #         # "ZW",
+        "AO", "AT", "AU", "BE",
     ]:
-        ic = InventoryCalculation(
-            tm,
+        bm.country = c
+        ic = InventoryBus(
+            bm,
             method="recipe",
-            method_type="midpoint",
-            background_configuration={
-                "country": c,
-            },
+            indicator="midpoint"
         )
-        ic.background_configuration["energy storage"]["electric"]["origin"] = c
-        ic.calculate_impacts()
-
-
-def test_IAM_regions():
-    """Test that calculation works with all IAM regions"""
-    for c in [
-        # "BRA","CAN","CEU","CHN","EAF","INDIA","INDO","JAP","KOR","ME","MEX",
-        #         #    "NAF","OCE","RCAM","RSAF","RSAM","RSAS","RUS","SAF","SEAS","STAN",
-        "TUR",
-        #         # "UKR","USA","WAF","WEU",
-        #         #    "LAM","CAZ","EUR","CHA","SSA","IND","OAS","JPN","MEA","REF","USA",
-    ]:
-        ic = InventoryCalculation(
-            tm,
-            method="recipe",
-            method_type="midpoint",
-            background_configuration={
-                "country": c,
-            },
-        )
-
-        ic.background_configuration["energy storage"]["electric"]["origin"] = c
+        assert ic.background_configuration["energy storage"]["electric"]["origin"] == bm.country
         ic.calculate_impacts()
 
 
 def test_endpoint():
 
     """Test if the correct impact categories are considered"""
-    ic = InventoryCalculation(tm, method="recipe", method_type="endpoint")
+    ic = InventoryBus(bm, method="recipe", indicator="endpoint")
     results = ic.calculate_impacts()
     assert "human health" in [i.lower() for i in results.impact_category.values]
     assert len(results.impact_category.values) == 4
 
     """Test if it errors properly if an incorrect method type is give"""
     with pytest.raises(TypeError) as wrapped_error:
-        ic = InventoryCalculation(tm, method="recipe", method_type="endpint")
+        ic = InventoryBus(bm, method="recipe", indicator="endpint")
         ic.calculate_impacts()
     assert wrapped_error.type == TypeError
 
 
 def test_sulfur_concentration():
-    ic = InventoryCalculation(tm, method="recipe", method_type="endpoint")
+    ic = InventoryBus(bm, method="recipe", indicator="endpoint")
     ic.get_sulfur_content("RER", "diesel", 2000)
     ic.get_sulfur_content("foo", "diesel", 2000)
 
@@ -217,8 +185,8 @@ def test_custom_electricity_mix():
     }
 
     with pytest.raises(ValueError) as wrapped_error:
-        InventoryCalculation(
-            tm, method="recipe", method_type="endpoint", background_configuration=bc
+        InventoryBus(
+            bm, method="recipe", indicator="endpoint", background_configuration=bc
         )
     assert wrapped_error.type == ValueError
 
@@ -233,8 +201,8 @@ def test_custom_electricity_mix():
     }
 
     with pytest.raises(ValueError) as wrapped_error:
-        InventoryCalculation(
-            tm, method="recipe", method_type="endpoint", background_configuration=bc
+        InventoryBus(
+            bm, method="recipe", indicator="endpoint", background_configuration=bc
         )
     assert wrapped_error.type == ValueError
 
@@ -247,15 +215,13 @@ def test_export_to_bw():
     tm.set_all()
 
     """Test that inventories export successfully"""
-    ic = InventoryCalculation(tm, method="recipe", method_type="midpoint")
-    for a in (True, False):
-        for b in ("3.5", "3.6", "3.7", "uvek"):
-            for c in (True, False):
-                ic.export_lci(
-                    ecoinvent_compatibility=a,
-                    ecoinvent_version=b,
-                    create_vehicle_datasets=c,
-                )
+    ic = InventoryBus(tm, method="recipe", indicator="midpoint")
+
+    for b in ("3.5", "3.6", "3.7", "3.8"):
+            ic.export_lci(
+                ecoinvent_version=b,
+                format="bw2io",
+            )
 
 
 def test_export_to_excel():
@@ -266,28 +232,13 @@ def test_export_to_excel():
     tm.set_all()
 
     """Test that inventories export successfully to Excel/CSV"""
-    ic = InventoryCalculation(tm)
-    for a in (True, False):
-        for b in ("3.5", "3.6", "3.7", "uvek"):
-            for c in (True, False):
-                for d in ("file", "string"):
-                    ic.export_lci_to_excel(
-                        ecoinvent_compatibility=a,
-                        ecoinvent_version=b,
-                        create_vehicle_datasets=c,
-                        export_format=d,
-                        directory="directory",
-                    )
-
-
-# # GHG of 40t diesel truck must be between 80 and 110 g/ton-km in 2020
-#
-# # Only three impact categories are available for recipe 2008 endpoint
-#
-# # GHG emissions of 7.5t trucks must be superior to that of 40t trucks
-#
-# # GHG intensity of EU electricity in 2020 must be between 300 and 400 g/kWh
-#
-# # GHG intensity of 1 kWh of solar PV must be between 50 and 100 g
-#
-# # GHG intensity of 1 ton-km from FCEV truck mus tbe between X and Y
+    ic = InventoryBus(tm)
+    for b in ("3.5", "3.6", "3.7", "3.8"):
+        for s in ("brightway2", "simapro"):
+            for d in ("file", "string"):
+                ic.export_lci(
+                    ecoinvent_version=b,
+                    format=d,
+                    directory="directory",
+                    software=s,
+                )
