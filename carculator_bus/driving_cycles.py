@@ -1,5 +1,5 @@
-from carculator_utils import get_standard_driving_cycle_and_gradient
 import numpy as np
+from carculator_utils import get_standard_driving_cycle_and_gradient
 
 
 def get_driving_cycle(size: list) -> np.ndarray:

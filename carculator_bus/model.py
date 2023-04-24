@@ -394,7 +394,11 @@ class BusModel(VehicleModel):
 
         if len(l_size) > 0:
             self.array.loc[
-                dict(powertrain="BEV-motion", parameter="is_available", size=l_size,)
+                dict(
+                    powertrain="BEV-motion",
+                    parameter="is_available",
+                    size=l_size,
+                )
             ] = 0
 
     def adjust_cost(self):
@@ -448,7 +452,13 @@ class BusModel(VehicleModel):
         ]
 
         if len(l_pwt) > 0:
-            self.array.loc[:, l_pwt, "energy battery cost per kWh", :, :,] = np.reshape(
+            self.array.loc[
+                :,
+                l_pwt,
+                "energy battery cost per kWh",
+                :,
+                :,
+            ] = np.reshape(
                 (2.75e86 * np.exp(-9.61e-2 * self.array.year.values) + 5.059e1)
                 * cost_factor,
                 (1, 1, n_year, n_iterations),
@@ -462,7 +472,13 @@ class BusModel(VehicleModel):
         ]
 
         if len(l_pwt) > 0:
-            self.array.loc[:, l_pwt, "power battery cost per kW", :, :,] = np.reshape(
+            self.array.loc[
+                :,
+                l_pwt,
+                "power battery cost per kW",
+                :,
+                :,
+            ] = np.reshape(
                 (8.337e40 * np.exp(-4.49e-2 * self.array.year.values) + 11.17)
                 * cost_factor,
                 (1, 1, n_year, n_iterations),
@@ -471,7 +487,11 @@ class BusModel(VehicleModel):
         # Correction of combustion powertrain cost for ICEV-g
         if "ICEV-g" in self.array.powertrain.values:
             self.array.loc[
-                :, ["ICEV-g"], "combustion powertrain cost per kW", :, :,
+                :,
+                ["ICEV-g"],
+                "combustion powertrain cost per kW",
+                :,
+                :,
             ] = np.reshape(
                 (5.92e160 * np.exp(-0.1819 * self.array.year.values) + 26.76)
                 * cost_factor,
@@ -541,7 +561,9 @@ class BusModel(VehicleModel):
                     "battery heating energy",
                     "recuperated energy",
                 ]
-            ).sum(dim=["second", "parameter"]).values
+            )
+            .sum(dim=["second", "parameter"])
+            .values
             / distance.values
         ).T
 
@@ -579,7 +601,9 @@ class BusModel(VehicleModel):
                     "battery cooling energy",
                     "battery heating energy",
                 ]
-            ).sum(dim=["parameter", "second"]).values
+            )
+            .sum(dim=["parameter", "second"])
+            .values
             / distance.values
         ).T
 
@@ -734,7 +758,10 @@ class BusModel(VehicleModel):
         # (we omitted the stops in the average)
         speed = self.ecm.velocity / 1000 * 3600
         speed[speed == 0] = np.nan
-        self["average speed"] = np.nanmean(speed, axis=0,).T
+        self["average speed"] = np.nanmean(
+            speed,
+            axis=0,
+        ).T
         self["daily distance"] = self["operation time"] * self["average speed"]
 
         # the number of trips is simply the daily driven distance
@@ -799,7 +826,15 @@ class BusModel(VehicleModel):
             )
 
             self.array.loc[dict(powertrain="FCEV", parameter="fuel tank mass")] = (
-                (-0.1916 * np.power(14.4, 2,)) + (14.586 * 14.4) + 10.805
+                (
+                    -0.1916
+                    * np.power(
+                        14.4,
+                        2,
+                    )
+                )
+                + (14.586 * 14.4)
+                + 10.805
             ) * nb_cylinder
 
         # for older trolley BEV buses,
@@ -994,14 +1029,11 @@ class BusModel(VehicleModel):
 
             self.array.loc[
                 dict(powertrain="FCEV", parameter="electric energy stored")
-            ] = (
-                20
-                + (
-                    self.array.loc[dict(powertrain="FCEV", parameter="fuel mass")]
-                    * 120
-                    / 3.6
-                    * 0.06
-                )
+            ] = 20 + (
+                self.array.loc[dict(powertrain="FCEV", parameter="fuel mass")]
+                * 120
+                / 3.6
+                * 0.06
             )
 
         self["battery cell mass"] = self["electric energy stored"] / _(
@@ -1391,7 +1423,13 @@ class BusModel(VehicleModel):
             dims=["size", "powertrain", "cost_type", "year", "value"],
         )
 
-        response.loc[:, :, list_cost_cat, :, :,] = self.array.sel(
+        response.loc[
+            :,
+            :,
+            list_cost_cat,
+            :,
+            :,
+        ] = self.array.sel(
             powertrain=scope["powertrain"],
             size=scope["size"],
             year=scope["year"],
@@ -1420,7 +1458,11 @@ class BusModel(VehicleModel):
 
         pwts = [
             pt
-            for pt in ["BEV-depot", "BEV-opp", "BEV-motion",]
+            for pt in [
+                "BEV-depot",
+                "BEV-opp",
+                "BEV-motion",
+            ]
             if pt in self.array.coords["powertrain"].values
         ]
 
@@ -1428,20 +1470,31 @@ class BusModel(VehicleModel):
 
         if years:
             self.array.loc[
-                dict(parameter="TtW energy", powertrain=pwts, year=years,)
+                dict(
+                    parameter="TtW energy",
+                    powertrain=pwts,
+                    year=years,
+                )
             ] = 0
 
         # and also coach buses with BEV-opp or BEV-motion powertrain
         pwts = [
             pt
-            for pt in ["BEV-opp", "BEV-motion",]
+            for pt in [
+                "BEV-opp",
+                "BEV-motion",
+            ]
             if pt in self.array.coords["powertrain"].values
         ]
         sizes = [s for s in self.array.coords["size"].values if "coach" in s.lower()]
 
         if pwts and sizes:
             self.array.loc[
-                dict(parameter="TtW energy", powertrain=pwts, size=sizes,)
+                dict(
+                    parameter="TtW energy",
+                    powertrain=pwts,
+                    size=sizes,
+                )
             ] = 0
 
         # remove double-deck BEV-motion buses
