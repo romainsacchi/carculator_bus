@@ -1,12 +1,1 @@
-pandas
-xarray
-numpy
-klausen
-xlrd
-numexpr
-bw2io
-prettytable
-pycountry
-atmos
-wurst
-pyyaml
+carculator_utils
