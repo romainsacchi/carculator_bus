@@ -136,20 +136,21 @@ def test_fuel_blend():
 def test_countries():
     """Test that calculation works with all countries"""
     for c in [
-        "AO", "AT", "AU", "BE",
+        "AO",
+        "AT",
+        "AU",
+        "BE",
     ]:
         bm.country = c
-        ic = InventoryBus(
-            bm,
-            method="recipe",
-            indicator="midpoint"
+        ic = InventoryBus(bm, method="recipe", indicator="midpoint")
+        assert (
+            ic.background_configuration["energy storage"]["electric"]["origin"]
+            == bm.country
         )
-        assert ic.background_configuration["energy storage"]["electric"]["origin"] == bm.country
         ic.calculate_impacts()
 
 
 def test_endpoint():
-
     """Test if the correct impact categories are considered"""
     ic = InventoryBus(bm, method="recipe", indicator="endpoint")
     results = ic.calculate_impacts()
@@ -218,10 +219,10 @@ def test_export_to_bw():
     ic = InventoryBus(tm, method="recipe", indicator="midpoint")
 
     for b in ("3.5", "3.6", "3.7", "3.8"):
-            ic.export_lci(
-                ecoinvent_version=b,
-                format="bw2io",
-            )
+        ic.export_lci(
+            ecoinvent_version=b,
+            format="bw2io",
+        )
 
 
 def test_export_to_excel():
