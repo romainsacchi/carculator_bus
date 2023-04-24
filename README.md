@@ -20,9 +20,6 @@ Based on the Life Cycle Assessment tool for passenger vehicles [carculator](http
 
 See [the documentation](https://carculator_bus.readthedocs.io/en/latest/index.html) for more detail, validation, etc.
 
-The model has been the subject of a submission to the journal <i>Environmental Science and Technology</i>.
-You may find a preprint version <a href="https://www.psi.ch/en/ta/preprint" target="_blank">here<a/>.
-
 
 ## How to install?
 

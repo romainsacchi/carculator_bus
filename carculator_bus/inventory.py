@@ -350,6 +350,7 @@ class InventoryBus(Inventory):
             ["BEV-depot", "PHEV-d"],
         )
 
+
         self.A[
             np.ix_(
                 np.arange(self.iterations),
@@ -360,7 +361,7 @@ class InventoryBus(Inventory):
             )
         ] = -1 / (
             self.array[self.array_inputs["kilometers per year"], :, index] * 2 * 24
-        )
+        ).values[:, None]
 
         # Opportunity charging BEV buses
         # The charging station has a lifetime of 24 years
@@ -381,7 +382,7 @@ class InventoryBus(Inventory):
             )
         ] = -1 / (
             self.array[self.array_inputs["kilometers per year"], :, index] * 10 * 24
-        )
+        ).values[:, None]
 
         # In-motion charging BEV buses
         # The overhead lines have a lifetime of 40 years
@@ -400,6 +401,6 @@ class InventoryBus(Inventory):
             )
         ] = -1 / (
             self.array[self.array_inputs["lifetime kilometers"], :, index] * 60 * 40
-        )
+        ).values[:, None]
 
         print("*********************************************************************")
