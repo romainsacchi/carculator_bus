@@ -42,6 +42,7 @@ setup(
     },
     install_requires=[
         "carculator_utils",
+        "prettytable",
     ],
     url="https://github.com/romainsacchi/carculator_bus",
     description="Prospective environmental and economic life cycle assessment of urban and coach buses",
