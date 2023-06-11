@@ -1,7 +1,7 @@
 # ``carculator_bus``
 
 <p align="center">
-  <img style="height:130px;" src="https://github.com/romainsacchi/coarse/raw/master/docs/mediumsmall.png">
+  <img style="height:130px;" src="docs/_static/img/mediumsmall.png">
 </p>
 
 <p align="center">
@@ -23,20 +23,23 @@ See [the documentation](https://carculator_bus.readthedocs.io/en/latest/index.ht
 
 ## How to install?
 
-For the latest version, using conda::
+For the latest version, using conda:
 
-    conda install -c romainsacchi carculator_bus
+```bash
+conda install -c romainsacchi carculator_bus
+```
     
-or for a stable release, from Pypi::
+or for a stable release, from Pypi:
 
-    pip install carculator_bus
-    
-    
-No extensive documentation right now, but check out the examples notebook.
+```bash
+pip install carculator_bus
+```
+
+No extensive documentation right now, but check out the examples' notebook.
 
 ## How to use it?
 
-See the notebook with [examples](https://github.com/romainsacchi/carculator_bus/blob/master/examples/buses.ipynb).
+See the notebook with [examples](examples/buses.ipynb).
 
 ## Support
 
@@ -49,8 +52,8 @@ Do not hesitate to contact the development team at [carculator@psi.ch](mailto:ca
 
 ## Contributing
 
-See [contributing](https://github.com/romainsacchi/carculator_bus/blob/master/CONTRIBUTING.md).
+See [contributing](CONTRIBUTING.md).
 
 ## License
 
-[BSD-3-Clause](https://github.com/romainsacchi/carculator_bus/blob/master/LICENSE). Copyright 2020 Paul Scherrer Institut.
+[BSD-3-Clause](LICENSE). Copyright 2020 Paul Scherrer Institut.
