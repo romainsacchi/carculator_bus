@@ -1,712 +1,1092 @@
-Modeling and assumptions
-========================
+.. _model:
 
-The modeling of urban and coach buses in the past, present and future is complex and relies on many assumptions.
-With **carculator_bus**, we wish to be transparent about those: assumptions and modeling approaches should ideally be easily
-criticized and modified if need be.
+Modeling
+========
 
-We try here to give a comprehensive list of assumptions and modeling choices, and describe how, as a user, you
-can change those.
+This document describes the ``carculator_bus`` model, assumptions
+and inventories as exhaustively as possible.
 
-Parameters' names are indicated ``verbatim`` and are to be used in **carculator_bus**.
-
-Vehicle sizing
-**************
-**carculator_bus** models vehicles along four dimensions:
-
-* their powertrain (e.g., gasoline-run internal combustion engine, battery electric vehicle, etc.),
-* their size (e.g., 3.5t, 7.5t, 18t, etc.),
-* their year of production (2000, 2010, 2020, 2030, 2040 and 2050)
-* and a parameter dimension (i.e., input and calculated parameters).
-
-When **carculator_bus** sizes the vehicles for the different powertrains, sizes and years, it starts with bringing
-together a few components common to all powertrains, that is: `glider base mass`, `suspension mass`, `braking system mass`,
-`wheels and tires mass`, `cabin mass`, `electrical system mass`, `other components mass`, `transmission mass`. Then, it adds
-energy storage components, such as:
-
-* ``fuel mass``: mass of the fuel in the fuel tank (only applicable to vehicles using liquid or gaseous fuels),
-* ``fuel tank mass``: mass of the fuel tank (empty),
-* ``charger mass``: mass of the onboard battery charger (for battery electric and plugin hybrid vehicles only),
-* ``converter mass``: mass of the onboard electricity AC/DC converter (for battery electric and plugin hybrid vehicles only),
-* ``inverter mass``: mass of the onboard electricity DC/AC converter (for battery electric and plugin hybrid vehicles only),
-* ``power distribution unit mass``: mass of the onboard power distribution unit (for battery electric and plugin hybrid vehicles only),
-* ``combustion engine mass``: mass of the internal combustion engine (if applicable),
-* ``electric engine mass``: mass of the electric motor (if applicable),
-* ``powertrain mass``: mass of the powertrain excluding the mass of the engine (e.g., transmission, drive shafts, differentials, etc.),
-* ``fuel cell stack mass``: mass of the fuel cell stack (only for fuel cell electric vehicles),
-* ``fuel cell ancillary BoP mass``: mass of the ancillary part of the Balance of Plant of the fuel cell stack (only for fuel cell electric vehicles),
-* ``fuel cell essential BoP mass``: mass of the essential part of the Balance of Plant of the fuel cell stack (only for fuel cell electric vehicles),
-* ``battery cell mass``: mass of the battery cells. Two types of batteries are distinguished: power and energy batteries,
-* ``battery BoP mass``: mass of the Balance of Plant of the battery.
-
-This constitutes the `curb mass` of the vehicle.
-
-The difference between the `curb mass` and the allowed maximum gross weight of the vehicle is the `maximum available payload`.
-Hence, a truck with a `curb mass` of 15 tons and an authorized gross weight of 40 tons has a `maximum available payload` of 25 tons.
-
-However, not all the `maximum available payload` is used. This depends on the parameter `capacity utilization`, whch is the ratio
-between actual cargo mass and `maximum available payload`. `capacity utilization` * `maximum available payload` gives the
-`total cargo mass`.
-
-The sum of `curb mass` and `total cargo mass` gives the `driving mass`.
-
-The mass of the energy storage compponents (e.g., batteries) depends:
-* on the range the vehicle is required to drive on a single fueling/charging, called `target range`.
-* and on the consumption of the vehicle per km, called `TtW energy`.
-
-The parameter `TtW energy`, which is the tank-to-wheel energy consumption over 1 km, depends itself on the `driving mass`
-of the vehicle. Hence, both `driving mass` and `TtW energy` need to be solved. This is done so iteratively, until the
-value for `driving mass` does not change by more than 0.1% form one iteration to the other.
-
-
-Then it adds the following components and their associated mass:
-
-.. image:: https://github.com/romainsacchi/carculator/raw/master/docs/mass_module.png
-    :width: 900
-    :alt: Structure of mass module
-
-Four initial input parameters are therefore of importance:
-
-* ``glider base mass``:the initial mass of the glider
-* ``power to mass ratio``: the power-to-mass ratio
-* ``combustion power share``: how much of the power is provided by an internal combustion engine
-* ``combustion mass per power``: the mass of the combustion engine per unit of power
-
-For electric vehicles (i.e., BEV and FCEV), ``combustion power share`` = 0.
-For internal combustion engine vehicles (i.e., ICEV-p, ICEV-d and ICEV-g),
-``combustion power share`` = 1 in the early years (until 2020). However, starting 2020 on, this value drops progressively
-to 0.85 by 2050, as we assumed a mild-hybridization of the powertrain to a level similar to that of non-plugin hybrids nowadays (i.e., HEV-p and HEV-d).
-While it is uncertain whether ICEVs will exist in the future, it was assumed that a way for them to comply with future
-emission standards was to be assisted by an electric engine. This mild-hybridization allows to reduce the size of the combustion engine and recover energy during braking.
-
-For non-plugin hybrids, ``combustion power share`` is usually set at around 0.75.
-
-For plugin hybrid vehicles, things are modeled differently: a purely electric vehicle is modeled, as well as a purely
-combustion-based vehicle. Later on, when the range of the purely-electric vehicle is calculated, a ``electric utility ratio``
-is obtained, which is used to fusion both vehicles. This ratio, which is dependent on the range, is usually between 0.6 and 0.7.
-This means that plugin hybrid vehicles are made of between 60 and 70% of a purely electric vehicle and 30 to 40% of a purely combustion-based vehicle.
-
-If I know already the ``curb mass`` of a vehicle, can I override its value?
----------------------------------------------------------------------------
-
-With **carculator online**:
-
-Currently, it is not possible to modify directly the calculated parameter ``curb mass``, as it would be recalculated.
-In order to do so, you need to use instead the Python library **carculator** (see next section). You can however
-modify any of the input parameters ``glider base mass``, ``power to mass ratio``, ``combustion power share``
-and ``combustion mass per power`` used to calculate ``curb mass``.
-To do so, type their name in the search field of the Parameters section.
-
-.. image:: https://github.com/romainsacchi/carculator/raw/master/docs/power_to_mass_change.png
-    :width: 900
-    :alt: Change parameters affecting the curb mass
-
-
-With **carculator**:
-
-Yes. After having created the CarModel() object and executed the :meth:`.set_all` method, you can override the
-calculated ``curb mass`` value. Here is an example for a diesel car of medium size in 2020::
-
-    cm = CarModel(array, cycle='WLTC')
-    cm.set_all()
-    cm.array.loc[dict(parameter="curb mass",
-                  powertrain="ICEV-d",
-                  year=2020,
-                  size="Medium")] = 1600
-
-How to prevent the mild-hybridization of ICEVs?
------------------------------------------------
-
-With **carculator online**:
-
-In the Parameters section, search for `combustion power share` and add the parameter for the vehicles you wish to modify.
-
-.. image:: https://github.com/romainsacchi/carculator/raw/master/docs/combustion_power_share.png
-    :width: 900
-    :alt: Change combustion power share parameter
-
-With **carculator**:
-
-You can simply override the default value by "1" in ``array`` before passing it to CarModel()::
-
-    dict_param = {('Powertrain',  ('ICEV-d', 'ICEV-p', 'ICEV-g'), 'all', 'combustion power share', 'none'): {
-                                                                                        (2000, 'loc'): 1,
-                                                                                        (2010, 'loc'): 1,
-                                                                                        (2017, 'loc'): 1,
-                                                                                        (2040, 'loc'): 1}
-                                                                                        }
-    modify_xarray_from_custom_parameters(dict_param, array)
-
-You can also just override the default value of a specific powertrain of a specific size, for a specific year::
-
-    dict_param = {('Powertrain',  'ICEV-d', 'Medium', 'combustion power share', 'none'): {
-                                                                                        (2017, 'loc'): 1
-                                                                                        }
-    modify_xarray_from_custom_parameters(dict_param, array)
-
-How can I modify the battery capacity of a battery electric car?
------------------------------------------------------------------------
-
-Two parameters are of importance, ``energy battery mass`` [kg] and ``battery cell energy density`` [kWh/kg], so that:
-
-``battery cell mass`` [kg] = ``energy battery mass`` [kg] × ``battery cell mass share`` [%]
-
-``energy stored`` [kWh] = ``battery cell energy density`` [kWh/kg] x ``battery cell mass`` [kg]
-
-Hence, by modifying either of them (or both), you can affect the capacity of the battery for a given size class.
-
-With **carculator online**:
-
-.. image:: https://github.com/romainsacchi/carculator/raw/master/docs/battery_capacity_change.png
-    :width: 900
-    :alt: Change battery capacity
-
-
-With **carculator**:
-
-You can simply override the default values in ``array`` before passing it to CarModel()::
-
-    dict_param = {('Energy Storage',  'BEV', 'Medium', 'energy battery mass', 'none'): {
-                                                                                        (2000, 'loc'): 100,
-                                                                                        (2010, 'loc'): 150,
-                                                                                        (2017, 'loc'): 180,
-                                                                                        (2040, 'loc'): 200}
-                                                                                        },
-                 ('Energy Storage',  'BEV', 'Medium', 'battery cell energy density', 'none'): {
-                                                                                        (2000, 'loc'): 0.05,
-                                                                                        (2010, 'loc'): 0.1,
-                                                                                        (2017, 'loc'): 0.2,
-                                                                                        (2040, 'loc'): 0.3}
-                                                                                        }
-
-    modify_xarray_from_custom_parameters(dict_param, array)
-
-The ``curb mass`` values obtained for the vehicles in 2000, 2010 and 2017 are calibrated against a passenger cars database
-`Car2DB <https://car2db.com/>`_. The calibration of the ``curb mass`` for vehicles for the year 2000 is done against vehicles in
-the Car2DB database with a production year in the range of 1998-2002, against 2008-2012 and 2015-2018 for vehicles for the years
-2010 and 2017, respectively.
-The value of the input parameter ``glider base mass`` was adjusted to fit the distribution shown in the plots below.
-
-Calibration of vehicles' curb mass for the year 2000
-
-.. image:: https://github.com/romainsacchi/carculator/raw/master/docs/curb_mass_calibration_2000.png
-    :width: 900
-    :alt: Calibration for year 2000 vehicles
-
-Calibration of vehicles' curb mass for the year 2010
-
-.. image:: https://github.com/romainsacchi/carculator/raw/master/docs/curb_mass_calibration_2010.png
-    :width: 900
-    :alt: Calibration for year 2010 vehicles
-
-Calibration of vehicles' curb mass for the year 2017
-
-.. image:: https://github.com/romainsacchi/carculator/raw/master/docs/mass_comparison.png
-    :width: 900
-    :alt: Calibration for year 2017 vehicles
-
-For the year 2040, the value for input parameters ``glider base mass``, ``combustion mass per power``, ``power to mass ratio`` are
-adjusted according to the following studies:
-
-* Hirschberg (Editor) S, Bauer C, Cox B, Heck T, Hofer J, Schenler W, et al. Opportunities and challenges for electric mobility: an interdisciplinary assessment of passenger vehicles Final report of the THELMA project in co-operation with the Swiss Competence Center for Energy Research "Efficient technologies and systems for mobil. 2016.
-* Del Duce, Andrea; Gauch, Marcel; Althaus, Hans-Jörg: "Electric passenger car transport and passenger car life cycle inventories in ecoinvent version 3", International Journal of Life Cycle Assessment, Vol. 21, pp. 1314-1326, (2016)
-* E. A. Grunditz and T. Thiringer, "Performance Analysis of Current BEVs Based on a Comprehensive Review of Specifications," in IEEE Transactions on Transportation Electrification, vol. 2, no. 3, pp. 270-289, Sept. 2016, doi: 10.1109/TTE.2016.2571783.
-
-What happens when I inter-/extrapolate to other years?
-------------------------------------------------------
-
-If the default years of 2000, 2010, 2017 and 2040 are of no interest, it is possible to inter-/extrapolate the vehicle
-models to any year between 2000 and 2050. When such inter-/extrapolation is done, all the *physical* input parameters' values
-are inter-/extrapolated **linearly**.
-
-With **carculator online**:
-
-In the Scope section, simply drag the desired years from the left frame to the right frame.
-
-.. image:: https://github.com/romainsacchi/carculator/raw/master/docs/select_vehicle_tutorial.gif
-    :width: 900
-    :alt: Select years
-
-With **carculator**:
-
-After creating ``array``, which is a `DataArray` object from the library ``xarray``, it is possible to use the `.interp()`
-method, like so::
-
-     array = array.interp(year=np.arange(2015, 2051, 5),  kwargs={'fill_value': 'extrapolate'})
-
-Here, the years under study are from 2015 to 2050 by step of 5 years.
-
-This is slightly different for cost input parameters' values, which are usually following a decay-like cost curve, to account
-for a learning rate.
-Hence, parameters such as ``fuel tank cost per kg``, ``fuel cell cost per kW``, ``energy battery cost per kWh``, ``power battery cost per kW``,
-or ``combustion powertrain cost per kW`` would be of shape: a*exp(b) + c. Coefficients *a*, *b* and *c* are defined to fit the literature and projections.
-
-Projection of energy battery cost per kWh for BEV and FCEV.
-
-.. image:: https://github.com/romainsacchi/carculator/raw/master/docs/cost_energy_battery_projection.png
-    :width: 900
-    :alt: Projection of energy battery cost per kWh
-
-
-Tank-to-wheel energy consumption
-********************************
-
-The `tank-to-wheel` energy consumption is the sum of:
-
-* the `motive energy` needed to move the vehicle over 1 km
-* the `auxilliary` energy needed to operate onboard equipment as well as to provide heating and cooling over 1 km
-
-Motive energy
--------------
-
-Once the vehicle and its powertrain has been sized, it is possible to calculate the `motive energy` required along
-a specific driving cycle to overcome the following forces:
-
-* rolling resistance
-* aerodynamic resistance
-* air resistance
-* road gradient resistance (if provided)
-
-on top of the *kinetic energy* needed to move the vehicle.
-
-To calculate the motive energy, the following parameters are needed:
-
-* the ``driving mass`` of the vehicle
-* its ``rolling resistance coefficient``
-* its ``aerodynamic drag coefficient``
-* its ``frontal area``
-* its tank-to-wheel efficiency (``TtW efficiency``)
-* its ``recuperation efficiency``
-* and the power of its electric motor, if any (``electric power``)
-
-To that amount of energy is subtracted the *energy recuperated* during braking, if the vehicle is equipped with
-an electric motor (to the extent of the power of the motor, discounted with a ``recuperation efficiency``).
-
-* ``recuperation efficiency`` [%] = ``drivetrain efficiency`` [%] x ``battery charge efficiency`` [%]
-
-
-.. image:: https://github.com/romainsacchi/carculator/raw/master/docs/motive_energy.png
-    :width: 900
-    :alt: Calculation of the motive energy
-
-Also, ``distance``, ``velocity`` and ``acceleration`` are derived from the driving cycle.
-
-.. image:: https://github.com/romainsacchi/carculator/raw/master/docs/driving_cycle.png
-    :width: 400
-    :alt: Driving cycle
-
-
-In parallel, the ``TtW efficiency`` (the loss of energy between the energy storage and the wheels) is calculated as the product of the following efficiency parameters:
-
-* ``battery discharge efficiency``
-* ``fuel cell system efficiency``
-* ``drivetrain efficiency``
-* ``engine efficiency``
-
-The `motive energy` is calculated as the sum of:
-
-* rolling resistance [kg.m.s^-2] = ``driving mass`` [kg] x ``rolling resistance coefficient`` [%] x 9.81 [m/s^2]
-* air resistance [kg.m.s^-2] = ``velocity`` ^2 [m^2/s^2] x (``frontal area`` [m^2] x ``aerodynamic drag coefficient`` [%] x air density [kg/m^3] / 2)
-* road gradient resistance [kg.m.s^-2] = ``driving mass`` [kg] x 9.81 [m/s^2] x sin(gradient)
-* kinetic force [kg.m.s^-2] = ``acceleration`` [m/s^2] x ``driving mass`` [kg]
-
-This gives:
-
-* force required [kg.m.s^-2] = rolling resistance + air resistance + road gradient resistance + kinetic force
-
-Then, the gross power required is calculated as:
-
-* power [W or kg.m^2.s^-3] = force required [kg.m.s^-2] x velocity [m/s]
-
-The recuperated power, via electro-braking is calculated as the decelerating power (when power is negative) comprised
-between 0 and the electric engine power *-1, times the recuperation efficiency:
-
-* recuperated power [W] = power [W] * recuperation efficiency [%], when power between (-1 x electric engine power [W]) and 0
-
-Finally, to obtain the `motive energy` the gross power minus the recuperated power (which is negative!) are summed along the driving cycle duration:
-
- * `motive energy` [joules] = sum ((power [W or joules/s] + recuperated power [W or joules/s]) / distance [m] / ``TtW efficiency`` [%] / 1000 [j/kj])
-
-The `motive energy` is divided by the ``TtW efficiency`` to obtain the amount of kilojoules needed in the tank (or battery) to move the vehicle over 1 km.
-
-Here is plotted the second-by-second gross power requirement for a large-sized battery electric vehicle, along the WLTC driving cycle:
-
-.. image:: https://github.com/romainsacchi/carculator/raw/master/docs/kw_bev_wltc.png
-    :width: 900
-    :alt: Calculation of the motive energy
-
-How can I add a road gradient?
+Overview of ``carculator_bus``
 ------------------------------
 
-By default, the vehicles are compared based on a driving cycle on a flat road.
+``carculator_bus`` is an open-source Python library. Its code is publicly
+available via its `Github repository <https://github.com/romainsacchi/carculator_bus>`__.
+You can also :download:`download an examples notebook <_static/resources/examples.zip>`, that guides new users into performing life cycle analyses.
+The tool generates bus inventories for different powertrain types, size classes, and years of manufacture.
+
+Vehicle modelling
+-----------------
+
+The modelling of vehicles along powertrain types, time and size classes
+is described in this section. It is also referred to as *foreground*  modelling.
 
+Powertrain types
+****************
 
+``carculator_bus`` can model the following powertrain types:
 
-Auxilliary energy
-----------------
+-  Diesel-run internal combustion engine vehicle (ICEV-d)
+-  Gas-run internal combustion engine vehicle (ICEV-g)
+-  Diesel-run hybrid electric vehicle (HEV-d)
+-  Battery electric vehicle (BEV):
+    * overnight charging at depot (BEV-depot)
+    * opportunity charging (BEV-opp)
+    * motion-charging (BEV-motion), also commonly referred to as trolleybuses
+-  Fuel cell electric vehicle (FCEV)
 
-The `auxilliary` energy, that is the energy needed to operate onboard equipment and heating and cooling systems, is also calculated
-as the sum of the power demand over time.
+Size classes
+************
 
-This power demand entails:
+Several size classes are available for each powertrain type, as indicated in :ref:`Table 1 <table-1>`.
+Some powertrain-size class combinations are not commercially available or technologically mature and
+are therefore not considered.
 
-* the average power demand for heating
-* the average power demand for cooling
-* the average power demand for onboard electronics
+.. _table-1:
 
-.. image:: https://github.com/romainsacchi/carculator/raw/master/docs/aux_energy.png
-    :width: 900
-    :alt: Auxilliary energy
+.. table:: Table 1: Powertrain-size class combinations considered in this study
+   :widths: auto
+   :align: center
 
-This power demand is modeled as:
+   +-----------------------------+------------+------------+-----------+----------+---------------+--------------+----------------+
+   | **size/powertrains**        | **ICEV-d** | **ICEV-g** | **HEV-d** | **FCEV** | **BEV-depot** | **BEV-opp**  | **BEV-motion** |
+   +=============================+============+============+===========+==========+===============+==============+================+
+   | 9m (midibus)                | x          | x          | x         | Only for 2020                           | Not available  |
+   +-----------------------------+------------+------------+-----------+                                         +----------------+
+   | 13m, single deck, city      | x          | x          | x         |                                         | Only for 2020  |
+   +-----------------------------+------------+------------+-----------+----------+---------------+--------------+----------------+
+   | 13m, single deck, coach     | x          | x          | x         | Not available                           | Not available  |
+   +-----------------------------+------------+------------+-----------+----------+---------------+--------------+                +
+   | 13m, double deck, city      | x          | x          | x         | Only for 2020                           |                |
+   +-----------------------------+------------+------------+-----------+----------+---------------+--------------+                +
+   | 13m, double deck, coach     | x          | x          | x         | Not available                           |                |
+   +-----------------------------+------------+------------+-----------+----------+---------------+--------------+----------------+
+   | 18m, articulated, city      | x          | x          | x         | Only for 2020                                            |
+   +-----------------------------+------------+------------+-----------+----------+---------------+--------------+----------------+
 
-* ``auxilliary power demand`` [W] = ``auxilliary power base demand`` [W] + (``heating thermal demand`` [W] x ``heating energy consumption`` [0-1]) + (``cooling thermal demand`` [W] x ``cooling energy consumption`` [0-1])
+|br|
 
-``auxilliary power demand`` is summed over the driving time defined by the driving cycle and divided by the ``engine efficiency``.
+.. image:: /_static/img/image_1.png
+    :width: 45%
 
+.. image:: /_static/img/image_2.png
+    :width: 45%
 
-The power demand for heating varies between 200 Watts and 350 Watts depending on the car size.
-The power demand for cooling varies between 200 Watts and 350 Watts depending on the car size.
+|s_caption| *Example of a midibus, 9m and a single deck, city bus, 13m* |e_caption|
 
-Note that, unlike battery electric vehicles, internal combustion engine vehicles satisfy the power demand in heating
-without the additional use of energy, because ``heating energy consumption`` = 0.
+.. image:: /_static/img/image_3.png
+    :width: 40%
 
+.. image:: /_static/img/image_4.png
+    :width: 50%
 
-Tank-to-wheel energy
---------------------
+|s_caption| *Example of a double deck, city bus, 13m and a single deck, coach bus, 13m* |e_caption|
 
-The sum of the `motive` and the `auxilliary` energy gives the tank-to-wheel energy (``TtW energy``) of the vehicle.
+.. image:: /_static/img/image_5.png
+    :width: 50%
 
-Parameters such as ``battery discharge efficiency``, ``fuel cell system efficiency``, ``drivetrain efficiency``,
-``engine efficiency`` and therefore, indirectly, ``TtW efficiency``, have been calibrated to obtain ``TtW energy``
-figures that fit what is observed in reality.
+.. image:: /_static/img/image_6.png
+    :width: 45%
 
-For 2010 and 2017 vehicles, the tank-to-wheel energy use (``TtW energy``) and underlying parameters have been calibrated
-against the database from the `Monitoring of CO2 emissions from passenger cars <https://www.eea.europa.eu/data-and-maps/data/co2-cars-emission-16>`_
-program from the European Environment Agency. This database lists energy and emission measurement for each new passenger
-car registered in the European Union, based on the NEDC and WLTC driving cycles.
+|s_caption| *Example of double deck, coach bus, 13m and a single-deck city bus, 18m* |e_caption|
 
-Tank-to-wheel energy calibration for 2010 vehicles
+Manufacture year and emission standard
+**************************************
 
-.. image:: https://github.com/romainsacchi/carculator/raw/master/docs/EU_energy_comparison_2010.png
-    :width: 900
-    :alt: Tank-to-wheel energy calibration for 2010 vehicles
+For ICE vehicles, several emission standards are considered. For
+simplicity, it is assumed that the vehicle manufacture year corresponds
+to the registration year, as indicated in :ref:`Table 2 <table-2>`.
 
+.. _table-2:
 
-Tank-to-wheel energy calibration for 2017 vehicles
+.. table:: Table 2: Emission standards and year of manufacture for medium and heavy/duty trucks
+   :widths: auto
+   :align: center
 
-.. image:: https://github.com/romainsacchi/carculator/raw/master/docs/EU_energy_comparison.png
-    :width: 900
-    :alt: Tank-to-wheel energy calibration for 2017 vehicles
+   +------------+-----------------+-----------------+-----------------+
+   |            | **Start of      | **End of        | **Manufacture   |
+   |            | registration**  | registration    | year in this    |
+   |            |                 | (incl.)**       | study**         |
+   +============+=================+=================+=================+
+   | **EURO-3** | 2000            | 2004            | **2002**        |
+   +------------+-----------------+-----------------+-----------------+
+   | **EURO-4** | 2005            | 2007            | **2006**        |
+   +------------+-----------------+-----------------+-----------------+
+   | **EURO-5** | 2008            | 2012            | **2010**        |
+   +------------+-----------------+-----------------+-----------------+
+   | **EURO-6** | 2013            |                 | **2020**        |
+   +------------+-----------------+-----------------+-----------------+
 
-For the year 2000, such energy and emission measurement data was not available. Hence, we relied on the `International
-Council on Clean Transportation data <https://theicct.org/chart-library-passenger-vehicle-fuel-economy>`_ that provides
-historical time series on the measured fuel efficiency of diesel and petrol engines based on the WLTC driving cycle,
-including its evolution between 2000 and 2010 (-20%). Therefore, the underlying parameters of ``TtW efficiency`` have
-been adjusted to produce ``TtW energy`` figures about 20% more important than those observed in 2010.
 
-Here is a comparison of the ``TtW energy`` based on the WLTC driving cycle for 2000, 2010 and 2017 vehicles:
+.. _modelling-considerations-applicable-to-all-vehicle-types-1:
 
-.. image:: https://github.com/romainsacchi/carculator/raw/master/docs/EU_energy_comparison_2000.png
-    :width: 900
-    :alt: Tank-to-wheel energy calibration for 2000 vehicles
+Modelling considerations applicable to all vehicle types
+--------------------------------------------------------
 
-Knowing the tank-to-wheel energy requirement allows to calculate the range (in km) of a vehicle on a full tank since:
+.. _sizing-of-the-base-frame-1:
 
-    ``range`` [km] = (``fuel mass`` [kg] x ``LHV fuel MJ per kg`` [Mj/kg] x 1000) / ``TtW energy``
-
-In the case of battery electric vehicles and hybrid vehicles, things are similar:
-
-    ``range`` [km] = (``electric energy stored`` [kWh] x ``battery DoD`` [%] x 3.6 x 1000) / ``TtW energy``
-
-The following lower heating values (LHV) for the liquid and gaseous fuels, in Mj/kg, are used:
-
-* conventional gasoline: 42.4
-* conventioanl diesel: 42.8
-* compressed natural gas: 55.5
-* hydrogen: 120
-
-Those can be changed by modifying the value of the ``LHV fuel MJ per kg`` in ``array`` before passing it to ``CarModel``.
-For example, we can decrease the LHV of diesel::
-
-    dict_param = {('Powertrain',  'ICEV-d', 'all', 'LHV fuel MJ per kg', 'none'): {
-                                                                                        (2000, 'loc'): 44,
-                                                                                        (2010, 'loc'): 44,
-                                                                                        (2017, 'loc'): 44,
-                                                                                        (2040, 'loc'): 44
-                                                                                        }
-    modify_xarray_from_custom_parameters(dict_param, array)
-
-
-How can I override the tank-to-wheel efficiency?
-------------------------------------------------
-
-With **carculator online**:
-
-You cannot directly override ``TtW efficieny``.
-However, you can adjust any of the four parameters affecting ``TtW efficiency`` in the Tank-to-wheel efficiency section.
-
-.. image:: https://github.com/romainsacchi/carculator/raw/master/docs/ttw_efficiency_change.png
-    :width: 900
-    :alt: Tank-to-wheel efficiency adjustment
-
-With **carculator**:
-
-After having created the CarModel() object and executed the :meth:`.set_all` method, you can override the
-calculated ``TtW efficiency`` value and recalculate ``TtW energy`` with the :meth:`.calculate_ttw_energy` method.
-Here is an example for a diesel car of medium size in 2020, for which we want to set the TtW efficiency at 30% (instead of 24%)::
-
-    cm = CarModel(array, cycle='WLTC')
-    cm.set_all()
-    cm.array.loc[dict(parameter="TtW efficiency",
-                  powertrain="ICEV-d",
-                  year=2020,
-                  size="Medium")] = 0.3
-    cm.calculate_ttw_energy()
-
-You can also adjust any of the input parameters that affect ``TtW efficiency``, namely ``battery discharge efficiency``
- (for battery electric cars only), ``fuel cell stack efficiency`` (for fuel cell cars only), ``engine efficiency`` and
- ``drivetrain efficiency``.
-
-If I know already the fuel consumption of a vehicle, can I override it?
------------------------------------------------------------------------
-
-With **carculator online**:
-
-Currently, it is not possible to modify directly the parameter ``TtW energy``, as it would be recalculated.
-In order to do so, you need to use instead the Python library *carculator* (see next section):
-
-With **carculator**:
-
-Yes. After having created the CarModel() object and executed the :meth:`.set_all` method, you can override the
-calculated ``TtW energy`` value (in kilojoules). Here is an example for a diesel car of medium size in 2020::
-
-    cm = CarModel(array, cycle='WLTC')
-    cm.set_all()
-    cm.array.loc[dict(parameter="TtW energy",
-                  powertrain="ICEV-d",
-                  year=2020,
-                  size="Medium")] = 2800
-
-
-Fuel blends
-***********
-
-The user can define fuel blends. The following fuel types are available, along with their lower heating value (in MJ/kg)
-and CO2 emission factor (kg CO2/kg fuel.
-
-Hydrogen technologies (LHV: 120 MJ/kg)
-......................................
-
-* 'electrolysis'
-* 'smr - natural gas'
-* 'smr - natural gas with CCS'
-* 'smr - biogas'
-* 'smr - biogas with CCS'
-* 'coal gasification'
-* 'wood gasification'
-* 'wood gasification with CCS'
-
-Natural gas technologies
-------------------------
-
-* 'cng' (55.5 MJ/kg, 2.65 kg CO2/kg CNG)
-* 'biogas' (55.5 MJ/kg, 2.65 kg CO2/kg CNG)
-* 'syngas' (55.5 MJ/kg, 2.65 kg CO2/kg CNG)
-
-Diesel technologies
--------------------
-
-* 'diesel' (42.8 MJ/kg, 3.14 kg CO2/kg)
-* 'biodiesel - algae' (31.7 MJ/kg, 2.85 kg CO2/kg)
-* 'biodiesel - cooking oil' (31.7 MJ/kg, 2.85 kg CO2/kg)
-* 'synthetic diesel' (43.3 MJ/kg, 3.16 kg CO2/kg)
-
-Petrol technologies
--------------------
-
-* 'petrol' (42.4 MJ/kg, 3.18 kg CO2/kg)
-* 'bioethanol - wheat straw' (26.8 MJ/kg, 1.91 kg CO2/kg)
-* 'bioethanol - maize starch' (26.8 MJ/kg, 1.91 kg CO2/kg)
-* 'bioethanol - sugarbeet' (26.8 MJ/kg, 1.91 kg CO2/kg)
-* 'bioethanol - forest residues' (26.8 MJ/kg, 1.91 kg CO2/kg)
-* 'synthetic gasoline' (42.4 MJ/kg, 3.18 kg CO2/kg)
-
-Once the fuel blend is defined, the range is calculated once again, now considering the new energy amount stored in the tank.
-Therefore, a car solely running on bio-ethanol will have a reduced range, increasing the fuel consumption and emissions
-related to the growing of crops and supply of fuel. The tailpipe CO2 emissions may not necessarily increase as biofuels
-have generally lower CO2 emission factors.
-
-It is important to note that CO2 emissions of biogenic origin from biofuels are characterized with a similar Global Warming Potential factor
-as those for conventional fossil fuels. However, CO2 uptake is considered during biomass growth.
-
-Fuel-related direct emissions
-*****************************
-
-Carbon dioxide emissions from fuel combustion are calculated based on the fuel blend defined by the user (see above).
-
-    carbon dioxide emission [kg/km] = CO2_fuel x ``fuel mass`` [kg] x share_fuel / ``range`` [km]
-
-This is calculated for every fuel type found in the blend (primary and secondary fuel).
-
-Other emissions based on fuel combustion are considered, from Spielmann et al., Transport Services Data v.2 (2007).
-However those only apply when conventional diesel or conventional gasoline is burnt:
-
-* Cadmium
-* Chromium and Chromium VI
-* Copper
-* Nickel
-* Selenium
-* Zinc
-
-
-Hot pollutants emissions
+Sizing of the base frame
 ************************
 
-**carculator** quantifies the emissions of the following substances:
+The sizing of the base frame is mainly based on p. 17-19 of :cite:`ct-1040`.
+Detailed weight composition is obtained for a **Midibus, 12t** and a
+**Single deck, coach, 19t**. Curb mass is obtained for all
+size classes. The rest being adjusted function of the gross mass, as indicated in :ref:`Table 3 <table-3>`.
+These bus models correspond to the baseline year of 2010. A 2% light weighting
+factor, as shown in the same report, is applied to represent the industry’s efforts in reducing
+vehicle weight in 2020.
 
-* Hydrocarbons
-* Carbon monoxide
-* Nitrogen oxides
-* Particulate matters
-* Methane
-* NMVOC
-* Lead
-* Sulfur dioxide
-* Dinitrogen oxide
-* Ammonia
-* Benzene
+The following components are common to all powertrains:
 
-It does so by correlating the emission of a substance at a given speed and the speed given for each second of the driving cycle.
+-  Frame
+-  Suspension
+-  Brakes
+-  Wheels and tires,
+-  Electrical system
+-  Transmission
+-  Other components
 
-The emission of substances function of the speed level is sourced from the
-`Handbook Emission Factors for Road Transport <https://www.hbefa.net/e/index.html>`_ for vehicles of various emission
-standards (from Euro-0 to Euro-6d).
+.. _table-3:
 
-Here is such correlation plotted for gasoline-run vehicles with a Euro-6d emission standard:
+.. table:: Table 3: Mass of urban bus and coach systems and components
+   :widths: auto
+   :align: center
 
-.. image:: https://github.com/romainsacchi/carculator/raw/master/docs/hbefa_petrol_euro6d.png
-    :width: 900
-    :alt: Substance emission versus speed, petrol, Euro-6d
+   +---------------------------+----------------------+---------------------------+--------------------------------+--------------------------------+--------------------------------+-----------------------------+-----------------------------+
+   |                           |                      | **Midibus, 12t**          | **Single deck, city bus, 19t** | **Single deck, city bus, 28t** | **Double deck, city bus, 26t** | **Single deck, coach, 19t** | **Double deck, coach, 26t** |
+   +===========================+======================+===========================+================================+================================+================================+=============================+=============================+
+   |                           | Type                 | rigid, 2 axles            | rigid, 2 axles                 | articulated, 3 axles           | rigid, 3 axles                 | rigid, 2 axles              | rigid, 3 axles              |
+   +---------------------------+----------------------+---------------------------+--------------------------------+--------------------------------+--------------------------------+-----------------------------+-----------------------------+
+   | in kilograms              | Gross weight         | 12'0000                   | 19'000                         | 28'000                         | 26'000                         | 19'000                      | 26'000                      |
+   +---------------------------+----------------------+---------------------------+--------------------------------+--------------------------------+--------------------------------+-----------------------------+-----------------------------+
+   | Powertrain                | Engine system        | 399                       | 931                            | 1'121                          | 1'121                          | 1'121                       | 1'200                       |
+   +---------------------------+----------------------+---------------------------+--------------------------------+--------------------------------+--------------------------------+-----------------------------+-----------------------------+
+   |                           | Coolant system       | 84                        | 116                            | 168                            | 130                            | 140                         | 182                         |
+   +---------------------------+----------------------+---------------------------+--------------------------------+--------------------------------+--------------------------------+-----------------------------+-----------------------------+
+   |                           | Fuel system          | 46                        | 66                             | 96                             | 74                             | 80                          | 104                         |
+   +---------------------------+----------------------+---------------------------+--------------------------------+--------------------------------+--------------------------------+-----------------------------+-----------------------------+
+   |                           | Exhaust system       | 60                        | 98                             | 142                            | 110                            | 118                         | 153                         |
+   +---------------------------+----------------------+---------------------------+--------------------------------+--------------------------------+--------------------------------+-----------------------------+-----------------------------+
+   |                           | Transmission system  | 451                       | 395                            | 571                            | 443                            | 476                         | 618                         |
+   +---------------------------+----------------------+---------------------------+--------------------------------+--------------------------------+--------------------------------+-----------------------------+-----------------------------+
+   | Electrical system         |                      | 135                       | 183                            | 264                            | 205                            | 220                         | 286                         |
+   +---------------------------+----------------------+---------------------------+--------------------------------+--------------------------------+--------------------------------+-----------------------------+-----------------------------+
+   | Chassis system            | Frame                | 472                       | 695                            | 1'004                          | 778                            | 837                         | 1'087                       |
+   +---------------------------+----------------------+---------------------------+--------------------------------+--------------------------------+--------------------------------+-----------------------------+-----------------------------+
+   |                           | Suspension           | 1'032                     | 1'490                          | 2'153                          | 1'669                          | 1'795                       | 2'331                       |
+   +---------------------------+----------------------+---------------------------+--------------------------------+--------------------------------+--------------------------------+-----------------------------+-----------------------------+
+   |                           | Braking system       | 149                       | 272                            | 393                            | 305                            | 328                         | 426                         |
+   +---------------------------+----------------------+---------------------------+--------------------------------+--------------------------------+--------------------------------+-----------------------------+-----------------------------+
+   |                           | Wheels and tires     | 245                       | 576                            | 832                            | 645                            | 694                         | 901                         |
+   +---------------------------+----------------------+---------------------------+--------------------------------+--------------------------------+--------------------------------+-----------------------------+-----------------------------+
+   | Cabin                     | Cabin                | 0                         | 0                              | 0                              | 0                              | 0                           | 0                           |
+   +---------------------------+----------------------+---------------------------+--------------------------------+--------------------------------+--------------------------------+-----------------------------+-----------------------------+
+   |                           | Body system          | 4'270                     | 5'570                          | 8'045                          | 6'238                          | 6'709                       | 8'714                       |
+   +---------------------------+----------------------+---------------------------+--------------------------------+--------------------------------+--------------------------------+-----------------------------+-----------------------------+
+   | Other                     |                      | 607                       | 858                            | 1'462                          | 882                            | 1'033                       | 1'598                       |
+   +---------------------------+----------------------+---------------------------+--------------------------------+--------------------------------+--------------------------------+-----------------------------+-----------------------------+
+   | Curb mass, incl. Trailer  |                      | 7'950                     | 11'250                         | 16'250                         | 12'600                         | 13'551                      | 17'600                      |
+   +---------------------------+----------------------+---------------------------+--------------------------------+--------------------------------+--------------------------------+-----------------------------+-----------------------------+
+   | Payload                   |                      | 4'050                     | 5'750                          | 9'750                          | 13'400                         | 5'450                       | 8'400                       |
+   +---------------------------+----------------------+---------------------------+--------------------------------+--------------------------------+--------------------------------+-----------------------------+-----------------------------+
 
-Given the years selected, the corresponding emission factors are chosen:
 
-* before 1993: Euro-0
-* between 1993 and 1997: Euro-1
-* between 1998 and 2000: Euro-2
-* between 2001 and 2005: Euro-3
-* between 2006 and 2010: Euro-4
-* between 2011 and 2014: Euro-5
-* above 2015: Euro-6
+Other size-related parameters
+*****************************
 
-Emissions are summed over the duration of the driving cycle. Furthermore, some driving cycles have distinct parts
-corresponding to different driving environments: urban, suburban, highway, etc. These driving environments are used
-to further split emissions and be more precise on the fate of the substances and the exposure of the population.
+Passenger occupancy is essential, as environmental impacts are normalized to a
+passenger-kilometer unit. The current version of Mobitool factors v.2.1 :cite:`ct-1004` uses
+the following occupancy values:
 
-Noise emissions
+* “City bus”: 10 passengers
+* “Autocar” (coach): 21 passengers
+* “Trolleybus” (18m): 19 passengers
+
+Similar values are used for “Single deck, city bus, 13m”, “Single deck, coach, 13m” and
+“Single deck, city bus, 18m” respectively. But the following occupancy values are also
+inferred for the remaining size classes:
+
+* Midibus, 9m: 5 passengers (based on a 16% load factor for “Single deck, city bus, 13m”)
+* Double deck, city bus, 13m: 13 passengers (based on a 16% load factor for “Single deck, city bus, 13m”)
+* Double deck, coach bus, 13m: 26 passengers (based on a 38% load factor for “Single deck, coach, 13m”)
+
+Regarding the expected lifetime of the vehicles, the Swiss vehicles registry MOFIS from the
+Swiss Federal Road Office :cite:`ct-1003` is used. Average lifetime values for
+decommissioned buses in Switzerland are derived and presented in :ref:`Table 4 <table-4>`. Vehicles with
+a lifetime below ten years or above 30 years are considered outliers and omitted. Because
+the lifetime values obtained are very close to one another for all bus types but trolleybuses,
+14 years is considered for those. For trolleybuses, the average value obtained is 21 years,
+but the sample of decommissioned vehicles is small (3). However, all of them were
+decommissioned at least after 20 years of use. Moreover, out of the 321 trolleybuses still in
+operation in 2021, a third are already 14 years or older. Hence, a lifetime value of 20 years
+seems representative.
+
+.. _table-4:
+
+.. table:: Table 4: Kilometric lifetime values for urban buses and coaches
+   :widths: auto
+   :align: center
+
+   +---------------------------------------------+-------------------+------------------------+----------------------+-----------------------------+----------------+--------------------------------------+
+   |                                             | **Midibus**       | **Single-decker, 13m** | **Articulated, 18m** | **Trolleybus (BEV-motion)** | **Source**     | **Comment**                          |
+   +=============================================+===================+========================+======================+=============================+================+======================================+
+   | Count                                       | 50                | 18                     | 316                  | 3                           | MOFIS vehicles | Outliers have been removed (with a   |
+   |                                             |                   |                        |                      |                             | registry       | lifetime inferior to 10 years or     |
+   |                                             |                   |                        |                      |                             | :cite:`ct-1003`| superior to 30 years)                |
+   +---------------------------------------------+-------------------+------------------------+----------------------+-----------------------------+                +                                      +
+   | Average lifetime [years]                    | 15.05             | 14.7                   | 14.2                 | 21                          |                |                                      |
+   +---------------------------------------------+-------------------+------------------------+----------------------+-----------------------------+----------------+--------------------------------------+
+   | Lifetime value used in this study [years]   | 14                | 14                     | 14                   | 20                          |                |                                      |
+   +---------------------------------------------+-------------------+------------------------+----------------------+-----------------------------+----------------+--------------------------------------+
+
+To estimate the annual mileage driven by the different bus types, the amount of vehicle-
+kilometers driven by buses and trolleybuses is compared with the number of corresponding
+vehicles in Switzerland for that same year, as provided by the Swiss Federal Statistical
+Office :cite:`ct-1130`. The results of this comparison are shown in :ref:`Table 5 <table-5>`.
+
+.. _table-5:
+
+.. table:: Table 5: Annual mileage for buses and trolleybuses
+   :widths: auto
+   :align: center
+
+   +---------------------------------+----------+-----------------------+-------------------+------------------------------+
+   |                                 | **Year** | **Transport service** | **Vehicle stock** | **Annual mileage**           |
+   |                                 |          | **[million vehicle**  | **[unit]**        | **[kilometer per year]**     |
+   |                                 |          | **- kilometer]**      |                   |                              |
+   +=================================+==========+=======================+===================+==============================+
+   | Buses                           | 2005     | 229                   | 4'685             | 48'844                       |
+   +                                 +----------+-----------------------+-------------------+------------------------------+
+   |                                 | 2006     | 233                   | 4'586             | 50'775                       |
+   +                                 +----------+-----------------------+-------------------+------------------------------+
+   |                                 | 2007     | 230                   | 4'786             | 47'977                       |
+   +                                 +----------+-----------------------+-------------------+------------------------------+
+   |                                 | 2010     | 244                   | 4'871             | 50'092                       |
+   +                                 +----------+-----------------------+-------------------+------------------------------+
+   |                                 | 2015     | 272                   | 5'410             | 50'357                       |
+   +---------------------------------+----------+-----------------------+-------------------+------------------------------+
+   | Trolleybuses (BEV-motion)       | 2005     | 27                    | 606               | 44'490                       |
+   +                                 +----------+-----------------------+-------------------+------------------------------+
+   |                                 | 2006     | 27                    | 606               | 43'913                       |
+   +                                 +----------+-----------------------+-------------------+------------------------------+
+   |                                 | 2007     | 26                    | 596               | 43'216                       |
+   +                                 +----------+-----------------------+-------------------+------------------------------+
+   |                                 | 2010     | 27                    | 606               | 44'554                       |
+   +                                 +----------+-----------------------+-------------------+------------------------------+
+   |                                 | 2015     | 27                    | 548               | 49'507                       |
+   +---------------------------------+----------+-----------------------+-------------------+------------------------------+
+
+Based on this data, an annual mileage of 50’000 km is considered for all bus types.
+
+Other size-related parameters are listed in :ref:`Table 6 <table-6>`. Some of them have
+been obtained and/or calculated from manufacturers’ data, which is
+available in :ref:`Annex C <annex-C>` of this report.
+
+.. _table-6:
+
+.. csv-table:: Table 6: Use and size parameters for urban buses and coaches.
+    :file: _static/tables/table_1.csv
+    :widths: auto
+    :align: center
+    :header-rows: 1
+
+
+The number of axles influences several aspects of the bus's performance, notably its overall
+rolling resistance and the emissions associated with tire, brake, and road wear. The rolling
+resistance is calculated considering the number of axles, the relative load per axle, the
+number of tires per axle, and the driving mass of the vehicle, as presented in the
+documentation of VECTO :cite:`ct-1024`.
+
+Auxiliary power demand
+**********************
+The auxiliary power demand comprises the base power demand, the power demand from
+the battery management system, and the power demand from the HVAC system.
+
+Base power demand
+~~~~~~~~~~~~~~~~~
+
+The auxiliary power base demand represents the power drawn from operating non-traction
+equipment such as the air compressor, the ticket vending machines, trip information displays, the
+steering compressor, etc. :cite:`ct-1104` estimate the base power load of a regular
+13m-long single-decker. Considering the air compressor, the steering and braking systems, and
+other devices, the instant base power load ranges between 2 and 7 kW (as not all devices work
+simultaneously). :cite:`ct-1034` confirm the value of 7 kW, but only when all devices work
+simultaneously. In the present study, a further assumption is made that such values for the base
+power demand are probably correlated to the size of the vehicle, as well as to the type of use
+(e.g., coach buses do not need to open and close doors as frequently as do urban buses).
+Hence, the values presented in :ref:`Table 7 <table-7>`  are considered.
+
+.. _table-7:
+
+.. table:: Table 7: Non-exhaustive list of time-dependent parameters common to European trucks
+   :widths: auto
+   :align: center
+
+   +---------------------------------+----------------------------+--------------------------------------+
+   | Size class in this study        | **Power base demand [kW]** | **Source**                           |
+   +=================================+============================+======================================+
+   | Midibus, 9m                     | 2.25                       | From :cite:`ct-1104` estimates the   |
+   |                                 |                            | base power load to be 2 to 7kW. It is|
+   |                                 |                            | further scaled on the gross weight.  |
+   +---------------------------------+----------------------------+                                      +
+   | Single deck, city bus, 13m      | 5                          |                                      |
+   | Double deck, city bus, 13m      |                            |                                      |
+   | Single deck, city bus, 18m      |                            |                                      |
+   +---------------------------------+----------------------------+                                      +
+   | Single deck, coach, 13m         | 3.5                        |                                      |
+   | Double deck, coach, 13m         |                            |                                      |
+   +---------------------------------+----------------------------+--------------------------------------+
+
+Battery management system power demand
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+According to :cite:`ct-1034`, the battery management system requires 2.75 kW on hot
+summer days to cool the battery down and 0.5 kW on cold winter days to keep it warm. The
+average monthly daytime temperature for Switzerland is used (i.e., 12 values for the year)
+together with the values mentioned above (i.e., 2.75 kW and 0.5 kW) to calculate the
+additional load from the battery management system when the ambient temperature is
+above 20 degrees Celsius and below 5 degrees Celsius, respectively.
+
+HVAC power demand
+*****************
+
+Estimating heating and cooling needs is a complicated matter, and unfortunately, it is also
+essential for BEV buses. In this study, a simplified approach is used. The following relation
+between HVAC power draw and ambient temperature from :cite:`ct-1104` is
+used, based on a 24 kW HVAC system fitted on a 12m city bus in Finland.
+
+.. _figure-1:
+
+.. figure:: _static/img/image_7.png
+    :align: center
+
+    *Figure 1: Relation between ambient outdoor temperature and HVAC system power output*
+
+The HVAC system is sized according to the bus size class (i.e., from 10 kW for the midibus
+to 24 kW for the double-deck or articulated buses). This curve is adapted to the different bus
+size classes using the power load-to-maximum HVAC power ratio depicted above.
+
+For BEV-buses, the HVAC is fitted with a heat pump, with the following Coefficients of
+Performance (CoP), taken from :cite:`ct-1095`:
+
+* CoP of 2.3 for heating
+* CoP of 1.3 for cooling
+
+For ICE buses, it is assumed that the excess heat from the engine is sufficient to warm the
+passengers’ cabin to a comfortable temperature.
+
+.. note::
+
+    **Important assumption:** Although data cannot confirm this, coach buses likely have lower
+    HVAC power requirements. They do not open doors as frequently and are generally better
+    insulated (notably through double-glazed windows). Hence, coach buses are assumed to
+    have an overall HVAC power requirement **20%** lower than city buses.
+
+:ref:`Figure 2 <figure-2>` compares the different auxiliary energy components between a 13m single-deck
+BEV and ICEV-d bus for city and intercity use, the outdoor ambient temperature function.
+
+.. note::
+
+    **Important remark:** the 13m single-deck BEV intercity bus (i.e., coach) is only shown for this
+    purpose, as the model would not validate such a bus (at least, not in 2020, as the battery
+    would make the bus heavier than its permitted gross mass when fully occupied).
+
+.. _figure-2:
+
+.. figure:: _static/img/image_8.png
+    :align: center
+
+    *Figure 2: Auxiliary energy consumption as a function of outdoor ambient temperature*
+
+Because the auxiliary energy depends on time and not on distance, it is more of an issue for
+city buses when normalized per km, as they have an average speed of 2-to-3 times as low
+as that of a coach bus.
+
+However, buses do not constantly operate at -20°C or +30°C. This is why pre-set monthly
+daylight average temperature series are used.
+
+.. _figure-3:
+
+.. figure:: _static/img/image_9.png
+    :align: center
+
+    *Figure 3: Auxiliary energy consumption for different countries, based on their yearly average daytime temperature*
+
+But does this matter compared to the traction energy?
+
+:ref:`Figure 4 <figure-4>` shows the energy consumption [1]_ of a 13m-long single-deck bus for urban and
+intercity use, including the traction energy. The values are normalized to one vehicle-
+kilometer as a function of the ambient temperature.
+
+It seems that the power draw from the HVAC system can potentially be an issue, but
+primarily for urban electric buses and, to a lesser extent, inter-city electric buses (provided
+they are a viable option, which they are not currently). It seems auxiliary energy represents
+25% of the tank-to-wheel energy consumption in normal conditions and goes up to 30% and
+40% in very cold and hot conditions, respectively. This is as much energy not available for
+traction purposes (i.e., which directly affects the vehicle’s range autonomy).
+
+.. _figure-4:
+
+.. figure:: _static/img/image_10.png
+    :align: center
+
+    *Figure 4: Distribution of the tank-to-wheel energy use for a single-deck 13m bus function of the ambient outdoor temperature*
+
+-----
+
+.. [1] The modeling of the traction energy is explained in the next section.
+
+Abrasion emissions
+******************
+
+:ref:`Figure 5 <figure-5>` shows the calculated abrasion emissions for buses in mg per vehicle-kilometer,
+following the approach presented in Section I.C.5.b.
+
+.. _figure-5:
+
+.. figure:: _static/img/image_11.png
+    :align: center
+
+    *Figure 5: Total particulate matter emissions (<2.5 µm and 2.5-10 µm) in mg per vehicle-kilometer for buses.*
+
+
+.. _modelling-approach-applicable-to-internal-combustion-engine-vehicles:
+
+Modelling approach applicable to internal combustion engine vehicles
+--------------------------------------------------------------------
+
+.. _traction-energy:
+
+Traction energy
 ***************
 
-Given the driving cycle, where speed [km/h] is given along time [s], noise levels (in dB) are calculated for each of the
-8 octaves (or frequency ranges) to obtain `propulsion` and `rolling noise` levels, based on the
-`CNOSSOS model <https://ec.europa.eu/jrc/en/publication/reference-reports/common-noise-assessment-methods-europe-cnossos-eu>`_.
+The traction energy for city buses is calculated based on the “Urban” driving cycle for buses
+provided by VECTO :cite:`ct-1024`. Simulations in VECTO are run with
+buses modeled as closely as possible to those of this study to obtain the performance along
+the driving cycle (e.g., speed, friction losses, and fuel consumption, among others). :ref:`Figure 6 <figure-6>`
+shows the first two hundred seconds of that driving cycle, distinguishing the target speed
+from the actual speed managed by the different vehicles. The power-to-mass ratio influences
+how much a vehicle manages to comply with the target speed.
 
-For electric engines, `special coefficients apply <https://hal.archives-ouvertes.fr/hal-01355872/document>`_.
+.. _figure-6:
 
-Also, electric cars are added a warning signal of 56 dB at speed levels lower than 20 km/h.
-Hybrid cars are assumed to use an electric engine up to a speed level of 30 km/h, beyond which the combustion engine is used.
-The sum of the propulsion and rolling noise levels is converted to noise power (in joules) and divided by the distance
-driven to obtain the noise power par km driven (joules/km), for each octave.
+.. figure:: _static/img/image_12.png
+   :align: center
 
-Noise emissions are further compartmented into urban, sub-urban and rural geographical environments based on speed
-intervals given by the driving cycle.
-The study from  `Cucurachi et al. 2014 <https://www.ncbi.nlm.nih.gov/pubmed/24035845>`_ is used to characterize noise
-emissions against midpoint and endpoint indicators, expressed in Person-Pascal-second and DALYs, respectively.
+   *Figure 6: VECTO's Urban driving cycle (first two hundred seconds).*
 
-Overall, propulsion noise emissions dominate in urban environments, thereby justifying the use of electric cars in that
-regard. In sub-urban and rural environments, rolling noise emissions dominate above a speed level around 50 km/h.
+Road gradients are also considered. :ref:`Figure 7 <figure-7>` shows the road gradient profile of the urban
+driving cycle.
 
-It is important to note that although **carculator** differentiates noise coefficients by powertrain
-(internal combustion engine, electric and hybrid), it is not possible to differentiate them by size class.
-Therefore, the noise produced by a `small` vehicle will be similar to that produced by a `large` vehicle.
+.. _figure-7:
 
+.. figure:: _static/img/image_13.png
+   :align: center
 
-Vehicle inventory
+   *Figure 7: Road gradients corresponding to VECTO's urban driving cycle.*
+
+For coach buses, VECTO’s “Intercity” driving cycle is used. This cycle has fewer stops and
+less fluctuation in terms of speed levels, and it also has a higher average speed level and
+lasts much longer. The first two hundred seconds of that driving cycle are depicted in :ref:`Figure 8 <figure-8>`.
+
+.. _figure-8:
+
+.. figure:: _static/img/image_14.png
+   :align: center
+
+   *Figure 8: VECTO's Intercity driving cycle (first two hundred seconds).*
+
+:ref:`Table 8 <table-8>` compares some of the parameters of both driving cycles.
+
+.. _table-8:
+
+.. table:: Table 8: Parameters for "Urban" and "Intercity" driving cycles
+   :widths: auto
+   :align: center
+
+   +----------------------------+-----------------------+----------------+-------------------+------------------+------------------------------------+
+   | Driving cycle              | Average speed [km/h]  | Distance [km]  | Driving time [s]  | Idling time [s]  | Mean positive acceleration [m.s2]  |
+   +============================+=======================+================+===================+==================+====================================+
+   | Midibus, 9m                | 26                    | 40             | ~7'700            | ~2'730           | 0.56                               |
+   | Single deck, city bus, 13m |                       |                |                   |                  |                                    |
+   | Double deck, city bus, 13m |                       |                |                   |                  |                                    |
+   | Single deck, city bus, 18m |                       |                |                   |                  |                                    |
+   +----------------------------+-----------------------+----------------+-------------------+------------------+------------------------------------+
+   | Single deck, coach, 13m    | 57                    | 275            | ~18'000           | ~390             | 0.29                               |
+   | Double deck, coach, 13m    |                       |                |                   |                  |                                    |
+   +----------------------------+-----------------------+----------------+-------------------+------------------+------------------------------------+
+
+The energy consumption model is similar to that of passenger cars: the sum of the different
+resistances at the wheel is calculated, after which friction-induced losses along the drivetrain are
+considered to obtain the energy required at the tank level.
+
+VECTO’s simulations are again used to calibrate the engine and transmission efficiency of diesel
+and compressed gas buses. Similar to the modeling of delivery, medium- and heavy-duty trucks,
+the relation between the efficiency of the drivetrain components (i.e., engine, gearbox, and axle)
+and the power load-to-peak-power ratio is used.
+
+A calibration exercise with VECTO for the diesel-powered 13m city bus is shown in :ref:`Figure 9 <figure-9>`.
+After calibration, the tank-to-wheel energy consumption value obtained from VECTO and
+``carculator_bus`` for diesel-powered buses differ by less than 1 percent over the entire driving cycle.
+
+.. _figure-9:
+
+.. figure:: _static/img/image_15.png
+   :align: center
+
+   *Figure 9: Calibration of carculator_bus energy model against VECTO simulations for a single deck 13m long diesel bus (first 1’000 seconds shown)*
+
+Unfortunately, VECTO does not have a model for compressed gas-powered buses.
+Therefore, correction factors for fuel efficiency relative to diesel buses are derived from
+HBEFA 4.1 and presented in :ref:`Table 9 <table-9>`. They are calculated from the average difference in
+fuel efficiency between compressed gas and diesel buses across similar traffic situations and size classes.
+
+.. _table-9:
+
+.. table:: Table 9: Difference in fuel economy between diesel and compressed gas urban and coach buses for similar traffic situations
+   :widths: auto
+   :align: center
+
+   +----------------------------+-------------------------------------+-------------------------------------+
+   | HBEFA size class           | Urban traffic situations            | Rural traffic situations            |
+   +============================+=====================================+=====================================+
+   | Midi < 15t                 | +10% (applicable to ” Midibus, 9m”) |                                     |
+   +----------------------------+-------------------------------------+-------------------------------------+
+   | 15-18t                     | +3% (relevant to “Single deck,      | +20% (relevant to “Single deck,     |
+   |                            | city bus, 13m”)                     | coach, 13m”)                        |
+   +----------------------------+-------------------------------------+-------------------------------------+
+   | > 18t                      | +1% (relevant to “Single deck,      | +20% (relevant to “Double deck,     |
+   |                            | city bus, 18m” and "Double deck,    | coach, 13m”)                        |
+   |                            | city bus, 13m”                      |                                     |
+   +----------------------------+-------------------------------------+-------------------------------------+
+
+.. note::
+
+    **Important remark:** the engine and gearbox efficiencies (and the resulting tank-to-wheel
+    consumption) are calibrated against VECTO’s simulations, but the relative change in
+    efficiency throughout time (i.e., along emission standards) is calibrated against HBEFA’s data.
+
+.. _exhaust-emissions:
+
+Exhaust emissions
 *****************
-This section presents the vehicle inventory once its size, mass, energy consumption and emissions are known.
 
-.. csv-table:: Vehicle inventory
-    :file: table_1.csv
-    :widths: 10 10 30 30 10 10
+As with passenger cars and trucks, several fuel-related emissions other than CO2 or SO2 are
+considered. The emission factors of the HBEFA 4.1 database are used.
+
+For buses, two sources of emissions are considered:
+
+* Exhaust emissions: emissions from the combustion of fuel during operation. Their
+  concentration relates to fuel consumption and the vehicle's emission standard.
+* Non-exhaust emissions: brake, tire, and road wear emissions, as well as emissions
+  of refrigerant and noise.
+
+For exhaust emissions, factors based on the fuel consumption are derived by comparing
+emission data points for different traffic situations (i.e., grams emitted per vehicle-km) in free-
+flowing driving conditions, with the fuel consumption corresponding to each data point (i.e.,
+MJ of fuel consumed per km), as illustrated in :ref:`Figure 10 <figure-10>` for a diesel-powered engine. The
+aim is to obtain emission factors expressed as grams of a substance emitted per MJ of fuel
+consumed to model emissions of buses of different sizes and mass operating on different
+driving cycles.
+
+.. note::
+
+    **Important remark:** the degradation of anti-pollution systems for EURO-6 diesel buses (i.e.,
+    catalytic converters) is accounted for, as indicated by HBEFA 4.1, by applying a degradation
+    factor on the emission factors for NOx. These factors are shown in :ref:`Table 10 <table-10>` for buses with a
+    mileage of 890’000 km. Since the diesel buses in this study have a kilometric lifetime of
+    700’000 km, degradation factors are interpolated linearly (with a degradation factor of 1 at
+    Km 0). The degradation factor corresponding to half of the vehicle kilometric lifetime is used
+    to obtain a lifetime-weighted average degradation factor.
+
+.. _table-10:
+
+.. table:: Table 10: Degradation factors at 890'000 km for diesel buses
+   :widths: auto
+   :align: center
+
+   +--------------------------------------+---------+
+   | **Degradation factor at 890’000 km** | \       |
+   +======================================+=========+
+   |\                                     | **NOx** |
+   +--------------------------------------+---------+
+   | **EURO-6**                           | 1.3     |
+   +--------------------------------------+---------+
+
+.. _figure-10:
+
+.. figure:: _static/img/image_16.png
+   :align: center
+
+   *Figure 10: Relation between emission factors and fuel consumption for a diesel-powered urban bus for several “urban” traffic situations*
+
+Using these fuel-based emissions factors, emissions for each second of the driving cycle for each substance are calculated.
+
+To confirm that such approach does not yield kilometric emissions too different from the
+emission factors per vehicle-kilometer proposed by HBEFA 4.1, :ref:`Figure 11 <figure-11>` compares the
+emissions obtained by ``carculator_bus`` using VECTO’s “Urban” driving cycle over one
+vehicle-km (red dots) for the “Single deck, city bus, 13m” with the distribution of the emission
+factors across different “urban” traffic situations (green box-and-whiskers) as well as the
+traffic-situation-weighted average emission factors (yellow dots) given by HBEFA 4.1 for
+various emission standards for a bus with a gross mass of 15-18 tons.
+
+There is some variation across HBEFA’s urban traffic situations. Still, the emissions obtained
+remain, for most substances, within 50% of the distributed HBEFA values across traffic
+situations, except for N2O and NOx, which are slightly under and overestimated, respectively.
+Those two substances are also underestimated compared to the traffic situation-weighted
+average emission factors given by HBEFA 4.1, especially for early emission standards.
+These deviations can be explained by a different underlying driving cycle to calculate fuel
+consumption and related emissions. The comparison between the model’s emission results
+for the intercity driving cycle using coach buses and HBEFA’s emission factors for “rural”
+traffic situations shows a similar picture.
+
+.. _figure-11:
+
+.. figure:: _static/img/image_17.png
+   :align: center
+
+   *Figure 11: Validation of the exhaust emissions model with the emission factors provided by HBEFA 4.1 for urban buses in traffic situations of “urban” type.*
+
+.. note::
+
+    Box-and-whiskers: distribution of HBEFA’s emission factors for different “urban” traffic situations (box: 50% of
+    the distribution, whiskers: 90%). Yellow dots: traffic situation-weighted average emission factor given by
+    HBEFA 4.1. Red dots: modeled emissions calculated by ``carculator_bus`` with the “Urban” driving cycle for
+    a 13m single deck urban bus, using the relation between fuel consumption and amounts emitted.
+
+.. _modelling-approach-applicable-to-electric-vehicles:
+
+Modelling approach applicable to electric vehicles
+--------------------------------------------------
+
+City bus itinerary parameters
+*****************************
+
+For electric buses, a few parameters affect their charging strategy and the sizing of the
+battery, and they are crucial to detail.
+
+The second edition of the ZeEUS eBus project report :cite:`ct-1036` extracts
+statistics on routes serviced by electric city buses in Europe, presented in :ref:`Table 11 <table-11>`. It is
+found that motion-charging buses are operated significantly longer than depot- and
+opportunity-charging buses per shift (a shift is understood as the operation time between two
+deep charges at the bus depot). It is also found that opportunity-charging buses are
+operated over a slightly longer distance than depot-charging buses, although not to a
+significant extent. Based on the average distance driven per shift, the average operation
+time for each electric bus type is calculated. Because the resulting values for opportunity-
+and depot-charging buses are very close (i.e., 6.5 hours against 6 hours), a similar operation
+time of 6 hours is assumed. All these parameters are presented in :ref:`Table 12 <table-12>`.
+
+.. _table-11:
+
+.. table:: Table 11: Statistics on electric bus routes in Europe
+   :widths: auto
+   :align: center
+
+   +---------------------------+-----------------+-----------------+-----------------+-----------------+-----------------+
+   |                           | **BEV-opp**     | **BEV-depot**   | **BEV-motion**  | **Source**      | **Comment**     |
+   +===========================+=================+=================+=================+=================+=================+
+   | Route count               | 23              | 31              | 12              | :cite:`ct-1036` |                 |
+   +---------------------------+-----------------+-----------------+-----------------+-----------------+-----------------+
+   | Average distance driven   | 170             | 156             | 310             |                 |                 |
+   | per shift [km]            |                 |                 |                 |                 |                 |
+   +---------------------------+-----------------+-----------------+-----------------+-----------------+-----------------+
+   | Average operation time per| 6               | 6               | 12              |                 | Calculated based|
+   | shift (in motion) [h]     |                 |                 |                 |                 | on the average  |
+   |                           |                 |                 |                 |                 | speed of VECTO’s|
+   |                           |                 |                 |                 |                 | driving cycle   |
+   |                           |                 |                 |                 |                 | for city buses. |
+   +---------------------------+-----------------+-----------------+-----------------+-----------------+-----------------+
+
+For coach buses, it is assumed they drive 9 hours per day (corresponding to the limit set by
+the EU and Swiss legislation if only one driver is present).
+
+Finally, using a pantograph system, opportunity-charging electric buses (BEV-opp) can
+charge once per trip. In-motion-charging electric trolleybuses (BEV-motion) follow an
+itinerary where 40% to 70% of the trip distance is equipped with overhead electrical lines to
+allow for charging, based on :cite:`ct-1069` but also based on
+the battery capacity featured on current models on the market.
+
+.. _table-12:
+
+.. csv-table:: Table 12: Use-related parameters for the different electric buses
+    :file: _static/tables/table_2.csv
+    :widths: auto
+    :align: center
     :header-rows: 1
 
+.. _traction-energy-2:
 
-Fuel pathways
-*************
+Traction energy
+***************
 
-Different fuel pathways can be selected for a given powertrain type.
-The table below lists them.
+Electric vehicles
+~~~~~~~~~~~~~~~~~
 
-.. csv-table:: Fuel pathways
-    :file: table_2.csv
-    :widths: 15 25 30 30
+VECTO does not have a model for battery or fuel-cell electric buses. Therefore, constant
+efficiency values for the engine and drivetrain for electric buses in driving and recuperation
+mode from :cite:`ct-1080` are used. They are detailed in :ref:`Table 13 <table-13>` and :ref:`Table 14 <table-14>`.
+
+
+.. _table-13:
+
+.. table:: Table 13: Efficiency values along the drivetrain of electric buses in driving mode
+   :widths: auto
+   :align: center
+
+   +---------------------+-----------------+-------------+---------------+
+   | **Eff. of**         | **Fuel cell**   | **BEV bus** | **Trolleybus**|
+   | **subsystem**       | **bus**         |             |               |
+   +=====================+=================+=============+===============+
+   | Fuel tank           | 0.98            |             |               |
+   +---------------------+-----------------+-------------+---------------+
+   | Energy storage      |                 | 0.92        |               |
+   +---------------------+-----------------+-------------+---------------+
+   | Fuel cell stack     | 0.55            |             |               |
+   +---------------------+-----------------+-------------+---------------+
+   | Converter           |                 | 0.98        |               |
+   +---------------------+-----------------+-------------+---------------+
+   | Rectifier           |                 |             |               |
+   +---------------------+-----------------+-------------+---------------+
+   | Inverter            | 0.98            | 0.98        | 0.98          |
+   +---------------------+-----------------+-------------+---------------+
+   | Electric motor      | 0.93            | 0.93        | 0.93          |
+   +---------------------+-----------------+-------------+---------------+
+   | Reduction gear      | 0.95            | 0.95        | 0.95          |
+   +---------------------+-----------------+-------------+---------------+
+   | Drive axle          | 0.94            | 0.94        | 0.94          |
+   +---------------------+-----------------+-------------+---------------+
+   | Total               | 0.44            | 0.73        | 0.81          |
+   +---------------------+-----------------+-------------+---------------+
+
+|br|
+
+.. _table-14:
+
+.. table:: Table 14: Efficiency values along the drivetrain of electric buses in recuperation mode
+   :widths: auto
+   :align: center
+
+   +---------------------+-----------------+-------------+---------------+
+   | **Eff. of**         | **Fuel cell**   | **BEV bus** | **BEV-motion**|
+   | **subsystem**       | **bus**         |             |               |
+   +=====================+=================+=============+===============+
+   | Drive axle          | 0.94            | 0.94        |    0.94       |
+   +---------------------+-----------------+-------------+---------------+
+   | Reduction gear      | 0.95            | 0.95        |    0.95       |
+   +---------------------+-----------------+-------------+---------------+
+   | Electric motor      | 0.93            | 0.93        |    0.93       |
+   +---------------------+-----------------+-------------+---------------+
+   | Rectifier           | 0.98            | 0.98        |    0.98       |
+   +---------------------+-----------------+-------------+---------------+
+   | Converter           | 0.98            | 0.98        |               |
+   +---------------------+-----------------+-------------+---------------+
+   | Energy storage      | 0.85            | 0.85        |    0.85       |
+   +---------------------+-----------------+-------------+---------------+
+   | Converter           | 0.98            | 0.98        |               |
+   +---------------------+-----------------+-------------+---------------+
+   | Inverter            | 0.98            | 0.98        |    0.98       |
+   +---------------------+-----------------+-------------+---------------+
+   | Electric motor      | 0.93            | 0.93        |    0.93       |
+   +---------------------+-----------------+-------------+---------------+
+   | Reduction gear      | 0.95            | 0.95        |    0.95       |
+   +---------------------+-----------------+-------------+---------------+
+   | Drive axle          | 0.94            | 0.94        |    0.94       |
+   +---------------------+-----------------+-------------+---------------+
+   | Total               | 0.54            | 0.54        |    0.56       |
+   +---------------------+-----------------+-------------+---------------+
+
+Energy Storage
+**************
+
+Battery electric buses
+~~~~~~~~~~~~~~~~~~~~~~
+
+The sizing of the energy storage unit for battery electric buses is sensitive to a few parameters,
+such as the operation time per shift, the number of charging opportunities per trip, the share of
+the bus line length equipped with overhead lines, and of course, the specific energy density of
+the battery cells and the amplitude of charge cycles. Furthermore, a 20% margin on the battery
+capacity is added for emergency or unexpected use.
+
+.. note::
+
+    * **Important remark:** ``carculator_bus`` models all buses. However, suppose a battery electric vehicle
+      (or other) has an energy storage unit mass leading to a fully occupied driving mass superior to
+      the maximum allowed gross mass. In that case, it will not be processed for LCI quantification,
+      which is typically the case for battery electric coach buses.
+    * **Important remark:** overnight charging vehicles (BEV-depot) use a Li-NMC battery by default
+      (but inventories with an NCA and LFP battery are also considered), while opportunity- (BEV-opp)
+      and in motion-charging (BEV-motion) vehicles use a Li-LTO battery. According to :cite:`ct-1034`
+      Li-LTO batteries are better suited for general ultra-fast charging and under extreme
+      temperatures in particular. This is also confirmed by recent trends, although some models
+      designed for ultra-fast charging can use Li-NMC and Li-LFP batteries.
+    * **Important remark:** According to :cite:`ct-1112`, Li-LFP batteries equip electric buses in Europe,
+      but the vast majority are used in Asia, China in particular. 95% of the battery electric buses in
+      China are equipped with Li-LFP batteries. Outside of China, it is 47% only. Sill according to
+      :cite:`ct-1112`, the European market seems to favor depot-charging buses with large Li-NMC batteries
+      over opportunity- or motion-charging buses. In 2018, China accounted for 98% of the new
+      battery-electric buses registered globally.
+
+The expected battery lifetime (and the need for replacement) is based on the expected battery
+cycle life, based on theoretical values given by :cite:`ct-1034` as well as some
+experimental ones from :cite:`ct-1063`. Although the specifications of the different battery
+chemistry are presented in :ref:`Table 15 <table-15>`
+
+.. _table-15:
+
+.. table:: Table 15: Parameters for different battery chemistry for battery electric buses
+   :widths: auto
+   :align: center
+
+   +-------------------------------------+------------+----------+-----------------+-------------+---------------+
+   |                                     | unit       | LFP      | LTO             | NMC         | NCA           |
+   +=====================================+============+==========+=================+=============+===============+
+   | Cell voltage                        | V          | 3.2      | 2.3             | 3.6         | 3.6           |
+   +-------------------------------------+------------+----------+-----------------+-------------+---------------+
+   | Cell capacity                       | Ah         | 1.4-4.5  | 2.0-6.5         | 3.7-5.3     | 4.8           |
+   +-------------------------------------+------------+----------+-----------------+-------------+---------------+
+   | Energy density                      | Wh/kg cell | 115-146  | 76-77           | 175-200     | 200-230       |
+   +-------------------------------------+------------+----------+-----------------+-------------+---------------+
+   | Charge rate                         |            | 1C       | 4C-10C          | 2C-3C       | 2C-3C         |
+   +-------------------------------------+------------+----------+-----------------+-------------+---------------+
+   | Cycle life (at 100% DoD)            | unit       | 7'000+   | 5'000-7'000     | 2'000       | 1'000         |
+   +-------------------------------------+------------+----------+-----------------+-------------+---------------+
+   | Corrected cycle life                | unit       | 7'000    | 7'000           | 3'000       | 1'500         |
+   +-------------------------------------+------------+----------+-----------------+-------------+---------------+
+
+Given the vehicle's energy consumption and the required battery capacity, ``carculator_bus``
+calculates the number of charging cycles needed and the resulting number of battery
+replacements, given the chemistry-specific cycle life of the battery. As discussed at the beginning
+of this report, the expected cycle life is corrected.
+
+Considering the chemistry-specific cycle life values, there is a difference in the extent battery cell
+degrades over charging cycles. It is explained by the fact that Li-LTO batteries are charged with
+a smaller charge cycle amplitude (about 40-50%, against 80% for Li-NMC batteries). This also
+leads to an important sizing factor. The Li-NMC battery of the BEV-depot bus needs replacing
+multiple times during the vehicle's lifetime, while the Li-LTO battery of ultra-fast charging buses
+only requires one replacement. The number of replacements is even higher when using Li-NCA
+batteries, as the expected cycle life is comparatively lower.
+
+:ref:`Table 16 <table-16>` shows the battery sizing factors considered.
+
+.. _table-16:
+
+.. table:: Table 16: Sizing factors used for different battery chemistries
+   :widths: auto
+   :align: center
+
+   +-----------------------------------+----------------------------+--------------------------------+
+   |                                   | **Ultra-fast charging**    | **Fast-charging (plug-in**     |
+   |                                   | **(pantograph, induction,**| **station)**                   |
+   |                                   | **overhead wires)**        |                                |
+   +===================================+============================+================================+
+   | **Battery chemistries**           | **LTO**                    | **NMC, NCA, LFP**              |
+   +-----------------------------------+----------------------------+--------------------------------+
+   | Maximum SoC                       | 90%                        | 100%                           |
+   +-----------------------------------+----------------------------+--------------------------------+
+   | Maximum DoD                       | 40%                        | 20%                            |
+   +-----------------------------------+----------------------------+--------------------------------+
+   | Sizing factor                     | 2                          | 1.25                           |
+   +-----------------------------------+----------------------------+--------------------------------+
+   | Additional margin in capacity     | +20%                       | +20%                           |
+   +-----------------------------------+----------------------------+--------------------------------+
+
+The effect of switching the battery chemistry for each type of electric bus can be quantified,
+as :ref:`Figure 12 <figure-12>` illustrates. While Li-LFP and Li-LTO batteries lead to fewer replacements, they
+are also heavier and result in higher energy consumption – and the necessity to increase the
+battery storage capacity consequently.
+
+.. _figure-12:
+
+.. figure:: _static/img/image_18.png
+   :align: center
+
+   *Figure 12: Effect of battery chemistry on the number of replacements, battery capacity, and mass for a 13m long single deck city bus.*
+
+:ref:`Table 17 <table-17>` indicates the number of battery replacements considered for each type of battery chemistry.
+
+.. _table-17:
+
+.. table:: Table 17: Lifetime battery replacements for different battery chemistries
+   :widths: auto
+   :align: center
+
+   +---------------------------------------------+------+------+------+------+
+   |                                             | NMC  | LFP  | NCA  | LTO  |
+   +=============================================+======+======+======+======+
+   | Bus, opportunity charging                   |      |      |      | 1    |
+   +---------------------------------------------+------+------+------+------+
+   | Bus, motion charging                        |      |      |      | 1    |
+   +---------------------------------------------+------+------+------+------+
+   | Bus, depot charging                         | 1    | 1    | 2    |      |
+   +---------------------------------------------+------+------+------+------+
+
+Fuel cell electric buses
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The energy storage unit of fuel cell electric buses is sized based on the required amount of
+hydrogen onboard (i.e., defined by the required range autonomy). The relation between
+hydrogen and tank mass is derived from manufacturers’ specifications – mainly from :cite:`ct-1042, ct-1067`,
+as shown in :ref:`Figure 13 <figure-13>`.
+
+We start from the basis that fuel cell electric buses are equipped with 650 liters cylinders,
+which contain 14.4 kg hydrogen at 700 bar, for an (empty) mass of 178 kg. The required size
+and mass of the tank eventually depend on the number of hours of service but should not
+exceed 300 kg, excluding the hydrogen.
+
+The hydrogen tank is of type IV, a carbon fiber-resin (CF) composite-wrapped single tank
+system, with an aluminum liner capable of storing 5.6 kg usable hydrogen, weighting 119 kg
+per unit (of which 20 kg is carbon fiber), which has been scaled up to 178 kg for a storage
+capacity of 14.4 kg to reflect current models on the market :cite:`ct-1067`. The inventories
+are initially from :cite:`ct-1042`. The inventories for the carbon fiber supply are from
+:cite:`ct-1008`. Note that alternative hydrogen tank designs exist, using substantially
+more carbon fiber (up to 70% by mass): this can potentially impact results as carbon fiber is
+very energy-intensive to produce.
+
+.. _figure-13:
+
+.. figure:: _static/img/image_19.png
+   :align: center
+
+   *Figure 13: Relation between stored hydrogen mass and hydrogen storage cylinder mass.*
+
+Inventories for Type IV hydrogen tanks from :cite:`ct-1008` are used to that effect.
+
+.. note::
+
+    **Important remark:** a battery is also added to fuel cell electric buses. Based on the
+    manufacturer’s specification, its storage capacity represents approximately 9% of the
+    storage capacity of the hydrogen cylinders, with a minimum capacity of 20 kWh.
+
+Compressed gas buses
+~~~~~~~~~~~~~~~~~~~~
+For compressed gas buses, the energy storage is in a four-cylinder configuration, with each
+cylinder containing up to 57.6 kg of compressed gas – 320 liters at 200 bar.
+
+The relation between the compressed gas and the cylinder mass is depicted in :ref:`Figure 14 <figure-14>`.
+This relation is based on manufacturers’ data – mainly from :cite:`ct-1017, ct-1066`.
+
+.. _figure-14:
+
+.. figure:: _static/img/image_20.png
+   :align: center
+
+   *Figure 14: Relation between the mass of stored compressed gas and cylinder mass.*
+
+Inventories for a Type II 200-bar compressed gas tank with a steel liner are from :cite:`ct-1010`.
+
+Charging stations
+*****************
+The parameters for the different charging stations modeled are presented in :ref:`Table 18 <table-18>`.
+
+.. _table-18:
+
+.. csv-table:: Table 18: Parameters of the different charging stations for battery electric buses
+    :file: _static/tables/table_3.csv
+    :widths: auto
+    :align: center
     :header-rows: 1
 
-Electricity mixes for battery charging and hydrogen production
-**************************************************************
+Finding solutions and validation
+--------------------------------
+Very much like ``carculator`` and ``carculator_truck``, ``carculator_bus`` iterates until:
 
-**carculator** has national electricity mixes for more than 80 countries, gathered from the following sources:
+* the change in curb mass of the vehicles between two iterations is below 1%
 
-* European Union State members and the UK: `EU Reference Scenario 2016 <https://ec.europa.eu/energy/en/data-analysis/energy-modelling/eu-reference-scenario-2016>`_
-* Switzerland: STEM model - Panos E, Kober T, Wokaun A. Long term evaluation of electric storage technologies vs alternative flexibility options for the Swiss energy system. Appl Energy 2019;252:113470
-* African countries: `TEMBA <http://www.osemosys.org/temba.html>`_ model
-* Other countries: `IEA World Energy outlook 2017 <https://www.iea.org/reports/world-energy-outlook-2017>`_
+All while considering the **following constraints**:
 
-Unless a specific electricity mix is indicated by the user, such national mixes are used when modeling the energy chain
-for battery and fuel cell electric vehicles (BEV, FCEV), for battery charging and the production of hydrogen via electrolysis, respectively.
+* For **all buses**, the driving mass when fully occupied cannot be superior to the gross
+  mass of the vehicle (this is specifically relevant for BEV buses)
+* For all buses, but particularly relevant for electric buses, the curb mass should be so
+  low as to allow a 50% increase in the average number of passengers (i.e., during
+  peak hours), all while staying under the permissible gross weight limit.
+* **Coach buses** cannot be considered for opportunity and in-motion charging strategies.
+* For **BEV-depot** buses, the capacity of the battery must be so that it gives enough
+  time to charge it overnight to be ready for the next shift.
 
-Knowing the production year of the vehicle, considered to be its first year of use, as well as its annual mileage,
-the number of years of use is calculated. Hence, **the electricity mix used is the kilometer-distributed mix over the
-years of use of the vehicle**.
+Validation
+----------
 
-If the annual mileage of the vehicle is evenly distributed throughout its lifetime, the electricity mix used therefore
-equals the average of the year-by-year national mixes comprised between Year 0 and Year 0 + the number of years of use.
+Manufacturer’s specifications
+*****************************
 
+The bus models generated by ``carculator_bus`` are validated against the specifications found
+in the literature and manufacturers’ data – available in :ref:`Annex C <annex_c>` of this report. For electric
+buses, most of the specifications obtained (i.e., battery capacity, motor power, curb mass)
+are from the ZeEUS project report :ref:`ct-1036`.
 
-Background inventory
-********************
+.. note:: **Important remark**: the sample size for fuel cell electric buses is very low (i.e., n=2).
 
-Besides datasets adapted from the literature, vehicle inventories also rely on a number of datasets provided by the database `ecoinvent cutoff 3.6 <https://www.ecoinvent.org>`_
-such as "market for glider, passenger car", "market for diesel", etc.
+The model returns curb masses and engine and electric motor power output values that
+largely agree with current European models, as shown in
+:ref:`Figure 15 <figure-15>` and :ref:`Figure 16 <figure-16>` respectively.
 
-However **carculator** does not directly use the database as is: the database and its datasets are modified according to
-projections provided by the Integrated Assessment Model `REMIND <https://www.pik-potsdam.de/research/transformation-pathways/models/remind/remind>`_.
+.. _figure-15:
 
-REMIND provides projections for different regions in the world until 2150, following different energy scenarios,
-described `here <https://github.com/romainsacchi/premise/blob/master/premise/data/remind_output_files/description.md>`_.
+.. figure:: _static/img/image_21.png
+   :align: center
 
-Projection outputs include the expected change over time in efficiency for power plants, steel making, cement production, etc.
+   *Figure 15: Validation of the vehicles' curb mass against manufacturers' data. Above each plot, the sample size is indicated for each size class.*
 
-Using the Python library `premise <https://github.com/romainsacchi/premise/tree/master/premise>`_, we produce a number
-of ecoinvent databases with the inclusion of REMIND projections, so that future improvements in electricity production, among others,
-propagate into the datasets involved in the vehicles' inventories.
+.. _figure-16:
 
-**carculator** comes with pre-calculated impact values for ecoinvent datasets from the following databases:
+.. figure:: _static/img/image_22.png
+   :align: center
 
-* 2005 - ecoinvent-REMIND, SSP2-Base
-* 2010 - ecoinvent-REMIND, SSP2-Base
-* 2020 - ecoinvent-REMIND, SSP2-Base
-* 2030 - ecoinvent-REMIND, SSP2-Base
-* 2040 - ecoinvent-REMIND, SSP2-Base
-* 2050 - ecoinvent-REMIND, SSP2-Base
-* 2005 - ecoinvent-REMIND, SSP2-PkBudg1100
-* 2010 - ecoinvent-REMIND, SSP2-PkBudg1100
-* 2020 - ecoinvent-REMIND, SSP2-PkBudg1100
-* 2030 - ecoinvent-REMIND, SSP2-PkBudg1100
-* 2040 - ecoinvent-REMIND, SSP2-PkBudg1100
-* 2050 - ecoinvent-REMIND, SSP2-PkBudg1100
+   *Figure 16: Validation of the vehicles' engine power against manufacturers' data. Above each plot, the sample size is indicated for each size class.*
 
-Depending on the year of analysis and the energy scenario demanded, **carculator** picks the corresponding datasets.
-If year of analysis in between the available years is demanded, a linear interpolation is used.
+The comparison between the modeled battery energy storage capacity for battery electric
+buses and what is currently found on the market in Europe is shown in :ref:`Figure 17 <figure-17>`.
+For BEV-depot buses, the model returns a battery capacity significantly higher than the median for
+European buses: based on personal communication with INFRAS, there is a tendency in
+Switzerland to purchase depot-charging electric buses with a battery capacity higher than
+average. It is, for example, the case with MAN’s Lion’s City electric bus models, which
+feature a 480 kWh and 640 kWh battery for the 12-meter and 18-meter versions,
+respectively. This overestimate is an attempt to reflect that trend partially.
 
-With **carculator online**, the results provided only use the "SSP2-Base" energy scenario of REMIND, projecting a global
-atmospheric temperature increase by 3.5 degrees Celsius by 2100.
+.. _figure-17:
+
+.. figure:: _static/img/image_23.png
+   :align: center
+
+   *Figure 17: Validation of the energy storage capacity of the battery electric buses against manufacturers' data. Above each plot, the sample size is indicated for each size class.*
+
+The resulting curb mass for each bus model is within the range given by the different models
+operated in Europe, as shown in :ref:`Figure 18 <figure-18>`.
+
+.. _figure-18:
+
+.. figure:: _static/img/image_24.png
+   :align: center
+
+   *Figure 18: Validation of the vehicles' curb mass against manufacturers' data. Above each plot, the sample size is indicated for each size class.*
+
+HEBFA’s data
+************
+
+:ref:`Figure 19 <figure-19>` compares the tank-to-wheel energy consumption modeled for urban buses with
+the values obtained from HBEFA 4.1 for urban traffic situations. HBEFA’s size class “Midi <=
+15t” corresponds in this case to “Midibus, 9m”, “<= 18t” and “15-18t” to “Single deck, city
+bus, 13m”, and “>18t” to “Single deck, city bus, 18m”. Overall, carculator_bus provides
+slightly higher energy consumption numbers for diesel and compressed gas city buses than
+those collected from HBEFA 4.1. This could be explained by the driving cycle from VECTO
+being more demanding in accelerations and stops.
+
+.. _figure-19:
+
+.. figure:: _static/img/image_25.png
+   :align: center
+
+   *Figure 19: Compares modeled tank-to-wheel energy consumption for city buses and values reported from HBEFA 4.1 for urban traffic situations. X-axis labels correspond to the European emission standard (except for electric powertrains).*
+
+:ref:`Figure 20 <figure-20>` compares the tank-to-wheel energy consumption modeled for coach buses with
+the values reported from HBEFA 4.1 for rural traffic situations. HBEFA’s size “<= 18t” and
+“15-18t” are matched with “Single deck, coach bus, 13m” and “>18t” to “Double deck, coach
+bus, 13m”. There is a good agreement between the energy consumption values for coach
+buses modeled by carculator_bus and those from HBEFA 4.1.
+
+.. _figure-20:
+
+.. figure:: _static/img/image_26.png
+   :align: center
+
+   *Figure 20: Compares modeled tank-to-wheel energy consumption for coach buses and values reported from HBEFA 4.1 for rural traffic situations. X-axis labels correspond to the European emission standard.*
+

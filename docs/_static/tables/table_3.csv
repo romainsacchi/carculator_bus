@@ -1,0 +1,9 @@
+,"EV charger, level 3, plug-in","EV charger, level 3, with pantograph",Catenary system
+Bus type,BEV-depot,BEV-opp,BEV-motion
+Power [kW],200,450,48
+Efficiency [%],95,90,95
+Source for efficiency,":cite:`ct-1011`",,":cite:`ct-1079`"
+Lifetime [years],24,24,40
+Number of buses allocated per charging system,2,10,60
+Source for inventories,":cite:`ct-1001, ct-1056`",,":cite:`ct-1079`"
+Comment,Assumed lifetime of 24 years. It is up-scaled to a 200 kW Level-3 charger by scaling the charger component up based on a mass of 1’290 kg given by AAB's 200 kW bus charger.,"The total mass is from AAB's 450 kW pantograph charger (1340 kg x 3) plus the charging interface (500 kg). But the material composition is extrapolated from the Level-2 charger :cite:`ct-1056`.",
