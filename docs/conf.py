@@ -145,7 +145,7 @@ linkcheck_ignore = [
     r"http://127.0.0.1:\d+",
     r"../.*",
     r"http://www.osemosys.org/temba.html",
-    r"https://carculator.psi.ch"
+    r"https://carculator.psi.ch",
 ]
 
 linkcheck_request_headers = {
