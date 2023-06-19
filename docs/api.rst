@@ -42,7 +42,7 @@ Noise Model
 Hot pollutants emissions
 ------------------------
 
-.. automodule:: carculator_bus.hot_emissions
+.. automodule:: carculator_utils.hot_emissions
     :members:
 
 Inventory calculation

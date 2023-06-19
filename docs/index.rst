@@ -17,7 +17,7 @@ The tool has a focus on buses.
 
 At the moment, the tool has a focus on the transport of dry goods.
 
-More specifically, ``carculator_bus`` generates `Brightway2 <https://brightwaylca.org/>`_ and
+More specifically, ``carculator_bus`` generates `Brightway2 <https://brightway.dev/>`_ and
 `SimaPro <https://www.simapro.com/>`_ compatible inventories, but also directly provides characterized results against several midpoint and endpoint indicators from the impact assessment method *ReCiPe 2008 (mid- and endpoint)* and *ILCD 2.0 2018 (only midpoint)* as well as life cycle cost indicators.
 
 ``carculator_bus`` differentiates itself from other bus LCA models as it uses time- and energy-scenario-differentiated background inventories for the future, resulting from the coupling between the `ecoinvent database <https://ecoinvent.org>`_ and the scenario outputs of PIK's integrated assessment model `REMIND <https://www.pik-potsdam.de/research/transformation-pathways/models/remind/remind>`_, using the `premise <https://github.com/romainsacchi/premise>`_ library.

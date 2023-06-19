@@ -137,3 +137,21 @@ rst_epilog = """
 
     </p>
 """
+
+# LINKCHECK config
+# https://www.sphinx-doc.org/en/master/usage/configuration.html?highlight=linkcheck#options-for-the-linkcheck-builder
+linkcheck_ignore = [
+    r"http://localhost:\d+",
+    r"http://127.0.0.1:\d+",
+    r"../.*",
+    r"http://www.osemosys.org/temba.html",
+    r"https://carculator.psi.ch"
+]
+
+linkcheck_request_headers = {
+    "*": {
+        "User-Agent": "Mozilla/5.0",
+    }
+}
+
+linkcheck_workers = 5
