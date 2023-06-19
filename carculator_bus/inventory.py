@@ -1,5 +1,6 @@
 """
-inventory.py contains Inventory which provides all methods to solve inventories.
+inventory.py contains the InventoryBus subclass which inherits from the Inventory class
+that provides all methods to solve inventories.
 """
 
 import numpy as np
@@ -14,9 +15,7 @@ IAM_FILES_DIR = DATA_DIR / "IAM"
 
 class InventoryBus(Inventory):
     """
-    Build and solve the inventory for results
-    characterization and inventory export
-
+    Build and solve the inventory for results characterization and inventory export
     """
 
     def fill_in_A_matrix(self):
@@ -24,7 +23,7 @@ class InventoryBus(Inventory):
         Fill-in the A matrix. Does not return anything. Modifies in place.
         Shape of the A matrix (values, products, activities).
 
-        :param array: :attr:`array` from :class:`CarModel` class
+        :attr:`array` from :class:`CarModel` class
         """
 
         # Assembly

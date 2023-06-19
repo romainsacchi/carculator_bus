@@ -1,0 +1,9 @@
+﻿,,City,,,Source,Comment
+powertrain,unit,BEV-opp,BEV-depot,BEV-motion,,
+Operation time per shift (in motion),hours,12,6,6,"Based on statistics from :cite:`ct-1036`",As shown above.
+Distance per shift,km,310,~155,~155,,
+Number of trips per shift,unit,8,5,8,,Calculated.
+Average speed,km/h,26,26,26,"VECTO :cite:`ct-1024`",Given by the driving cycle.
+Distance per trip,km,40,40,40,,Given by the driving cycle.
+Charging opportunity per trip,unit,1,\-,\-,,Assumed.
+Share of trip distance with catenary,ratio,\-,\-,0.4 - 0.7,"Based on :cite:`ct-1069` but further adjusted to match the battery sizes observed on the market.",

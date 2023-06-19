@@ -8,12 +8,12 @@ from . import DATA_DIR
 def get_sulfur_content_in_fuel():
     """
     Retrieve sulfur content per kg of petrol and diesel.
-    For CH, DE, FR, AU and SE, the concentration values come from HBEFA 4.1, from 1909 to 2020 (extrapolated to 2050).
+    For CH, DE, FR, AU and SE, the concentration values come from
+    `HBEFA 4.1 <https://www.hbefa.net/e/index.html>`_, from 1909 to 2020 (extrapolated to 2050).
 
-    For the other countries, values come from
-    Miller, J. D., & Jin, L. (2019). Global progress toward soot-free diesel vehicles in 2019.
-    International Council on Clean Transportation.
-    https://www.theicct.org/publications/global-progress-toward-soot-free-diesel-vehicles-2019
+    For the other countries, values come from the report by Miller, J. D., & Jin, L. (2019) titled
+    `Global progress toward soot-free diesel vehicles in 2019 <https://www.theicct.org/publications/global-progress-toward-soot-free-diesel-vehicles-2019>`_.
+    on the International Council on Clean Transportation website.
 
     There is an assumption made: countries that have high-sulfur content fuels (above 50 ppm in 2019) are assumed to
     improve over time to reach 50 ppm by 2050.
@@ -47,7 +47,7 @@ def get_sulfur_content_in_fuel():
 
 def get_biofuel_share():
     """
-    Retrieve shares of biofuel consumption from REMIND and shape them into an xarray.
+    Retrieve shares of biofuel consumption from REMIND and shape them into a xarray.
 
     :return: An axarray with 'country' and 'year' as dimensions
     :rtype: xarray.core.dataarray.DataArray
@@ -79,15 +79,16 @@ def get_biofuel_share():
 
 def get_electricity_mix():
     """
-    Retrieve electricity mixes and shape them into an xarray.
+    Retrieve electricity mixes and shape them into a xarray.
+
     Source:
-        * for European countries (`EU Reference Scenario 2016 <https://ec.europa.eu/energy/en/data-analysis/energy-modelling/eu-reference-scenario-2016>`_),
-        * for African countries (`TEMBA <http://www.osemosys.org/temba.html>`_ model)
-        * and for other countries (`IEA World Energy outlook 2017 <https://www.iea.org/reports/world-energy-outlook-2017>`_)
+
+    * for European countries (`EU Reference Scenario 2016 <https://ec.europa.eu/energy/en/data-analysis/energy-modelling/eu-reference-scenario-2016>`_),
+    * for African countries (`TEMBA <http://www.osemosys.org/temba.html>`_ model)
+    * and for other countries (`IEA World Energy outlook 2017 <https://www.iea.org/reports/world-energy-outlook-2017>`_)
 
     :returns: An axarray with 'country' and 'year' as dimensions
     :rtype: xarray.core.dataarray.DataArray
-
     """
     filename = "electricity_mixes.csv"
     filepath = DATA_DIR / filename
@@ -119,7 +120,6 @@ def get_region_mapping():
 
     :returns: dictionary
     :rtype: dict
-
     """
     filename = "region_mapping.csv"
     filepath = DATA_DIR / filename
@@ -146,7 +146,6 @@ def get_electricity_losses():
 
     :returns: dictionary
     :rtype: dict
-
     """
     filename = "cumulative_electricity_losses.csv"
     filepath = DATA_DIR / filename
@@ -169,9 +168,9 @@ class BackgroundSystemModel:
     """
     Retrieve and build dictionaries that contain important information to model in the background system:
 
-        * gross electricity production mixes from nearly all countries in the world, from 2015 to 2050.
-        * cumulative electricity transformation/transmission/distribution losses from high voltage to medium and low voltage.
-        * share of biomass-derived fuel in the total consumption of liquid fuel in the transport sector. Source: REMIND.
+    * gross electricity production mixes from nearly all countries in the world, from 2015 to 2050.
+    * cumulative electricity transformation/transmission/distribution losses from high voltage to medium and low voltage.
+    * share of biomass-derived fuel in the total consumption of liquid fuel in the transport sector. Source: REMIND.
     """
 
     def __init__(self):
