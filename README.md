@@ -1,7 +1,5 @@
-# ``carculator_bus``
-
 <p align="center">
-  <img style="height:130px;" src="docs/_static/img/mediumsmall.png">
+  <img style="height:130px;" src="docs/_static/img/mediumsmall_2.png">
 </p>
 
 <p align="center">
@@ -11,6 +9,9 @@
   <a href="https://coveralls.io/github/romainsacchi/carculator_bus" target="_blank"><img src="https://coveralls.io/repos/github/romainsacchi/carculator_bus/badge.svg"></a>
   <a href="https://carculator_bus.readthedocs.io/en/latest/" target="_blank"><img src="https://readthedocs.org/projects/carculator_bus/badge/?version=latest"></a>
  </p>
+
+# ``carculator_bus``
+
 
 Prospective environmental and economic life cycle assessment of urban and coach buses.
 
