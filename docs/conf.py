@@ -75,7 +75,6 @@ html_theme_options = {
     "site_url": "https://carculator-bus.readthedocs.io",
     "repo_url": "https://github.com/romainsacchi/carculator_bus/",
     "repo_name": "romainsacchi/carculator_bus",
-    "repo_type": "github",
     "edit_uri": "blob/master/docs/",
     "globaltoc_collapse": True,
     "features": ["navigation.top", "search.share", "navigation.tracking", "toc.follow"],
