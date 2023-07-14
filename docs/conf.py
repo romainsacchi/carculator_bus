@@ -55,10 +55,10 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 # -- Options for HTML output -------------------------------------------------
 
-# The theme to use for HTML and HTML Help pages.  See the documentation for
+# The theme to use for HTML and HTML Help pages. See the documentation for
 # a list of builtin themes.
 #
-# The theme to use for HTML and HTML Help pages.  See the documentation for
+# The theme to use for HTML and HTML Help pages. See the documentation for
 # a list of builtin themes.
 html_logo = "_static/img/mediumsmall.png"
 html_favicon = "_static/img/favicon.png"
@@ -75,7 +75,6 @@ html_theme_options = {
     "site_url": "https://carculator-bus.readthedocs.io",
     "repo_url": "https://github.com/romainsacchi/carculator_bus/",
     "repo_name": "romainsacchi/carculator_bus",
-    "repo_type": "github",
     "edit_uri": "blob/master/docs/",
     "globaltoc_collapse": True,
     "features": ["navigation.top", "search.share", "navigation.tracking", "toc.follow"],
