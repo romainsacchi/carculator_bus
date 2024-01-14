@@ -13,7 +13,7 @@ from carculator_utils.model import VehicleModel
 from prettytable import PrettyTable
 
 from . import DATA_DIR
-from .background_systems import BackgroundSystemModel
+from carculator_utils.background_systems import BackgroundSystemModel
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
