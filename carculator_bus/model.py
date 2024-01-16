@@ -1018,7 +1018,7 @@ class BusModel(VehicleModel):
                 * self.array.loc[
                     dict(parameter="distance per trip", powertrain="BEV-motion")
                 ],
-                0,
+                10,
                 None,
             )
 
@@ -1477,7 +1477,7 @@ class BusModel(VehicleModel):
                 )
             ] = 0
 
-        # and also coach buses with BEV-opp or BEV-motion powertrain
+        # and also coach buses with BEV-opp or BEV-motion powertrains
         pwts = [
             pt
             for pt in [
@@ -1499,14 +1499,19 @@ class BusModel(VehicleModel):
 
         # remove double-deck BEV-motion buses
         if "BEV-motion" in self.array.coords["powertrain"].values:
-            if "13m-double-city" in self.array.coords["size"].values:
-                self.array.loc[
-                    dict(
-                        parameter="TtW energy",
-                        powertrain="BEV-motion",
-                        size="13m-double-city",
-                    )
-                ] = 0
+            for s in [
+                "13m-city-double",
+                "13m-coach",
+                "13m-coach-double",
+            ]:
+                if s in self.array.coords["size"].values:
+                    self.array.loc[
+                        dict(
+                            parameter="TtW energy",
+                            powertrain="BEV-motion",
+                            size=s,
+                        )
+                    ] = 0
 
         # if the mass allowance left
         # if not enough to welcome the average passenger number +50%
