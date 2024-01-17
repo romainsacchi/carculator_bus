@@ -209,16 +209,19 @@ class InventoryBus(Inventory):
         # Use the inventory of Wolff et al. 2020 for
         # lead acid battery for non-electric
         # and non-hybrid trucks
+        # replaced every 5 years
+        # 16 kg a piece
 
         self.A[
             :,
             self.find_input_indices(("lead acid battery, for lorry",)),
             self.find_input_indices(contains=("Bus, ", )),
         ] = (
-            self.array.sel(parameter=["battery BoP mass", "battery cell mass"]).sum(dim="parameter")
+            16.0 # kg/battery
             * (
-                1
-                + self.array.sel(parameter="battery lifetime replacements")
+                self.array.sel(parameter="lifetime kilometers")
+                        / self.array.sel(parameter="kilometers per year")
+                / 5 # years
             )
             * (self.array.sel(parameter="combustion power") > 0)
         ) * -1
