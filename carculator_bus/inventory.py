@@ -2,12 +2,14 @@
 inventory.py contains Inventory which provides all methods to solve inventories.
 """
 
+import warnings
+
 import numpy as np
 from carculator_utils.inventory import Inventory
 
 from . import DATA_DIR
 
-np.warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning)
+warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning)
 
 IAM_FILES_DIR = DATA_DIR / "IAM"
 
@@ -51,11 +53,12 @@ class InventoryBus(Inventory):
             self.find_input_indices(("suspension, for lorry",)),
             self.find_input_indices(("Bus, ",)),
         ] = (
-                        self.array.sel(parameter=[
-                            "suspension mass",
-                            "braking system mass",
-                        ]).sum(dim="parameter")
-
+            self.array.sel(
+                parameter=[
+                    "suspension mass",
+                    "braking system mass",
+                ]
+            ).sum(dim="parameter")
             * -1
         )
 
@@ -197,8 +200,7 @@ class InventoryBus(Inventory):
             self.find_input_indices(("internal combustion engine, for lorry",)),
             self.find_input_indices(contains=("Bus, ",)),
         ] = (
-            self.array.sel(parameter="combustion engine mass")
-            * -1
+            self.array.sel(parameter="combustion engine mass") * -1
         )
 
         # Energy storage
@@ -215,13 +217,13 @@ class InventoryBus(Inventory):
         self.A[
             :,
             self.find_input_indices(("lead acid battery, for lorry",)),
-            self.find_input_indices(contains=("Bus, ", )),
+            self.find_input_indices(contains=("Bus, ",)),
         ] = (
-            16.0 # kg/battery
+            16.0  # kg/battery
             * (
                 self.array.sel(parameter="lifetime kilometers")
-                        / self.array.sel(parameter="kilometers per year")
-                / 5 # years
+                / self.array.sel(parameter="kilometers per year")
+                / 5  # years
             )
             * (self.array.sel(parameter="combustion power") > 0)
         ) * -1
@@ -236,10 +238,12 @@ class InventoryBus(Inventory):
             self.array.sel(
                 parameter="fuel tank mass",
                 combined_dim=[
-                    d for d in self.array.coords["combined_dim"].values
+                    d
+                    for d in self.array.coords["combined_dim"].values
                     if any(x in d for x in ["ICEV-d", "HEV-d"])
-                ]
-            ) * -1
+                ],
+            )
+            * -1
         )
 
         self.add_cng_tank()
@@ -264,8 +268,13 @@ class InventoryBus(Inventory):
 
         # add the diesel consumption from the generator for BEV-motion buses
         # anterior to 2020
-        if any(True for x in ["BEV-motion",] if x in self.scope["powertrain"]):
-
+        if any(
+            True
+            for x in [
+                "BEV-motion",
+            ]
+            if x in self.scope["powertrain"]
+        ):
             self.A[
                 np.ix_(
                     np.arange(self.iterations),
@@ -279,50 +288,43 @@ class InventoryBus(Inventory):
                         contains=("transport, bus, ", "BEV-motion")
                     ),
                 )
-            ] = ((
+            ] = (
                 self.array.sel(
-                    parameter=["oxidation energy stored",],
+                    parameter=[
+                        "oxidation energy stored",
+                    ],
                     combined_dim=[
-                        d for d in self.array.coords["combined_dim"].values
+                        d
+                        for d in self.array.coords["combined_dim"].values
                         if "BEV-motion" in d
-                    ]
+                    ],
                 ).values
                 / self.array.sel(
-                parameter=["daily distance",],
-                combined_dim=[
-                    d for d in self.array.coords["combined_dim"].values
-                    if "BEV-motion" in d
-                ]
-            ).values)
-                * -1
-            )
+                    parameter=[
+                        "daily distance",
+                    ],
+                    combined_dim=[
+                        d
+                        for d in self.array.coords["combined_dim"].values
+                        if "BEV-motion" in d
+                    ],
+                ).values
+            ) * -1
 
         self.add_fuel_to_vehicles("methane", ["ICEV-g"], "EV-g")
 
         self.A[
             :,
             self.find_input_indices(("fuel supply for methane vehicles",)),
-            self.find_input_indices(
-                (f"transport, {self.vm.vehicle_type}",)
-            ),
-        ] *= (
-            1
-            + self.array.sel(parameter="CNG pump-to-tank leakage")
-        )
+            self.find_input_indices((f"transport, {self.vm.vehicle_type}",)),
+        ] *= 1 + self.array.sel(parameter="CNG pump-to-tank leakage")
 
         # Gas leakage to air
         self.A[
             :,
             self.inputs[("Methane, fossil", ("air",), "kilogram")],
-            self.find_input_indices(
-                (
-                    f"transport, {self.vm.vehicle_type}",
-                )
-            ),
-        ] *= (
-            1
-            + self.array.sel(parameter="CNG pump-to-tank leakage")
-        )
+            self.find_input_indices((f"transport, {self.vm.vehicle_type}",)),
+        ] *= 1 + self.array.sel(parameter="CNG pump-to-tank leakage")
 
         self.add_fuel_to_vehicles("diesel", ["ICEV-d", "HEV-d"], "EV-d")
 
@@ -347,23 +349,25 @@ class InventoryBus(Inventory):
         self.A[
             np.ix_(
                 np.arange(self.iterations),
-                self.find_input_indices(("charger, for electric vehicles, level 3, plugin, 200 kW",)),
+                self.find_input_indices(
+                    ("charger, for electric vehicles, level 3, plugin, 200 kW",)
+                ),
                 self.find_input_indices(
                     contains=(f"transport, {self.vm.vehicle_type}", "battery"),
-                    excludes=("motion", "opp")
+                    excludes=("motion", "opp"),
                 ),
             )
-        ] = (
-            -1
-            / (
-                self.array.sel(
-                    parameter=["kilometers per year"],
-                    combined_dim=[
-                        d for d in self.array.coords["combined_dim"].values
-                        if "BEV-depot" in d
-                    ]
-                ) * 2 * 24
+        ] = -1 / (
+            self.array.sel(
+                parameter=["kilometers per year"],
+                combined_dim=[
+                    d
+                    for d in self.array.coords["combined_dim"].values
+                    if "BEV-depot" in d
+                ],
             )
+            * 2
+            * 24
         )
 
         # Opportunity charging BEV buses
@@ -375,23 +379,25 @@ class InventoryBus(Inventory):
             np.ix_(
                 np.arange(self.iterations),
                 self.find_input_indices(
-                    ("charger, for electric vehicles, level 3, with pantograph, 450 kW",)
+                    (
+                        "charger, for electric vehicles, level 3, with pantograph, 450 kW",
+                    )
                 ),
                 self.find_input_indices(
                     contains=(f"transport, {self.vm.vehicle_type}", "BEV-opp")
                 ),
             )
-        ] = (
-            -1
-            / (
-                self.array.sel(
-                    parameter=["kilometers per year"],
-                    combined_dim=[
-                        d for d in self.array.coords["combined_dim"].values
-                        if "BEV-opp" in d
-                    ]
-                ) * 10 * 24
+        ] = -1 / (
+            self.array.sel(
+                parameter=["kilometers per year"],
+                combined_dim=[
+                    d
+                    for d in self.array.coords["combined_dim"].values
+                    if "BEV-opp" in d
+                ],
             )
+            * 10
+            * 24
         )
 
         # In-motion charging BEV buses
@@ -402,8 +408,12 @@ class InventoryBus(Inventory):
         self.A[
             np.ix_(
                 np.arange(self.iterations),
-                self.find_input_indices(("catenary system assembly, with overhead lines, for trolleybus",)),
-                self.find_input_indices(contains=(f"transport, {self.vm.vehicle_type}", "BEV-motion")),
+                self.find_input_indices(
+                    ("catenary system assembly, with overhead lines, for trolleybus",)
+                ),
+                self.find_input_indices(
+                    contains=(f"transport, {self.vm.vehicle_type}", "BEV-motion")
+                ),
             )
         ] = (
             -1
@@ -411,10 +421,13 @@ class InventoryBus(Inventory):
                 self.array.sel(
                     parameter="lifetime kilometers",
                     combined_dim=[
-                        d for d in self.array.coords["combined_dim"].values
+                        d
+                        for d in self.array.coords["combined_dim"].values
                         if "BEV-motion" in d
-                    ]
-                ) * 30 * 40
+                    ],
+                )
+                * 30
+                * 40
             ).values[:, None]
         )
 

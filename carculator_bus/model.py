@@ -5,6 +5,7 @@ import numexpr as ne
 import numpy as np
 import xarray as xr
 import yaml
+from carculator_utils.background_systems import BackgroundSystemModel
 from carculator_utils.energy_consumption import (
     EnergyConsumptionModel,
     get_default_driving_cycle_name,
@@ -13,7 +14,6 @@ from carculator_utils.model import VehicleModel
 from prettytable import PrettyTable
 
 from . import DATA_DIR
-from carculator_utils.background_systems import BackgroundSystemModel
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
