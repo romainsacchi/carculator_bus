@@ -42,7 +42,6 @@ setup(
     },
     install_requires=[
         "carculator_utils==1.2.0.dev3",
-        "bw2io<=0.8.12",
         "prettytable",
     ],
     url="https://github.com/romainsacchi/carculator_bus",
