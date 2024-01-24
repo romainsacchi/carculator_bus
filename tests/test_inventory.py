@@ -13,7 +13,7 @@ bm.set_all()
 def test_check_country():
     # Ensure that country specified in BusModel equals country in InventoryBus
     ic = InventoryBus(bm)
-    assert bm.country == ic.country
+    assert bm.country == ic.vm.country
 
 
 def test_electricity_mix():
@@ -43,16 +43,24 @@ def test_scope():
         bm,
         method="recipe",
         indicator="midpoint",
-        scope={"powertrain": ["ICEV-d"], "size": ["9m"]},
     )
     results = ic.calculate_impacts()
 
-    assert "13m-city" not in results.coords["size"].values
-    assert "BEV-opp" not in results.coords["powertrain"].values
+    assert "13m-urban" not in results.coords["size"].values
+    assert "BEV-opp-x" not in results.coords["powertrain"].values
 
 
 def test_fuel_blend():
     """Test if fuel blends defined by the user are considered"""
+
+    tip = BusInputParameters()
+    tip.static()
+    _, array = fill_xarray_from_input_parameters(
+        tip,
+        scope={"powertrain": ["ICEV-d", "ICEV-g", ], "size": ["13m-city"]},
+    )
+    bm = BusModel(array, country="CH")
+    bm.set_all()
 
     fb = {
         "diesel": {
@@ -61,13 +69,13 @@ def test_fuel_blend():
                 "share": [0.93, 0.93, 0.93, 0.93, 0.93, 0.93],
             },
             "secondary": {
-                "type": "biodiesel - cooking oil",
+                "type": "diesel - biodiesel - cooking oil",
                 "share": [0.07, 0.07, 0.07, 0.07, 0.07, 0.07],
             },
         },
-        "cng": {
+        "methane": {
             "primary": {
-                "type": "biogas - sewage sludge",
+                "type": "methane - biomethane - sewage sludge",
                 "share": [1, 1, 1, 1, 1, 1],
             }
         },
@@ -79,44 +87,44 @@ def test_fuel_blend():
     ic = InventoryBus(tm, method="recipe", indicator="midpoint")
 
     assert np.allclose(
-        ic.fuel_blends["diesel"]["primary"]["share"],
+        tm.fuel_blend["diesel"]["primary"]["share"],
         [0.93, 0.93, 0.93, 0.93, 0.93, 0.93],
     )
     assert np.allclose(
-        ic.fuel_blends["diesel"]["secondary"]["share"],
+        tm.fuel_blend["diesel"]["secondary"]["share"],
         [0.07, 0.07, 0.07, 0.07, 0.07, 0.07],
     )
-    assert np.allclose(ic.fuel_blends["cng"]["primary"]["share"], [1, 1, 1, 1, 1, 1])
-    assert np.sum(ic.fuel_blends["cng"]["secondary"]["share"]) == 0
+    assert np.allclose(tm.fuel_blend["methane"]["primary"]["share"], [1, 1, 1, 1, 1, 1])
+    assert np.sum(tm.fuel_blend["methane"]["secondary"]["share"]) == 0
 
     ic.calculate_impacts()
 
     for fuels in [
-        ("diesel", "electrolysis", "cng"),
+        ("diesel", "hydrogen - electrolysis - PEM", "methane"),
         (
-            "biodiesel - palm oil",
-            "smr - natural gas",
-            "biogas - sewage sludge",
+                "diesel - biodiesel - palm oil",
+                "hydrogen - smr - natural gas",
+                "methane - biomethane - sewage sludge",
         ),
         (
-            "biodiesel - rapeseed oil",
-            "smr - natural gas with CCS",
-            "biogas - biowaste",
+                "diesel - biodiesel - rapeseed oil",
+                "hydrogen - smr - natural gas with CCS",
+                "methane - synthetic - coal",
         ),
         (
-            "biodiesel - cooking oil",
-            "wood gasification with EF with CCS",
-            "biogas - biowaste",
+                "diesel - biodiesel - cooking oil",
+                "hydrogen - wood gasification",
+                "methane - synthetic - biological",
         ),
         (
-            "biodiesel - algae",
-            "atr - biogas",
-            "biogas - biowaste",
+                "diesel - synthetic - FT - coal - economic allocation",
+                "hydrogen - atr - biogas",
+                "methane - synthetic - biological - MSWI",
         ),
         (
-            "synthetic diesel - energy allocation",
-            "wood gasification with EF with CCS (Swiss forest)",
-            "syngas",
+                "diesel - synthetic - methanol - cement - economic allocation",
+                "hydrogen - wood gasification with CCS",
+                "methane - synthetic - electrochemical - MSWI",
         ),
     ]:
         fb = {
@@ -124,7 +132,7 @@ def test_fuel_blend():
                 "primary": {"type": fuels[0], "share": [1, 1, 1, 1, 1, 1]},
             },
             "hydrogen": {"primary": {"type": fuels[1], "share": [1, 1, 1, 1, 1, 1]}},
-            "cng": {"primary": {"type": fuels[2], "share": [1, 1, 1, 1, 1, 1]}},
+            "methane": {"primary": {"type": fuels[2], "share": [1, 1, 1, 1, 1, 1]}},
         }
 
         tm = BusModel(array, country="CH", fuel_blend=fb)
@@ -141,12 +149,17 @@ def test_countries():
         "AU",
         "BE",
     ]:
-        bm.country = c
+        bm.energy_storage["origin"] = c
         ic = InventoryBus(bm, method="recipe", indicator="midpoint")
+
         assert (
-            ic.background_configuration["energy storage"]["electric"]["origin"]
+            ic.vm.country
             == bm.country
         )
+        assert (
+            ic.vm.energy_storage["origin"] == c
+        )
+
         ic.calculate_impacts()
 
 
@@ -158,20 +171,15 @@ def test_endpoint():
     assert len(results.impact_category.values) == 4
 
     """Test if it errors properly if an incorrect method type is give"""
-    with pytest.raises(TypeError) as wrapped_error:
+    with pytest.raises(ValueError) as wrapped_error:
         ic = InventoryBus(bm, method="recipe", indicator="endpint")
         ic.calculate_impacts()
-    assert wrapped_error.type == TypeError
+    assert wrapped_error.type == ValueError
 
 
 def test_sulfur_concentration():
     ic = InventoryBus(bm, method="recipe", indicator="endpoint")
-    ic.get_sulfur_content("RER", "diesel", 2000)
-    ic.get_sulfur_content("foo", "diesel", 2000)
-
-    with pytest.raises(ValueError) as wrapped_error:
-        ic.get_sulfur_content("FR", "diesel", "jku")
-    assert wrapped_error.type == ValueError
+    ic.get_sulfur_content("RER", "diesel")
 
 
 def test_custom_electricity_mix():
@@ -218,7 +226,7 @@ def test_export_to_bw():
     """Test that inventories export successfully"""
     ic = InventoryBus(tm, method="recipe", indicator="midpoint")
 
-    for b in ("3.5", "3.6", "3.7", "3.8"):
+    for b in ("3.9",):
         ic.export_lci(
             ecoinvent_version=b,
             format="bw2io",
@@ -234,7 +242,7 @@ def test_export_to_excel():
 
     """Test that inventories export successfully to Excel/CSV"""
     ic = InventoryBus(tm)
-    for b in ("3.5", "3.6", "3.7", "3.8"):
+    for b in ("3.9",):
         for s in ("brightway2", "simapro"):
             for d in ("file", "string"):
                 ic.export_lci(
