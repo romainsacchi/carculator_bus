@@ -57,7 +57,13 @@ def test_fuel_blend():
     tip.static()
     _, array = fill_xarray_from_input_parameters(
         tip,
-        scope={"powertrain": ["ICEV-d", "ICEV-g", ], "size": ["13m-city"]},
+        scope={
+            "powertrain": [
+                "ICEV-d",
+                "ICEV-g",
+            ],
+            "size": ["13m-city"],
+        },
     )
     bm = BusModel(array, country="CH")
     bm.set_all()
@@ -102,29 +108,29 @@ def test_fuel_blend():
     for fuels in [
         ("diesel", "hydrogen - electrolysis - PEM", "methane"),
         (
-                "diesel - biodiesel - palm oil",
-                "hydrogen - smr - natural gas",
-                "methane - biomethane - sewage sludge",
+            "diesel - biodiesel - palm oil",
+            "hydrogen - smr - natural gas",
+            "methane - biomethane - sewage sludge",
         ),
         (
-                "diesel - biodiesel - rapeseed oil",
-                "hydrogen - smr - natural gas with CCS",
-                "methane - synthetic - coal",
+            "diesel - biodiesel - rapeseed oil",
+            "hydrogen - smr - natural gas with CCS",
+            "methane - synthetic - coal",
         ),
         (
-                "diesel - biodiesel - cooking oil",
-                "hydrogen - wood gasification",
-                "methane - synthetic - biological",
+            "diesel - biodiesel - cooking oil",
+            "hydrogen - wood gasification",
+            "methane - synthetic - biological",
         ),
         (
-                "diesel - synthetic - FT - coal - economic allocation",
-                "hydrogen - atr - biogas",
-                "methane - synthetic - biological - MSWI",
+            "diesel - synthetic - FT - coal - economic allocation",
+            "hydrogen - atr - biogas",
+            "methane - synthetic - biological - MSWI",
         ),
         (
-                "diesel - synthetic - methanol - cement - economic allocation",
-                "hydrogen - wood gasification with CCS",
-                "methane - synthetic - electrochemical - MSWI",
+            "diesel - synthetic - methanol - cement - economic allocation",
+            "hydrogen - wood gasification with CCS",
+            "methane - synthetic - electrochemical - MSWI",
         ),
     ]:
         fb = {
@@ -152,13 +158,8 @@ def test_countries():
         bm.energy_storage["origin"] = c
         ic = InventoryBus(bm, method="recipe", indicator="midpoint")
 
-        assert (
-            ic.vm.country
-            == bm.country
-        )
-        assert (
-            ic.vm.energy_storage["origin"] == c
-        )
+        assert ic.vm.country == bm.country
+        assert ic.vm.energy_storage["origin"] == c
 
         ic.calculate_impacts()
 
