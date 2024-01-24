@@ -1,0 +1,16 @@
+﻿,"unit","Midibus, 9m","Single deck, city bus, 13m","Single deck, city bus, 18m","Double deck, city bus, 13m","Single deck, coach, 13m","Double deck, coach, 13m",Source
+Lifetime,year,14,"14 (20 for BEV-motion)","14 (20 for BEV-motion)",14,14,14,"Derived from the MOFIS vehicles registry :cite:`ct-1003`, a similar value used by :cite:`ct-1012` for buses"
+Annual kilometers,km,50’000,50’000,50’000,50’000,50’000,50’000,":cite:`ct-1130`"
+Lifetime,km,700’000,"(1’000’000,700’000 for BEV- motion)","(1’000’000,700’000 for BEV- motion)",700’000,700’000,700’000,Calculated from the two rows above.
+Average length,meter,9,13,18,13,13,13,Manufacturer s’ data.
+Number of axles,unit,2,2,3 (1 driven),3 (1 driven),2,3 (1 driven),
+Axles load distribution,% of the total load,"60% back, 40% front","60% back, 40% front","60% back, 20% middle, 20% front","60% back, 20% middle, 20% front","60% back, 40% front","60% back, 20% middle, 20% front",":cite:`ct-1024`"
+Rolling resistance coefficient,"unitless, per tire","0.0055","0.0055","0.0055","0.0055","0.0055","0.0055",
+Number of tires per axle,unit,"2 per non-driven axle, 4 per driven axle",,,,,,":cite:`ct-1024`"
+85% of tire load capacity,N,20’850,,,,,,
+Frontal area,square meter,"6.06","8.07","8.07","9.45","8.07","9.45",Calculated from manufacturer s’ data.
+Passengers capacity,unit,34,64,150,83,55,70,Manufacturer s’ data.
+Passengers occupancy,unit,5,10,19,13,21,26,Inferred from Mobitool factors v.2.1 values
+Load factor,,0.16,0.16,0.13,0.16,0.38,0.38,Calculated from the two rows above.
+Average passenger mass,kilogram,75,,,,,,Standard assumption
+Passenger luggage mass,kilogram,17,,,,,,":cite:`ct-1078`"

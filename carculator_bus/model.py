@@ -50,19 +50,20 @@ class BusModel(VehicleModel):
         of the car, costs, etc.
 
         :meth:`set_component_masses()`, :meth:`set_car_masses()` and :meth:`set_power_parameters()` and
-         :meth:`set_energy_stored_properties` relate to one another.
+        :meth:`set_energy_stored_properties` relate to one another.
         `powertrain_mass` depends on `power`, `curb_mass` is affected by changes in `powertrain_mass`,
-        `combustion engine mass`, `electric engine mass`. `energy battery mass` is influenced by the `curb mass` but also
-        by the `daily distance` the truck has. `power` is also varying with `curb_mass`.
+        `combustion engine mass`, `electric engine mass`. `energy battery mass` is influenced by the `curb mass`
+        but also by the `daily distance` the truck has. `power` is also varying with `curb_mass`.
 
         The current solution is to loop through the methods until either:
+
         * the change in curb mass between two iterations is inferior to 2%.
         * or the number of vehicles with a solution has been stable for the last 3 iterations
         * and that there has been at least 7 iterations
+
         It is then assumed that the buses are correctly sized.
 
         :returns: Does not return anything. Modifies ``self.array`` in place.
-
         """
 
         diff = 1
@@ -405,7 +406,6 @@ class BusModel(VehicleModel):
         """
         This method adjusts costs of energy storage over time, to correct for the overly optimistic linear
         interpolation between years.
-
         """
 
         n_iterations = self.array.shape[-1]
@@ -502,7 +502,6 @@ class BusModel(VehicleModel):
         """
         This method calculates the energy required to operate auxiliary services as well
         as to move the car. The sum is stored under the parameter label "TtW energy" in :attr:`self.array`.
-
         """
         self.energy = self.ecm.motive_energy_per_km(
             driving_mass=self["driving mass"],
@@ -609,7 +608,7 @@ class BusModel(VehicleModel):
 
     def set_battery_fuel_cell_replacements(self):
         """
-        This methods calculates the number of replacement batteries needed
+        These methods calculate the number of replacement batteries needed
         to match the vehicle lifetime. Given the chemistry used,
         the cycle life is known. Given the lifetime kilometers and
         the kilometers per charge, the number of charge cycles can be inferred.
@@ -668,12 +667,11 @@ class BusModel(VehicleModel):
         """
         Define ``curb mass``, ``driving mass``, and ``total cargo mass``.
 
-            * `curb mass <https://en.wikipedia.org/wiki/Curb_weight>`__ is the mass of the vehicle and fuel, without people or cargo.
-            * ``total cargo mass`` is the mass of the cargo and passengers.
-            * ``driving mass`` is the ``curb mass`` plus ``total cargo mass``.
+        * `curb mass <https://en.wikipedia.org/wiki/Curb_weight>`__ is the mass of the vehicle and fuel, without people or cargo.
+        * ``total cargo mass`` is the mass of the cargo and passengers.
+        * ``driving mass`` is the ``curb mass`` plus ``total cargo mass``.
 
-        .. note::
-            driving mass = total cargo mass + driving mass
+        .. note:: driving mass = total cargo mass + driving mass
 
         """
 
@@ -1370,11 +1368,11 @@ class BusModel(VehicleModel):
         """
         This method returns an array with cost values per vehicle-km, sub-divided into the following groups:
 
-            * Purchase
-            * Maintentance
-            * Component replacement
-            * Energy
-            * Total cost of ownership
+        * Purchase
+        * Maintenance
+        * Component replacement
+        * Energy
+        * Total cost of ownership
 
         :return: a_matrix xarray array with cost information per vehicle-km
         :rtype: xarray.core.dataarray.DataArray
