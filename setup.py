@@ -40,7 +40,7 @@ setup(
     package_data={
         "carculator_bus": package_files(os.path.join("carculator_bus", "data"))
     },
-    python_requires='>=3.10',
+    python_requires=">=3.10",
     install_requires=[
         "carculator_utils==1.2.0.dev3",
         "prettytable",
