@@ -84,7 +84,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [ "3.9" ]
+        python-version: [ "3.10" ]
     steps:
       - uses: actions/checkout@v2
       - uses: conda-incubator/setup-miniconda@v2
@@ -94,7 +94,6 @@ jobs:
           allow-softlinks: true
           channel-priority: strict
           auto-update-conda: true
-          conda-build-version: 3.21.4
           activate-environment: test
 
       - name: Conda info
@@ -108,6 +107,7 @@ jobs:
 
           PKG_NAME=carculator_bus
           USER=romainsacchi
+          conda install conda-build
           conda install anaconda-client
           mkdir ~/conda-bld
           conda config --set anaconda_upload no
