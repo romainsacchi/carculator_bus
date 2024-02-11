@@ -42,7 +42,7 @@ setup(
     },
     python_requires=">=3.10",
     install_requires=[
-        "carculator_utils==1.2.0.dev3",
+        "carculator_utils>=1.2.0.dev5",
         "prettytable",
     ],
     url="https://github.com/romainsacchi/carculator_bus",
