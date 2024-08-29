@@ -168,7 +168,9 @@ def test_endpoint():
     """Test if the correct impact categories are considered"""
     ic = InventoryBus(bm, method="recipe", indicator="endpoint")
     results = ic.calculate_impacts()
-    assert "human toxicity: non-carcinogenic" in [i.lower() for i in results.impact_category.values]
+    assert "human toxicity: non-carcinogenic" in [
+        i.lower() for i in results.impact_category.values
+    ]
     assert len(results.impact_category.values) == 26
 
     """Test if it errors properly if an incorrect method type is give"""
