@@ -125,12 +125,12 @@ def test_fuel_blend():
         (
             "diesel - synthetic - FT - coal - economic allocation",
             "hydrogen - atr - biogas",
-            "methane - synthetic - biological - MSWI",
+            "methane - synthetic - biological",
         ),
         (
             "diesel - synthetic - methanol - cement - economic allocation",
             "hydrogen - wood gasification with CCS",
-            "methane - synthetic - electrochemical - MSWI",
+            "methane - synthetic - biological",
         ),
     ]:
         fb = {
@@ -168,8 +168,8 @@ def test_endpoint():
     """Test if the correct impact categories are considered"""
     ic = InventoryBus(bm, method="recipe", indicator="endpoint")
     results = ic.calculate_impacts()
-    assert "human health" in [i.lower() for i in results.impact_category.values]
-    assert len(results.impact_category.values) == 4
+    assert "human toxicity: non-carcinogenic" in [i.lower() for i in results.impact_category.values]
+    assert len(results.impact_category.values) == 26
 
     """Test if it errors properly if an incorrect method type is give"""
     with pytest.raises(ValueError) as wrapped_error:
@@ -243,7 +243,7 @@ def test_export_to_excel():
 
     """Test that inventories export successfully to Excel/CSV"""
     ic = InventoryBus(tm)
-    for b in ("3.9",):
+    for b in ("3.10",):
         for s in ("brightway2", "simapro"):
             for d in ("file", "string"):
                 ic.export_lci(

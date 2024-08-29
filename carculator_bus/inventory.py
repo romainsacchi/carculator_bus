@@ -32,7 +32,7 @@ class InventoryBus(Inventory):
         self.A[
             :,
             self.find_input_indices(("assembly operation, for lorry",)),
-            self.find_input_indices(("Bus, ",)),
+            [j for i, j in self.inputs.items() if i[0].startswith("bus, ")]
         ] = (
             self.array.sel(parameter="curb mass") * -1
         )
@@ -41,7 +41,7 @@ class InventoryBus(Inventory):
         self.A[
             :,
             self.find_input_indices(("frame, blanks and saddle, for lorry",)),
-            self.find_input_indices(("Bus, ",)),
+            [j for i, j in self.inputs.items() if i[0].startswith("bus, ")]
         ] = (
             self.array.sel(parameter="glider base mass") * -1
         )
@@ -50,7 +50,7 @@ class InventoryBus(Inventory):
         self.A[
             :,
             self.find_input_indices(("suspension, for lorry",)),
-            self.find_input_indices(("Bus, ",)),
+            [j for i, j in self.inputs.items() if i[0].startswith("bus, ")]
         ] = (
             self.array.sel(
                 parameter=[
@@ -65,7 +65,7 @@ class InventoryBus(Inventory):
         self.A[
             :,
             self.find_input_indices(("tires and wheels, for lorry",)),
-            self.find_input_indices(("Bus, ",)),
+            [j for i, j in self.inputs.items() if i[0].startswith("bus, ")]
         ] = (
             self.array.sel(parameter="wheels and tires mass") * -1
         )
@@ -74,7 +74,7 @@ class InventoryBus(Inventory):
         self.A[
             :,
             self.find_input_indices(("exhaust system, for lorry",)),
-            self.find_input_indices(("Bus, ",)),
+            [j for i, j in self.inputs.items() if i[0].startswith("bus, ")]
         ] = (
             self.array.sel(parameter="exhaust system mass") * -1
         )
@@ -83,7 +83,7 @@ class InventoryBus(Inventory):
         self.A[
             :,
             self.find_input_indices(("power electronics, for lorry",)),
-            self.find_input_indices(("Bus, ",)),
+            [j for i, j in self.inputs.items() if i[0].startswith("bus, ")]
         ] = (
             self.array.sel(parameter="electrical system mass") * -1
         )
@@ -92,7 +92,7 @@ class InventoryBus(Inventory):
         self.A[
             :,
             self.find_input_indices(("transmission, for lorry",)),
-            self.find_input_indices(("Bus, ",)),
+            [j for i, j in self.inputs.items() if i[0].startswith("bus, ")]
         ] = (
             self.array.sel(parameter="transmission mass") * 0.52 * -1
         )
@@ -100,7 +100,7 @@ class InventoryBus(Inventory):
         self.A[
             :,
             self.find_input_indices(("gearbox, for lorry",)),
-            self.find_input_indices(("Bus, ",)),
+            [j for i, j in self.inputs.items() if i[0].startswith("bus, ")]
         ] = (
             self.array.sel(parameter="transmission mass") * 0.36 * -1
         )
@@ -108,7 +108,7 @@ class InventoryBus(Inventory):
         self.A[
             :,
             self.find_input_indices(("retarder, for lorry",)),
-            self.find_input_indices(("Bus, ",)),
+            [j for i, j in self.inputs.items() if i[0].startswith("bus, ")]
         ] = (
             self.array.sel(parameter="transmission mass") * 0.12 * -1
         )
@@ -117,9 +117,7 @@ class InventoryBus(Inventory):
         self.A[
             :,
             self.find_input_indices(("other components, for hybrid electric lorry",)),
-            self.find_input_indices(
-                contains=("Bus, ",),
-            ),
+            [j for i, j in self.inputs.items() if i[0].startswith("bus, ")],
         ] = (
             self.array.sel(parameter="other components mass")
             * (self.array.sel(parameter="combustion power") > 0)
@@ -130,7 +128,7 @@ class InventoryBus(Inventory):
         self.A[
             :,
             self.find_input_indices(("other components, for electric lorry",)),
-            self.find_input_indices(contains=("Bus, ",)),
+            [j for i, j in self.inputs.items() if i[0].startswith("bus, ")],
         ] = (
             self.array.sel(parameter="other components mass")
             * (self.array.sel(parameter="combustion power") == 0)
@@ -140,7 +138,7 @@ class InventoryBus(Inventory):
         self.A[
             :,
             self.find_input_indices(("glider lightweighting",)),
-            self.find_input_indices(contains=("Bus, ",)),
+            [j for i, j in self.inputs.items() if i[0].startswith("bus, ")],
         ] = (
             self.array.sel(parameter="lightweighting")
             * self.array.sel(parameter="glider base mass")
@@ -150,7 +148,7 @@ class InventoryBus(Inventory):
         self.A[
             :,
             self.find_input_indices(("maintenance, bus",)),
-            self.find_input_indices(contains=("Bus, ",)),
+            [j for i, j in self.inputs.items() if i[0].startswith("bus, ")],
         ] = -1 * (self.array.sel(parameter="gross mass") / 19000)
 
         # Electric powertrain components
@@ -159,7 +157,7 @@ class InventoryBus(Inventory):
             self.find_input_indices(
                 ("market for converter, for electric passenger car",)
             ),
-            self.find_input_indices(contains=("Bus, ",)),
+            [j for i, j in self.inputs.items() if i[0].startswith("bus, ")],
         ] = (
             self.array.sel(parameter="converter mass") * -1
         )
@@ -169,7 +167,7 @@ class InventoryBus(Inventory):
             self.find_input_indices(
                 ("market for electric motor, electric passenger car",)
             ),
-            self.find_input_indices(contains=("Bus, ",)),
+            [j for i, j in self.inputs.items() if i[0].startswith("bus, ")],
         ] = (
             self.array.sel(parameter="electric engine mass") * -1
         )
@@ -179,7 +177,7 @@ class InventoryBus(Inventory):
             self.find_input_indices(
                 ("market for inverter, for electric passenger car",)
             ),
-            self.find_input_indices(contains=("Bus, ",)),
+            [j for i, j in self.inputs.items() if i[0].startswith("bus, ")],
         ] = (
             self.array.sel(parameter="inverter mass") * -1
         )
@@ -189,7 +187,7 @@ class InventoryBus(Inventory):
             self.find_input_indices(
                 ("market for power distribution unit, for electric passenger car",)
             ),
-            self.find_input_indices(contains=("Bus, ",)),
+            [j for i, j in self.inputs.items() if i[0].startswith("bus, ")],
         ] = (
             self.array.sel(parameter="power distribution unit mass") * -1
         )
@@ -197,7 +195,7 @@ class InventoryBus(Inventory):
         self.A[
             :,
             self.find_input_indices(("internal combustion engine, for lorry",)),
-            self.find_input_indices(contains=("Bus, ",)),
+            [j for i, j in self.inputs.items() if i[0].startswith("bus, ")],
         ] = (
             self.array.sel(parameter="combustion engine mass") * -1
         )
@@ -216,7 +214,7 @@ class InventoryBus(Inventory):
         self.A[
             :,
             self.find_input_indices(("lead acid battery, for lorry",)),
-            self.find_input_indices(contains=("Bus, ",)),
+            [j for i, j in self.inputs.items() if i[0].startswith("bus, ")],
         ] = (
             16.0  # kg/battery
             * (
@@ -228,11 +226,15 @@ class InventoryBus(Inventory):
         ) * -1
 
         # Fuel tank for diesel buses
-
         self.A[
             :,
-            self.find_input_indices(("fuel tank production, for diesel vehicle",)),
-            self.find_input_indices(contains=("Bus, ", "EV-d"), excludes=("battery",)),
+            self.find_input_indices(("fuel tank, for diesel vehicle",)),
+        [
+            j for i, j in self.inputs.items()
+            if i[0].startswith("bus, ")
+               and "EV-d" in i[0]
+               and "BEV" not in i[0]
+        ]
         ] = (
             self.array.sel(
                 parameter="fuel tank mass",
@@ -251,7 +253,7 @@ class InventoryBus(Inventory):
         self.A[
             :,
             self.find_input_indices(("treatment of used bus",)),
-            self.find_input_indices(contains=("Bus, ",)),
+            [j for i, j in self.inputs.items() if i[0].startswith("bus, ")],
         ] = 1 * (self.array.sel(parameter="gross mass") / 19000)
 
         # END of vehicle building
@@ -345,14 +347,33 @@ class InventoryBus(Inventory):
         # The charging station has a lifetime of 24 years
         # Hence, we calculate the lifetime of the bus
 
+        print(
+            [
+                self.rev_inputs[i]
+                for i in self.find_input_indices(
+                    ("EV charger, level 3, plugin, 200 kW",)
+                )
+            ]
+        )
+
+        print(
+            [
+                self.rev_inputs[i]
+                for i in self.find_input_indices(
+                    contains=(f"transport, {self.vm.vehicle_type}", "BEV"),
+                    excludes=("motion", "opp"),
+                )
+            ]
+        )
+
         self.A[
             np.ix_(
                 np.arange(self.iterations),
                 self.find_input_indices(
-                    ("charger, for electric vehicles, level 3, plugin, 200 kW",)
+                    ("EV charger, level 3, plugin, 200 kW",)
                 ),
                 self.find_input_indices(
-                    contains=(f"transport, {self.vm.vehicle_type}", "battery"),
+                    contains=(f"transport, {self.vm.vehicle_type}", "BEV"),
                     excludes=("motion", "opp"),
                 ),
             )

@@ -111,8 +111,8 @@ class BusModel(VehicleModel):
             if self.energy_consumption:
                 self.override_ttw_energy()
             else:
-                self.set_ttw_efficiency()
                 self.calculate_ttw_energy()
+            self.set_ttw_efficiency()
 
             self.set_share_recuperated_energy()
             self.set_battery_fuel_cell_replacements()
