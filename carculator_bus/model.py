@@ -195,9 +195,11 @@ class BusModel(VehicleModel):
                             parameter=["average passengers"],
                             powertrain=pt,
                             year=y,
-                            value="reference"
-                            if "reference" in self.array.coords["value"]
-                            else 0,
+                            value=(
+                                "reference"
+                                if "reference" in self.array.coords["value"]
+                                else 0
+                            ),
                             size=s,
                         ).values,
                         1,
@@ -209,9 +211,11 @@ class BusModel(VehicleModel):
                             parameter="is_compliant",
                             powertrain=pt,
                             year=y,
-                            value="reference"
-                            if "reference" in self.array.coords["value"]
-                            else 0,
+                            value=(
+                                "reference"
+                                if "reference" in self.array.coords["value"]
+                                else 0
+                            ),
                             size=s,
                         ).values,
                         val,
@@ -224,9 +228,11 @@ class BusModel(VehicleModel):
                             parameter="has_schedule_issue",
                             powertrain=pt,
                             year=y,
-                            value="reference"
-                            if "reference" in self.array.coords["value"]
-                            else 0,
+                            value=(
+                                "reference"
+                                if "reference" in self.array.coords["value"]
+                                else 0
+                            ),
                             size=s,
                         ).values,
                         "O",
@@ -239,9 +245,11 @@ class BusModel(VehicleModel):
                             parameter="is_too_heavy",
                             powertrain=pt,
                             year=y,
-                            value="reference"
-                            if "reference" in self.array.coords["value"]
-                            else 0,
+                            value=(
+                                "reference"
+                                if "reference" in self.array.coords["value"]
+                                else 0
+                            ),
                             size=s,
                         ).values,
                         "X",
@@ -254,9 +262,11 @@ class BusModel(VehicleModel):
                             parameter="is_available",
                             powertrain=pt,
                             year=y,
-                            value="reference"
-                            if "reference" in self.array.coords["value"]
-                            else 0,
+                            value=(
+                                "reference"
+                                if "reference" in self.array.coords["value"]
+                                else 0
+                            ),
                             size=s,
                         ).values,
                         val,
