@@ -346,25 +346,6 @@ class InventoryBus(Inventory):
         # The charging station has a lifetime of 24 years
         # Hence, we calculate the lifetime of the bus
 
-        print(
-            [
-                self.rev_inputs[i]
-                for i in self.find_input_indices(
-                    ("EV charger, level 3, plugin, 200 kW",)
-                )
-            ]
-        )
-
-        print(
-            [
-                self.rev_inputs[i]
-                for i in self.find_input_indices(
-                    contains=(f"transport, {self.vm.vehicle_type}", "BEV"),
-                    excludes=("motion", "opp"),
-                )
-            ]
-        )
-
         self.A[
             np.ix_(
                 np.arange(self.iterations),
@@ -397,7 +378,7 @@ class InventoryBus(Inventory):
                 np.arange(self.iterations),
                 self.find_input_indices(
                     (
-                        "charger, for electric vehicles, level 3, with pantograph, 450 kW",
+                        "EV charger, level 3, with pantograph, 450 kW",
                     )
                 ),
                 self.find_input_indices(
@@ -422,30 +403,31 @@ class InventoryBus(Inventory):
         # And 30 buses use it
         # Hence, we calculate the lifetime of the bus
 
-        self.A[
-            np.ix_(
-                np.arange(self.iterations),
-                self.find_input_indices(
-                    ("catenary system assembly, with overhead lines, for trolleybus",)
-                ),
-                self.find_input_indices(
-                    contains=(f"transport, {self.vm.vehicle_type}", "BEV-motion")
-                ),
-            )
-        ] = (
-            -1
-            / (
-                self.array.sel(
-                    parameter="lifetime kilometers",
-                    combined_dim=[
-                        d
-                        for d in self.array.coords["combined_dim"].values
-                        if "BEV-motion" in d
-                    ],
+        if "BEV-motion" in self.scope["powertrain"]:
+            self.A[
+                np.ix_(
+                    np.arange(self.iterations),
+                    self.find_input_indices(
+                        ("catenary system",)
+                    ),
+                    self.find_input_indices(
+                        contains=(f"transport, {self.vm.vehicle_type}", "BEV-motion")
+                    ),
                 )
-                * 30
-                * 40
-            ).values[:, None]
-        )
+            ] = (
+                -1
+                / (
+                    self.array.sel(
+                        parameter="lifetime kilometers",
+                        combined_dim=[
+                            d
+                            for d in self.array.coords["combined_dim"].values
+                            if "BEV-motion" in d
+                        ],
+                    )
+                    * 30
+                    * 40
+                ).values[:, None]
+            )
 
         print("*********************************************************************")
