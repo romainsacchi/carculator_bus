@@ -578,17 +578,17 @@ class BusModel(VehicleModel):
         )
 
         self["TtW energy"] = (
-                self.energy.sel(
-                    parameter=[
-                        "motive energy",
-                        "auxiliary energy",
-                        "cooling energy",
-                        "heating energy",
-                        "battery cooling energy",
-                        "battery heating energy",
-                    ]
-                ).sum(dim=["second", "parameter"])
-                / distance
+            self.energy.sel(
+                parameter=[
+                    "motive energy",
+                    "auxiliary energy",
+                    "cooling energy",
+                    "heating energy",
+                    "battery cooling energy",
+                    "battery heating energy",
+                ]
+            ).sum(dim=["second", "parameter"])
+            / distance
         ).T
 
         # saved_TtW_energy_by_recuperation = recuperated energy
@@ -596,21 +596,21 @@ class BusModel(VehicleModel):
         # / (engine efficiency * transmission efficiency)
 
         self["TtW energy"] += (
-                (
-                        self.energy.sel(parameter="recuperated energy").sum(dim="second")
-                        / distance
-                ).T
-                * self.array.sel(parameter="engine efficiency")
-                * self.array.sel(parameter="transmission efficiency")
-                / (
-                        self["engine efficiency"]
-                        * self["transmission efficiency"]
-                        * np.where(
+            (
+                self.energy.sel(parameter="recuperated energy").sum(dim="second")
+                / distance
+            ).T
+            * self.array.sel(parameter="engine efficiency")
+            * self.array.sel(parameter="transmission efficiency")
+            / (
+                self["engine efficiency"]
+                * self["transmission efficiency"]
+                * np.where(
                     self["fuel cell system efficiency"] == 0,
                     1,
                     self["fuel cell system efficiency"],
                 )
-                )
+            )
         )
 
         self["TtW energy, combustion mode"] = self["TtW energy"] * (

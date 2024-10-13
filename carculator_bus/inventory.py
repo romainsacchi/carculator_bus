@@ -377,9 +377,7 @@ class InventoryBus(Inventory):
             np.ix_(
                 np.arange(self.iterations),
                 self.find_input_indices(
-                    (
-                        "EV charger, level 3, with pantograph, 450 kW",
-                    )
+                    ("EV charger, level 3, with pantograph, 450 kW",)
                 ),
                 self.find_input_indices(
                     contains=(f"transport, {self.vm.vehicle_type}", "BEV-opp")
@@ -407,9 +405,7 @@ class InventoryBus(Inventory):
             self.A[
                 np.ix_(
                     np.arange(self.iterations),
-                    self.find_input_indices(
-                        ("catenary system",)
-                    ),
+                    self.find_input_indices(("catenary system",)),
                     self.find_input_indices(
                         contains=(f"transport, {self.vm.vehicle_type}", "BEV-motion")
                     ),
