@@ -33,7 +33,7 @@ def package_files(directory):
 
 setup(
     name="carculator_bus",
-    version="0.1.0.dev0",
+    version="0.1.0",
     packages=packages,
     author="Romain Sacchi <romain.sacchi@psi.ch>",
     license=open("LICENSE").read(),
@@ -42,7 +42,7 @@ setup(
     },
     python_requires=">=3.10",
     install_requires=[
-        "carculator_utils>=1.2.0.dev5",
+        "carculator_utils>=1.3.0",
         "prettytable",
     ],
     url="https://github.com/romainsacchi/carculator_bus",

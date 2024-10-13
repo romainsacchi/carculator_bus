@@ -1,2 +1,2 @@
-carculator_utils>=1.2.0.dev5
+carculator_utils>=1.3.0
 prettytable
